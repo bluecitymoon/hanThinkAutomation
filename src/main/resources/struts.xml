@@ -40,7 +40,7 @@
 		</result-types>
 		<action name="hello" class="userAction" method="doLogin">
 			<result name="success" type="redirectAction">
-				<param name="actionName">load</param>
+				<param name="actionName">conf</param>
 				<param name="namespace">/user</param>
 			</result>
 			<result name="error" type="redirectAction">
