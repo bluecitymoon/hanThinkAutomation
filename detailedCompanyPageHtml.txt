@@ -1,0 +1,407 @@
+<!Doctype html>
+<html>
+<head>
+<meta name="location" content="province=江苏;city=苏州; coord=120.6199070,31.3179870">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>吴江区盛泽镇欧格兰顿美容生活馆2014年最新招聘信息 - 苏州58同城</title>
+<meta name="Keywords"  content="" /> 
+<meta name="Description" content="吴江区盛泽镇欧格兰顿美容生活馆招聘,58同城官方网站,提供最新招聘职位、公司介绍、电话、地址等信息；我公司为私营企业，属于医疗/保健/卫生/美容行业，目前公司规模:1-49人，公司在“苏州吴江西二环路购物公园61号”，诚聘:“前台”“前台”“欧格兰顿诚招美容顾问”；了解更多该企业信息，请到58同城。" />
+<link rel="stylesheet" type="text/css" href="http://static.58.com/ui7/job/hire/job-compDetail.css">
+<script>
+document.domain = '58.com';
+var ____json4fe = {rootcatentry:{dispid:'',name:'',listname:'job'}, catentry: { dispid: '', name: '', listname: 'content' }, locallist: [{ dispid: '5', name: '苏州', listname: 'su' }],userid:'13571834103302', modules:'qy'}
+</script>
+<script type="text/javascript" src="http://static.58.com/n/js/jianli/jquery.js"></script>
+<script type="text/javascript" src="/js/entdetail.js?v=20131126"></script>
+</head>
+<body class="wbp-job-compDetail">
+<input id="newmingqi" type="hidden" value=""/>
+<!--topbar start-->
+<div id="topbar"></div>	
+<!--topbar end-->
+<!--head start-->
+<div class="wb-head" id="header">
+	<div class="wb-header">
+		<div class="logo">
+			<a href="http://www.58.com/">
+				<img src="http://pic2.58.com/ui7/job/hire/logo-49h.gif" alt="中文最大生活信息门户">
+			</a>
+		</div>
+		<span id="crumbs" class="crumbs" style="display: none;"><a href="/">企业名录</a>&gt;<a href="http://qy.58.com/su/">苏州企业名录</a>&gt;<a href="http://qy.58.com/13571834103302/">吴江区盛泽镇欧格兰顿美容生活馆</a></span>
+		<div id="searchbar" class="searchbar fl">
+			<form onsubmit="b_query();return false;">
+				<span id="key" class="searchInput">
+					<input id="keywordtop" class="keyword1" para="key" name="b_q" value="请输入职位名称或公司名称" onblur="if(this.value==''){this.value='请输入职位名称或公司名称';this.className='keyword1';}" onfocus="if(this.value=='请输入职位名称或公司名称')this.value='';this.className='keyword2';" autocomplete="off" fdv="请输入职位名称或公司名称" data-fdv="true">
+				</span>
+				<a id="searchbtnSelf" class="sbtn" type="button" href="javascript:search();">找工作</a>
+			</form>
+		</div>
+		<div class="fabu fr">
+		<a href="http://post.58.com/1/9224/j5" class="fabu_zp" target="_blank" onclick="javascript:_gaq.push(['pageTracker._trackEvent','zhaopin','click','/zhaopin/list/button/fabuzhaopin']);" rel="nofollow">发布招聘</a>
+		<a href="http://jianli.58.com/resumebase/" target="_blank" onclick="javascript:_gaq.push(['pageTracker._trackEvent','zhaopin','click','/zhaopin/list/button/fabujianli']);" rel="nofollow">登记简历</a>
+		</div>
+	</div>
+</div>
+<!--head end-->
+<!--main start-->
+<div class="wb-main">
+	<div class="wb-content">
+		<div class="compHead">
+			<div class="compT">
+				<h1>
+					<a href="/13571834103302/" title="吴江区盛泽镇欧格兰顿美容生活馆">吴江区盛泽镇欧格兰顿美容生活馆 </a>
+				</h1>	
+				<!-- 	
+				<div class="compComm" style="display: none;">			
+					<strong>0%</strong>
+					<p class="red">好评率</p>
+					<p>已有0名求职者评价</p>
+				</div> -->
+			</div>
+			<div class="nav">
+				<ul>
+					<li class="cur">
+						<a href="javascript:void(0)">公司信息</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)" onclick="scrollTo(0,$('.jobInfo').offset().top);">招聘职位</a>
+					</li>
+					<!-- 
+					<li>
+						<a href="javascript:void(0)" onclick="scrollTo(0,$('.comment').offset().top);">公司评价</a>
+					</li>
+					 -->
+				</ul>
+			</div>
+   		</div>
+   		<div class="wrap">
+   			<!--分享 start-->
+   			<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare share">
+			<span class="bds_more operTip">分享到：</span>
+			<a class="bds_qzone"></a>
+			<a class="bds_tsina"></a>
+			<a class="bds_tqq"></a>
+			<a class="bds_renren"></a>
+			</div>
+			<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=218186" ></script>
+			<script type="text/javascript" id="bdshell_js"></script>
+			<script type="text/javascript">
+			document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+			</script>
+   			<!--分享 end-->
+   			<div class="basicMsg">
+   				<h2>基本资料</h2>
+   				<table>
+   					<tr>
+   						<th>公司资质</th>
+   						<td>
+   							   							<span class="vip-yan" title="营业执照已验证"><i></i>营业执照已验证</span><!--未验证添加样式noyan-->
+   							   							   							<span class="yearIco" title="网邻通会员2年"><i>2</i>网邻通会员2年</span>
+   							   						</td>
+   						<th>公司性质</th>
+   						<td>
+   							   								私营
+   							   						</td>
+   					</tr>
+   					<tr>
+						<th>公司行业</th>
+   						<td>
+   							<span>
+   							   								<a class="c33" target="_blank" href="http://qy.58.com/su_262/">医疗/保健/卫生/美容</a>
+   							   							</span>  							
+   						</td>
+   						<th>公司规模</th><td>
+   							1-49人
+   						</td>
+   					</tr>
+   					   					<tr>
+						<th>联系人</th>
+   						<td>
+   						   							陈小姐
+   						   						</td>
+   						<th>联系电话</th>
+   						<td class="telNum">
+   							<img src="http://image.58.com/showphone.aspx?t=v55&v=9A230F707718C31EF1BDD2BABEB34C2E6"><img src="http://image.58.com/showphone.aspx?t=v55&v=3B8DA15642CE9050D9A557E074E59B59C">
+   						</td>
+   					</tr>
+   					   					<tr>
+   												<th>邮箱</th>
+   						<td><img src="http://image.58.com/showphone.aspx?t=v55&v=7118E462FFE32415ADCFB75FN35096D42F738C57644F6A1A0"></td>
+   						<th>企业网址</th>
+   						<td>
+   							<a href="http://szoglmr.58.com.cn/" target="_blank">http://szoglmr.58.com.cn/</a>
+   						</td>
+   						   					</tr>
+   					<tr>	
+   						<th>公司地址</th>
+   						<td class="adress"  colspan="3">
+   							<span>苏州吴江西二环路购物公园61号</span>
+   								<i class="map"></i><a href="javascript:setbg('公交地图',430,170,'/mapdetail.html?lat=120.632441%2C30.893041&name=%E5%90%B4%E6%B1%9F%E5%8C%BA%E7%9B%9B%E6%B3%BD%E9%95%87%E6%AC%A7%E6%A0%BC%E5%85%B0%E9%A1%BF%E7%BE%8E%E5%AE%B9%E7%94%9F%E6%B4%BB%E9%A6%86');">查看地图</a>   							
+   						</td>
+   					</tr>
+   				</table>
+   				
+	   				<div class="infoview clearfix" id="infoview">
+	   					   					<span class="fl">公司福利：</span>
+	   					<ul class="cbright fl">
+	   					 	   					 							 	   					 							 	   					 							 	   					 							 	   					 							 	   					 							 	   					 							 	   					 							 	   					 							 	   					 							 	   					 														<li><div class="cbSum"><span>福利待遇好</span></div></li>
+														<li><div class="cbSum"><span>发展空间大</span></div></li>
+														<li><div class="cbSum"><span>环境优雅</span></div></li>
+																			</ul>
+										</div>
+				<div class="compIntro">
+					<p>
+					欧格兰顿美容养生馆,面积400平方,苏州吴江盛泽店,位于苏州吴江区盛泽镇西二环路,购物公园内61号.周边有欧尚大形超市,高档住宅小区,高档会所KTV,肯得基,五星级酒店.欧格兰顿美容现已经拥有500个创始会员.<i style='padding-left:7px;line-height:14px;overflow:hidden;zoom:1;'></i>真诚期待爱美的女士们加入
+					</p>
+				</div>
+   			</div>
+   			<div class="compAppear">
+				   				<h2>企业风采</h2>
+   				   				<!--企业视频 start-->
+				<div class="videoup_step3"> 
+					<span class="video"> <span class="videocontain"></span></span>
+				 </div>
+				 <!--企业视频 end-->
+									<!--幻灯片开始-->
+			  		<div class="companySlide" id="companySlide">           
+		         		<div class="contList">
+		         		</div>
+						<a href="javascript:void(0);" class="rightmask">
+							<i class="rightarrow"></i>
+						</a>
+						<a href="javascript:void(0);" class="leftmask">
+							<i class="leftarrow"></i>
+						</a>
+		      		</div>
+					<!--幻灯片结束-->
+				   			</div>
+   		</div>
+   		<!--招聘信息 start-->
+   		<div class="jobInfo bor">
+   		<a name="joblist" id="joblist"></a>
+   			<div class="headline">
+		    	<h2>招聘信息</h2> 
+		       	<div class="posCata">
+		       							<a	 class="selcur"  href="/13571834103302/574/pn1">全职职位</a>
+		       						</div>
+		    </div>
+		    		    <table class="jobList"><thead><tr><th class="wid1">职位信息</th><th class="wid2">薪资水平</th><th class="wid3">工作地点</th><th class="wid4">学历</th><th class="wid5">工作经验</th><th class="wid6">招聘人数</th><th class="wid7">更新时间</th></tr></thead><tbody><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/renli/19010710742273x.shtml" title="前台">前台</a></div></td><td><div><span>3000-5000</span>元/月</div></td><td><div>盛泽</div></td><td><div>不限</div></td><td><div>不限</div></td><td><div>3人</div></td><td><div class="mr20">2014-09-25</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/renli/18268358892546x.shtml" title="前台">前台</a></div></td><td><div><span>3000-5000</span>元/月</div></td><td><div>盛泽</div></td><td><div>高中</div></td><td><div>1-2年</div></td><td><div>6人</div></td><td><div class="mr20">2014-08-29</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/meirongjianshen/16929272786818x.shtml" title="欧格兰顿诚招美容顾问">欧格兰顿诚招美容顾问</a></div></td><td><div><span>5000-8000</span>元/月</div></td><td><div>盛泽</div></td><td><div>不限</div></td><td><div>1-2年</div></td><td><div>2人</div></td><td><div class="mr20">2014-08-29</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/meirongjianshen/16841168256259x.shtml" title="包住宿+高薪诚聘美容师">包住宿+高薪诚聘美容师</a></div></td><td><div><span>3000-5000</span>元/月</div></td><td><div>盛泽</div></td><td><div>高中</div></td><td><div>3-5年</div></td><td><div>5人</div></td><td><div class="mr20">2014-08-29</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/meirongjianshen/16575532265733x.shtml" title="欧格兰顿诚聘中医美容师">欧格兰顿诚聘中医美容师</a></div></td><td><div><span>5000-8000</span>元/月</div></td><td><div>盛泽</div></td><td><div>不限</div></td><td><div>3-5年</div></td><td><div>2人</div></td><td><div class="mr20">2014-08-29</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/meirongjianshen/15882713064074x.shtml" title="欧格兰顿诚聘美容师">欧格兰顿诚聘美容师</a></div></td><td><div><span>5000-8000</span>元/月</div></td><td><div>狮山</div></td><td><div>不限</div></td><td><div>1年以下</div></td><td><div>10人</div></td><td><div class="mr20">2014-08-29</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/yewu/14530564332935x.shtml" title="欧格兰顿诚招营销策划经理">欧格兰顿诚招营销策划经理</a></div></td><td><div><span>5000-8000</span>元/月</div></td><td><div>盛泽</div></td><td><div>高中</div></td><td><div>3-5年</div></td><td><div>3人</div></td><td><div class="mr20">2014-08-29</div></td></tr><tr><td><div class="ml20"><a target="_blank" href="http://su.58.com/meirongjianshen/14530541827463x.shtml" title="欧格兰顿诚招店长">欧格兰顿诚招店长</a></div></td><td><div><span>5000-8000</span>元/月</div></td><td><div>盛泽</div></td><td><div>高中</div></td><td><div>3-5年</div></td><td><div>3人</div></td><td><div class="mr20">2014-08-29</div></td></tr></tbody></table>
+		    		   	<div class="pagerout">
+				<div id="pager" class="pager">
+					
+				<!--	
+					<a class="prv" href="/yewu/pn2/"><span>上一页</span></a><a href="/yewu/"><span>1</span></a><a href="/yewu/pn2/"><span>2</span></a><strong><span>3</span></strong><a href="/yewu/pn4/"><span>4</span></a><a href="/yewu/pn5/"><span>5</span></a><a href="/yewu/pn6/"><span>6</span></a><a href="/yewu/pn7/"><span>7</span></a><a href="/yewu/pn8/"><span>8</span></a><a href="/yewu/pn9/"><span>9</span></a><a href="/yewu/pn10/"><span>10</span></a><a href="/yewu/pn11/"><span>11</span></a><a href="/yewu/pn12/"><span>12</span></a><a class="next" href="/yewu/pn4/"><span>下一页</span></a>
+				
+				-->
+				</div>
+			</div>
+   		</div>
+   		<!--招聘信息 end-->
+   		<!--公司评价 start-->
+   		<!-- 
+   		<div class="comment bor" style="display: none;">
+   			<div class="headline">
+		    	<h2>公司评价</h2> 
+		    </div>
+		    <div class="commCont">
+				<iframe style="background-color:White;" id="dianpingList" name="dianpingList"  src="/zhaopin/enterprise/13571834103302/10/1" width="100%" height="44px" scrolling="no"  frameborder="0">
+				</iframe>
+			</div>
+		    <!--公司评价iframe嵌入-->
+   		</div>
+   		<!--公司评价 end-->
+   		<!--感兴趣职位 start-->
+   		<div class="recPos bor"><div class="headline"><h2>您可能感兴趣的职位</h2><a target="_blank" href="http://su.58.com/job/pve_5363_262_pve_5358_0/" class="f12" tongji_tag="RecPCqy_more">查看更多</a></div><div class="recCont"><div class="recInfo"><dl class="clearfix"><dt><a href="http://su.58.com/chaoshishangye/19542296446217x.shtml?from=RecPCqy" title="收银员" target="_blank" tongji_tag="RecPCqy_titleToDetail&26210191379207&C1|C2|C3">收银员</a></dt><dd class="wid217"><a href="/26210191379207/" title="张家港市杨舍镇东城御足堂养生馆" target="_blank" tongji_tag="RecPCqy_firmToQY&26210191379207&C1|C2|C3">张家港市杨舍镇东城御足堂养生馆</a></dd><dd class="wid156">3000-5000</dd><dd class="wid156">城北</dd><dd>2014-10-08</dd></dl><div class="recReason clearfix"><span class="fl">推荐理由：</span><ul class="cbright fl"><li><div class="cbSum"><span class="fl">包吃</span></div></li><li><div class="cbSum"><span class="fl">包住</span></div></li></ul></div></div><div class="recInfo"><dl class="clearfix"><dt><a href="http://su.58.com/chaoshishangye/19552897923205x.shtml?from=RecPCqy" title="莫施活机护肤店员/营业员" target="_blank" tongji_tag="RecPCqy_titleToDetail&874542750727&C1|C2|C3">莫施活机护肤店员/营业员</a></dt><dd class="wid217"><a href="/874542750727/" title="上海威淳实业有限公司" target="_blank" tongji_tag="RecPCqy_firmToQY&874542750727&C1|C2|C3">上海威淳实业有限公司</a></dd><dd class="wid156">3000-5000</dd><dd class="wid156">东环</dd><dd>2014-10-08</dd></dl><div class="recReason clearfix"><span class="fl">推荐理由：</span><ul class="cbright fl"><li><div class="cbSum"><span class="fl">五险一金</span></div></li><li><div class="cbSum"><span class="fl">年底双薪</span></div></li><li><div class="cbSum"><span class="fl">交通补助</span></div></li><li><div class="cbSum"><span class="fl">加班补助</span></div></li><li><div class="cbSum"><span class="fl">带薪年假</span></div></li><li><div class="cbSum"><span class="fl">季度产品福利</span></div></li></ul></div></div><div class="recInfo"><dl class="clearfix"><dt><a href="http://su.58.com/chaoshishangye/18921175802243x.shtml?from=RecPCqy" title="美容顾问" target="_blank" tongji_tag="RecPCqy_titleToDetail&874542750727&C1|C2|C3">美容顾问</a></dt><dd class="wid217"><a href="/874542750727/" title="上海威淳实业有限公司" target="_blank" tongji_tag="RecPCqy_firmToQY&874542750727&C1|C2|C3">上海威淳实业有限公司</a></dd><dd class="wid156">面议</dd><dd class="wid156">观前</dd><dd>2014-10-08</dd></dl><div class="recReason clearfix"><span class="fl">推荐理由：</span><ul class="cbright fl"><li><div class="cbSum"><span class="fl">五险一金</span></div></li><li><div class="cbSum"><span class="fl">年底双薪</span></div></li><li><div class="cbSum"><span class="fl">交通补助</span></div></li><li><div class="cbSum"><span class="fl">加班补助</span></div></li><li><div class="cbSum"><span class="fl">带薪年假</span></div></li><li><div class="cbSum"><span class="fl">季度产品福利</span></div></li></ul></div></div><div class="recInfo"><dl class="clearfix"><dt><a href="http://su.58.com/meirongjianshen/19552858773761x.shtml?from=RecPCqy" title="莫施活机护肤美容顾问" target="_blank" tongji_tag="RecPCqy_titleToDetail&874542750727&C1|C2|C3">莫施活机护肤美容顾问</a></dt><dd class="wid217"><a href="/874542750727/" title="上海威淳实业有限公司" target="_blank" tongji_tag="RecPCqy_firmToQY&874542750727&C1|C2|C3">上海威淳实业有限公司</a></dd><dd class="wid156">2000-3000</dd><dd class="wid156">常熟</dd><dd>2014-10-08</dd></dl><div class="recReason clearfix"><span class="fl">推荐理由：</span><ul class="cbright fl"><li><div class="cbSum"><span class="fl">五险一金</span></div></li><li><div class="cbSum"><span class="fl">年底双薪</span></div></li><li><div class="cbSum"><span class="fl">交通补助</span></div></li><li><div class="cbSum"><span class="fl">加班补助</span></div></li><li><div class="cbSum"><span class="fl">带薪年假</span></div></li><li><div class="cbSum"><span class="fl">季度产品福利</span></div></li></ul></div></div></div></div>
+   		<!--感兴趣职位  end-->
+   		<!--感兴趣企业  start-->
+		<div class="recBusin bor"><div class="headline"><h2>您可能感兴趣的企业</h2></div><div class="businList"><ul><li><a title="独立经纪人" target="_blank" href="/7004717735687/">独立经纪人</a><a title="德派软件（北京）有限公司" target="_blank" href="/26364612418822/">德派软件（北京）有限公司</a><a title="蓓丽臣健康管理中心" target="_blank" href="/26444472662790/">蓓丽臣健康管理中心</a></li><li><a title="乐祥驿站" target="_blank" href="/26443596669703/">乐祥驿站</a><a title="O度造型" target="_blank" href="/26095346344198/">O度造型</a><a title="香港可诺丹婷美颜美体" target="_blank" href="/26441995762695/">香港可诺丹婷美颜美体</a></li><li><a title="兴旺企业管理有限公司" target="_blank" href="/26442895638022/">兴旺企业管理有限公司</a><a title="苏州市彩林子化妆品商店" target="_blank" href="/26441100753926/">苏州市彩林子化妆品商店</a><a title="亲亲爱宠屋" target="_blank" href="/26440689430790/">亲亲爱宠屋</a></li></ul></div></div>
+   		<!--感兴趣企业  end-->
+   	</div>
+</div>
+<!-- main end -->
+<!--foot start-->
+<div class="wb-foot" id="footer">
+	<div class="wb-footer">
+        <div id="ad19_baidu_cpro"></div>
+<script>
+	var $cproIdRandom = parseInt(Math.random() * 10000);
+	function cproRendererList(datas) {
+		var getSubString = function (source, length) {
+			if(!source){
+				return "";
+			}
+			source = String(source);
+			if (length < 0 || source.replace(/[^\\x00-\\xff]/g, "ci").length <= length) {
+				return source;
+			}    
+			source = source.substr(0,length).replace(/([^\\x00-\\xff])/g,"\\x241 ")
+				.substr(0,length)
+				.replace(/[^\\x00-\\xff]$/,"")
+				.replace(/([^\\x00-\\xff]) /g,"\\x241");
+			return source;
+		};
+		var getSubStrEx = function (source, length) {
+			if(source.length * 2 <= length) return source;
+			var index = 0;
+			for(var i = 0, leni = source.length; i < leni; i++){
+				if(source.charCodeAt(i) > 128) index += 2;
+				else index++;
+				if (index == length) return source.substring(0, i + 1) + '..';
+				else if (index == length + 1) return source.substring(0, i) + '..';
+			}
+			return source;
+		}
+		var getStrLenEx = function(source){
+			var index = 0;
+			for (var i = 0, leni = source.length; i < leni; i++) {
+				if(source.charCodeAt(i) > 128) index += 2;
+				else index++;
+			}
+			return index;
+		}
+		var _templateRender = function (source, obj) {
+			var regex = /{(.*?)}/g;
+			return source.replace(regex, function (match, subMatch, index, s) {
+				return obj[subMatch] || "";
+			});
+		}					
+		var template = '<li style="color:#585858;font-size:12px;line-height:20px;margin-top:12px;padding:0;">'
+			+ '<a href="{url_all}"  target="_blank" style="text-decoration:underline;">{title_short}</a>&nbsp;'
+			+ '<a href="{url_all}"  target="_blank" style="color:#585858;text-decoration:none;">{desc_short}</a>&nbsp;'
+			+ '<a href="{url_all}"  target="_blank"  style="color:#585858;text-decoration:underline;">{url_short}</a>'
+			+ '</li>';
+		if (typeof datas == "undefined") return;
+		var length = datas.length;
+		if (length <= 0) return;
+		var str = '';
+		var i, data, item, result = new Array();
+		for (i = 0; i < length; i++) {
+			data = datas[i];
+			item = {
+				title_all: data.tit,
+				title_short: data.tit,
+				desc_all: data.desc,
+				desc_short: data.desc,
+				url_all: data.curl,
+				url_short: data.surl
+			};
+			result.push(_templateRender(template, item));
+		}
+		document.getElementById('baiduCpro' + $cproIdRandom).innerHTML = result.join("");
+		return;
+	}
+	var arrBaiduCproConfig=new Array();
+	arrBaiduCproConfig['n'] = '14026035_6_cpr';
+	arrBaiduCproConfig['template'] = 'baiduDEFINE';
+	arrBaiduCproConfig['tm'] = '10';
+	arrBaiduCproConfig['cm'] = '24';
+	arrBaiduCproConfig['um'] = '26';
+	arrBaiduCproConfig['wn'] = '1';
+	arrBaiduCproConfig['hn'] = '10';
+	arrBaiduCproConfig['define'] = 'cproRendererList';
+	arrBaiduCproConfig['charset'] = 'utf-8';
+	arrBaiduCproConfig['ta'] = 'left';
+	arrBaiduCproConfig['tl'] = 'top';
+	arrBaiduCproConfig['bu'] = '1';
+	arrBaiduCproConfig['nfr'] = '1';
+	arrBaiduCproConfig['rad'] = '1';
+	arrBaiduCproConfig['uap'] = '0';
+	arrBaiduCproConfig['cad'] = '0';
+	arrBaiduCproConfig['channel'] = 'c';
+	if(document.getElementById('ad19_baidu_cpro')){
+		var $cproHolder = '<div id="ad19_gg_ad' + $cproIdRandom + '" style="border:1px solid #F1F1F1;' + 
+			'padding:5px 5px 10px 6px;margin-bottom:10px;"><a href="http://e.baidu.com" target="_blank" ' + 
+			'title="百度推广" style="color:#585858;font-size:12px;font-weight:normal;margin-left:0;padding:0;">百度推广</a>' + 
+			'<ul id="baiduCpro' + $cproIdRandom + '" class="baidu_cproad" style="overflow:hidden;"></ul></div>';
+		document.getElementById('ad19_baidu_cpro').innerHTML += $cproHolder;
+		document.write('<scr' + 'ipt type="text/javascript" src="http://cpro.baidu.com/cpro/ui/ui.js"></scr' + 'ipt>');
+	}
+
+</script>
+        <div id="links" class="links">
+	<dl class="sRele"><dt>周边城市招聘：</dt><dd><a href="http://NJ.58.com/job.shtml">南京招聘</a><a href="http://WX.58.com/job.shtml">无锡招聘</a><a href="http://XZ.58.com/job.shtml">徐州招聘</a><a href="http://SU.58.com/job.shtml">苏州招聘</a><a href="http://YZ.58.com/job.shtml">扬州招聘</a><a href="http://CZ.58.com/job.shtml">常州招聘</a><a href="http://NT.58.com/job.shtml">南通招聘</a><a href="http://LYG.58.com/job.shtml">连云港招聘</a><a href="http://HA.58.com/job.shtml">淮安招聘</a><a href="http://YANCHENG.58.com/job.shtml">盐城招聘</a></dd></dl>
+</div>		<div class="bottom">申明：该信息由“吴江区盛泽镇欧格兰顿美容生活馆”自行发布，内容真实性及所涉及承诺均由发布者自行负责，请浏览者自行识别和判断。<p align="center">? 58.com <a href="http://about.58.com/" target="_blank" rel="nofollow">帮助中心</a></p>
+		</div>
+	</div>
+</div>
+<!--foot end-->
+
+<!--展开后的图片幻灯片-->
+<div class="outermask"></div>
+<div class="rollBox" id="rollBox">
+	<div class="rollBoxwrap">
+    	<div class="scollCont">
+        	<a class="prevBtn" onFocus="this.blur()"></a>
+			<div class="photoDis">
+	            <ul class="scollList1 fl">
+	            	<li><img src="http://pic2.58.com/ui7/job/hire/pic5.png"/><dl><dt>企业文化</dt><dd>共和党总统候选人罗姆尼讲话</dd></dl></li>
+	            </ul>
+				<div class="photoPrev" onFocus="this.blur()"></div>
+				<div class="photoNext" onFocus="this.blur()"></div>
+			</div>
+            <a class="nextBtn" onFocus="this.blur()"></a>
+        </div>
+        <div class="scrollList2">
+        </div>
+        <a class="closeroll"></a>
+    </div>
+</div>
+<script type="text/javascript" src="/js/videoshow.js"></script>
+<script type="text/javascript">
+var search=function(){
+	location.href="http://su.58.com/job/?key="+encodeURI(encodeURI($("#keywordtop").val()))+"&sourcetype=4"
+}
+
+var mp=1;
+var cp=1;
+var uri="/13571834103302/574/pn";
+setPager(mp,cp,uri);
+
+
+	
+	$(function(){
+	
+							$.qy.home.init('/enterprise/appearance/big/n_1647360608569112.jpg||-/enterprise/appearance/big/n_1647360653263639.jpg||-/enterprise/appearance/big/n_1647360675416346.jpg||-/enterprise/appearance/big/n_1647360720306711.jpg||-/enterprise/appearance/big/n_1647360761677594.jpg||-/enterprise/appearance/big/n_s12179668047889751036.jpg||-/enterprise/appearance/big/n_s02179668133790427003.jpg||-/enterprise/appearance/big/n_s02179668230360094104.jpg||');
+				VideoShow.afterShow=function(){
+			$(".videoup_step3").find(".videocontain").children().attr("wmode","Opaque");
+		}
+		var videoid="";
+		if(videoid&&videoid>0){
+			VideoShow.showVideo(videoid);
+		}
+		
+	})
+	
+	//
+
+	var _gaq = _gaq || [];var site_name = "58";
+	var source = "0";
+	if(""==source){
+		source="0";
+	}
+	var _trackURL = "{'qiye_cate':'262','pagetype':'detail','page':'qy_index','source':'"+source+"','cate':'9224'}";  
+	_gaq.push(['pageTracker._setAccount', 'UA-877409-4']);
+	_gaq.push(['pageTracker._setDomainName', '.58.com']);
+	_gaq.push(['pageTracker._setAllowLinker', true]);
+	_gaq.push(['pageTracker._addOrganic', 'sogou', 'query']);
+	_gaq.push(['pageTracker._addOrganic', 'baidu', 'word']);
+	_gaq.push(['pageTracker._addOrganic', 'soso', 'w']);
+	_gaq.push(['pageTracker._addOrganic', 'youdao', 'q']);
+	_gaq.push(['pageTracker._addOrganic', '360', 'q']); 
+	_gaq.push(['pageTracker._trackPageview', '/zhaopin/qy/putong/index/']);  
+	$.getScript( ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js');
+	$.getScript('http://tracklog.58.com/referrer4.js');
+	</script>
+	
+	<script type="text/javascript">
+		var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+		document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F74e7f6ad49774e9bb7a4b0fae4c4f668' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+<script type="text/javascript" src="http://static.58.com/js/5_1/comm_js/boot_qy_version.js?version=20130808"></script>
+<script type="text/javascript" charset="gb2312" src="http://pic2.58.com/n/js/zp/3.js"></script>
+<script type="text/javascript">
+	boot.require('business.topbar', function(Frame, topbar) { topbar.init(); });
+</script>
+<!-- flag=iResearch-zp-qy -->
+</body>
+</html>
