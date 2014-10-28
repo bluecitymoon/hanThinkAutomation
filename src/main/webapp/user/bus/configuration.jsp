@@ -34,75 +34,59 @@
 							<h2>欧尚自动化任务配置</h2>
 						</div>
 						<div class="content">
-							<div class="row">
-								<label>存储数据客户端IP</label>
-								<input type="text" class="addon-postfix" data-bind = "value : clientIp"/>
+							<div class="panel">
+								<div class="row">
+								<label>任务名称（可选）</label> <input type="text" class="addon-postfix" data-bind="value : name" />
 							</div>
 							<div class="row">
-								<div class="six columns">
-									<label>每天的开始抓取时间</label>
-									<input type="text" class="addon-postfix" data-bind = "value : clientIp"/>
-								</div>
-								<div class="six columns">
-									<label>每天的抓取截止时间</label>
-									<input type="text" class="addon-postfix" data-bind = "value : clientIp"/>
-								</div>
+								<label>存储数据客户端IP</label> <input type="text" class="addon-postfix" data-bind="value : clientIp" />
 							</div>
 							<div class="row">
-								<div class="six columns">
-									<label>间隔（小时）</label>
-									<input type="text" class="addon-postfix" data-bind = "value : clientIp"/>
+								<div class="five columns">
+									<label>每天的开始抓取时间</label> <input type="text" class="addon-postfix" data-bind="value : start" />
 								</div>
-								<div class="six columns">
-									<label>上一次抓取的时间戳</label>
-									<input type="text" class="addon-postfix disable" data-bind = "value : clientIp"/>
+								<div class="five columns">
+									<label>每天的抓取截止时间</label> <input type="text" class="addon-postfix" data-bind="value : stop" />
+								</div>
+								<div class="two columns">
+									<label>间隔(Hour)</label> <input type="text" class="addon-postfix" data-bind="value : interval" />
 								</div>
 							</div>
 							<div class="row">
-							<div class="twelve columns centered">
-								<a class="small blue button" href="#" data-bind="click : save" >保存</a>
+								<div class="six columns">
+									<label>上一次抓取的开始时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabStart" />
+								</div>
+								<div class="six columns">
+									<label>上一次抓取的结束时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabEnd" />
+								</div>
 							</div>
-						</div>
+							</div>
+							<div class="row">
+								<div class="twelve columns centered">
+									<a class="small blue button" href="#" data-bind="click : save">保存</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="six columns">
 					<div class="app-wrapper ui-corner-top">
 						<div class="blue module ui-corner-top clearfix">
-							<h2>数据采集历史记录</h2>
+							<h2>欧尚手动抓取</h2>
 						</div>
 						<div class="content">
-							<table class="dataTable">
-								<thead>
-									<tr>
-										<th>#</th>
-										<th>zhixn</th>
-										<th>Last Name</th>
-										<th>Username</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>1</td>
-										<td>Mark</td>
-										<td>Otto</td>
-										<td>@mdo</td>
-									</tr>
-									<tr>
-										<td>2</td>
-										<td>Jacob</td>
-										<td>Thornton</td>
-										<td>@fat</td>
-									</tr>
-									<tr>
-										<td>3</td>
-										<td>Larry</td>
-										<td>the Bird</td>
-										<td>@twitter</td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="row">
+								<div class="six columns">
+									<label>开始时间</label> <input type="text" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
+								</div>
+								<div class="six columns">
+									<label>结束时间</label> <input type="text" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
+								</div>
+							</div>
 							<br>
+							<div class="row">
+								<a class=" blue button" href="#" data-bind="click : startManually">开始抓取</a>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -112,16 +96,44 @@
 
 	<s:include value="/jsps/common/footer.jsp" />
 	<script src="/ls/js/User.js"></script>
+	<script src="/ls/js/knockout-jqueryui.min.js"></script>
 	<script>
 		$(document).ready(function() {
 
 			var ConfigurationModel = function() {
 				var self = this;
-				self.newProblenName = ko.observable();
-				self.problems = ko.observableArray([]);
-				self.newStepName = ko.observable();
-				self.steps = ko.observableArray([]);
-
+				self.name = ko.observable('');
+				self.clientIp = ko.observable('');
+				self.start = ko.observable('');
+				self.stop = ko.observable('');
+				self.interval = ko.observable('');
+				self.lastGrabStart = ko.observable('');
+				self.lastGrabEnd = ko.observable('');
+				self.manuallyStart = ko.observable('');
+				self.manuallyStop = ko.observable('');
+				self.save = function() {
+					
+				};
+				
+				self.startManually = function() {
+					$.ajax({
+						data : { manuallyStart: self.manuallyStart(), manuallyStop : self.manuallyStop()},
+						url : '/ls/startManually.ls',
+						success : function(data) {
+							alert(data);
+						},
+						error : function() {
+							
+						}
+					});
+				};
+				self.startDateOnClose = function() {
+					
+				};
+				
+				self.endDateOnClose = function() {
+					
+				};
 			};
 
 			var model = new ConfigurationModel();
