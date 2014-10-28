@@ -18,6 +18,7 @@
 		<shiro.version>1.2.2</shiro.version>
 	</properties>
 	<dependencies>
+		<!-- 
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
@@ -33,6 +34,11 @@
 					<artifactId>xalan</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency> -->	
+		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>2.15</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>

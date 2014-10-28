@@ -60,6 +60,14 @@
 									<label>上一次抓取的结束时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabEnd" />
 								</div>
 							</div>
+							<div class="row">
+								<div class="six columns">
+									<label>登陆用户名</label> <input type="text" disabled="disabled" data-bind="value : username" />
+								</div>
+								<div class="six columns">
+									<label>登陆密码</label> <input type="text" disabled="disabled" data-bind="value : password" />
+								</div>
+							</div>
 							</div>
 							<div class="row">
 								<div class="twelve columns centered">
@@ -80,7 +88,7 @@
 									<label>开始时间</label> <input type="text" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
 								</div>
 								<div class="six columns">
-									<label>结束时间</label> <input type="text" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
+									<label>结束时间</label> <input type="password" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
 								</div>
 							</div>
 							<br>
@@ -101,6 +109,7 @@
 		$(document).ready(function() {
 
 			var ConfigurationModel = function() {
+				
 				var self = this;
 				self.name = ko.observable('');
 				self.clientIp = ko.observable('');
@@ -111,6 +120,9 @@
 				self.lastGrabEnd = ko.observable('');
 				self.manuallyStart = ko.observable('');
 				self.manuallyStop = ko.observable('');
+				self.username =  ko.observable('');
+				self.password =  ko.observable('');
+				
 				self.save = function() {
 					
 				};

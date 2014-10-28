@@ -1,5 +1,8 @@
 package com.ls.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
@@ -7,7 +10,7 @@ import com.ls.vo.Orders;
 
 @Component("auchanAction")
 public class AuchanAutomationAction extends BaseAction {
-
+	public static final String DATE_FORMAT = "yy-mm-dd";
 	
 	/**
 	 * 
@@ -20,6 +23,8 @@ public class AuchanAutomationAction extends BaseAction {
 		
 		String manuallyStart = getParameter("manuallyStart");
 		String manuallyStop = getParameter("manuallyStop");
+		
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 		
 		orders = new Orders();
 		

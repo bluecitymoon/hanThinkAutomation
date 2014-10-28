@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -19,22 +17,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.ls.entity.City;
 import com.ls.entity.Company;
-import com.ls.entity.Problem;
 import com.ls.entity.CompanyResource;
+import com.ls.entity.Problem;
 import com.ls.entity.Province;
 import com.ls.grab.GrapImgUtil;
 import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.grab.HttpClientGrabUtil;
 import com.ls.repository.CompanyRepository;
-import com.ls.repository.ProblemRepository;
 import com.ls.repository.CompanyResourceRepository;
+import com.ls.repository.ProblemRepository;
 import com.ls.repository.ProvinceRepository;
 import com.ls.service.GrabService;
-import com.ls.service.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
@@ -86,6 +81,15 @@ public class TestGrabCompany {
 		}
 	}
 
+	@Test
+	public void testReadOrderList() throws Exception {
+		String file = "D:\\workspace\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\searchResult.html";
+		
+		List<String> orderList = HtmlParserUtilPlanB.findOrderList(Files.toString(new File(file), Charset.defaultCharset()));
+		
+		System.out.println(orderList);
+	}
+	
 	@Test
 	public void testGrabCompanyName() throws Exception {
 

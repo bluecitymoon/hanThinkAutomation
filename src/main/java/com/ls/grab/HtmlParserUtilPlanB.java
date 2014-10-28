@@ -130,6 +130,42 @@ public class HtmlParserUtilPlanB {
 		return companyList;
 	}
 
+	public static List<String> findOrderList(String wholeCityPageHTML) {
+
+		final List<String> orderList = new ArrayList<String>();
+
+		try {
+
+			Parser htmlParser = new Parser();
+			htmlParser.setInputHTML(wholeCityPageHTML);
+
+			NodeVisitor nodeVisitor = new NodeVisitor() {
+
+				@Override
+				public void visitTag(Tag tag) {
+
+					super.visitTag(tag);
+					if (tag instanceof LinkTag) {
+						LinkTag grnDetailLinkTag = (LinkTag) tag;
+						String onclickValue = grnDetailLinkTag.getAttribute("onclick");
+						if (StringUtils.isNotBlank(onclickValue) && onclickValue.startsWith("grnDetail")) {
+							int start = onclickValue.indexOf("'");
+							String order = onclickValue.substring(start, onclickValue.length() - 2);
+							orderList.add(order);
+						}
+					}
+				}
+			};
+
+			htmlParser.visitAllNodesWith(nodeVisitor);
+
+		} catch (ParserException e) {
+
+			e.printStackTrace();
+		}
+
+		return orderList;
+	}
 	public static String findCompanyName(String detailPageHtml) {
 
 		final StringBuilder comanyName = new StringBuilder();
