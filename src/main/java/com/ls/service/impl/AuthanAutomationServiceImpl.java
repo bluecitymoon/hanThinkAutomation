@@ -3,7 +3,10 @@ package com.ls.service.impl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -55,11 +58,26 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 			button.click();
 
-			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end));
+			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null));
 			
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
-			
 			List<String> orderIdList = HtmlParserUtilPlanB.findOrderList(ordersListHtml);
+			
+			Integer totalPageCount = getTotalPageCount(ordersListHtml);
+			
+			if (totalPageCount > 1) {
+				for(int i = 2; i < totalPageCount + 1; i++) {
+					String nextPageUrl = makeParametersToSearchOrderList(start, end, i);
+					
+					final HtmlPage nextOrderResultPage = webClient.getPage(nextPageUrl);
+					String nextOrdersListHtml = nextOrderResultPage.getWebResponse().getContentAsString();
+					List<String> nextPageOrderIdList = HtmlParserUtilPlanB.findOrderList(nextOrdersListHtml);
+					
+					if (null != nextPageOrderIdList && nextPageOrderIdList.size() > 0) {
+						orderIdList.addAll(nextPageOrderIdList);
+					}
+				}
+			}
 			
 			String orderDetailUrl = "https://auchan.chinab2bi.com/auchan/buyGrnQry/detail.hlt?grnid=";
 			for (String orderId : orderIdList) {
@@ -75,28 +93,65 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			}
 
 			webClient.closeAllWindows();
+			
 		} catch (FailingHttpStatusCodeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ElementNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return ordersList;
 	}
 
-	private String makeParametersToSearchOrderList(String start, String end) {
-		String basicTemplate = "https://auchan.chinab2bi.com/auchan/sellOrderMainQry/query.hlt?accountModel.vendorNo=1356&accountModel.dateType=0&accountModel.dateStart=" + start + "&accountModel.dateEnd=" + end + "&page.pageSize=10&page.pageNo=1&page.totalPages=-1";
+	private String makeParametersToSearchOrderList(String start, String end, Integer currentPageNumber) {
+		if (null == currentPageNumber) {
+			currentPageNumber = 1;
+		}
+		
+		String basicTemplate = "https://auchan.chinab2bi.com/auchan/sellOrderMainQry/query.hlt?accountModel.vendorNo=1356&accountModel.dateType=0&accountModel.dateStart=" + start + "&accountModel.dateEnd=" + end + "&page.pageSize=10&page.pageNo="+ currentPageNumber +"&page.totalPages=-1";
 		
 		return basicTemplate;
 	}
+	
+	private int getTotalCount(String html) {
 
+		String regex = "[^共\r\n]*?共[^\\d\r\n]*?(\\d+)[^\r\n]*";
+
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(html);
+		
+		String result = "";
+		while (m.find()) {
+			 result = m.group(1);
+		}
+		if (StringUtils.isNotBlank(result)) {
+			
+			return Integer.valueOf(result);
+		}
+		return 1;
+	}
+
+	private int getTotalPageCount(String html) {
+
+		String regex = "[^页, 共\r\n]*?页, 共[^\\d\r\n]*?(\\d+)[^\r\n]*";
+
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(html);
+		
+		String result = "";
+		while (m.find()) {
+			 result = m.group(1);
+		}
+		if (StringUtils.isNotBlank(result)) {
+			
+			return Integer.valueOf(result);
+		}
+		return 1;
+	}
+	
 	public Orders grabSingleOrders(String start, String end) {
 
 		// TODO Auto-generated method stub

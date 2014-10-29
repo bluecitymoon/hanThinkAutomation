@@ -19,6 +19,7 @@ public class AutomaticJob implements Serializable {
 	@Id
 	@GeneratedValue
 	protected Integer id;
+	protected String type;
 	protected String name;
 	protected String clientIp;
 	protected String customer;
@@ -86,5 +87,14 @@ public class AutomaticJob implements Serializable {
 	}
 
 	
+	public String getType() {
+	
+		return type;
+	}
+	
+	public void setType(String type) {
+	
+		this.type = type;
+	}
 
 }

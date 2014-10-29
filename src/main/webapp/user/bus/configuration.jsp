@@ -62,10 +62,10 @@
 							</div>
 							<div class="row">
 								<div class="six columns">
-									<label>µÇÂ½ÓÃ»§Ãû</label> <input type="text" disabled="disabled" data-bind="value : username" />
+									<label>µÇÂ½ÓÃ»§Ãû</label> <input type="text" data-bind="value : username" />
 								</div>
 								<div class="six columns">
-									<label>µÇÂ½ÃÜÂë</label> <input type="text" disabled="disabled" data-bind="value : password" />
+									<label>µÇÂ½ÃÜÂë</label> <input type="password" data-bind="value : password" />
 								</div>
 							</div>
 							</div>
@@ -115,15 +115,16 @@
 				var self = this;
 				self.name = ko.observable('');
 				self.clientIp = ko.observable('');
-				self.start = ko.observable('');
-				self.stop = ko.observable('');
-				self.interval = ko.observable('');
+				self.start = ko.observable('00:00');
+				self.stop = ko.observable('24:00');
+				self.interval = ko.observable('8');
 				self.lastGrabStart = ko.observable('');
 				self.lastGrabEnd = ko.observable('');
 				self.manuallyStart = ko.observable('');
 				self.manuallyStop = ko.observable('');
 				self.username =  ko.observable('');
 				self.password =  ko.observable('');
+				self.type = 'authan';
 				
 				self.save = function() {
 					
@@ -154,7 +155,6 @@
 
 			var model = new ConfigurationModel();
 			ko.applyBindings(model);
-			
 			
 		});
 	</script>
