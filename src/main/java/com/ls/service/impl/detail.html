@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>退货单明细列表</title>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+<meta http-equiv="Cache-Control" content="no-store" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<script type="text/javascript">
+	var _ctx = '';
+</script>
+<link href="/styles/default.all.css" rel="stylesheet" type="text/css" />
+<script src="/scripts/basic/jquery.js" type="text/javascript"></script>
+<script src="/scripts/widgets/easyui/easyloader.js" type="text/javascript"></script>
+<script src="/scripts/basic/common.js" type="text/javascript"></script>
+
+</head>
+<body topmargin="0" leftmargin="0" rightmargin="0" style="background: #f1f8fd;">
+	<form id="queryForm" action="detail.hlt" method="post" autocomplete="off">
+
+		<input type="hidden" name="page.togglestatus" id="togglestatus" value="null" />
+		<script type="text/javascript">
+			$(function() {
+				ToggelPanel("panel1_button", "hide_table");
+			});
+		</script>
+		<table border="0" id="query_panel" width="100%" cellspacing="0" cellpadding="0" class="panel-table">
+			<tr>
+				<td height="20"><table border="0" width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="4px"><div class="panel-title-left"></div></td>
+							<td width="20px" class="panel-title"><div id="panel1_button" class="PANEL_OPEN_BUTTON"></div></td>
+							<td class="panel-title">收货单信息</td>
+						</tr>
+					</table></td>
+			</tr>
+			<tr>
+				<td class="panel-body" valign="top">
+					<table align="center" id="hide_table" border="0" width="100%" class="form_table">
+						<tr>
+							<td class="form_label" nowrap width="20%">门店号：</td>
+							<td width="30%">106</td>
+							<td class="form_label" nowrap width="20%">门店名：</td>
+							<td width="30%">HZ1-杭州1</td>
+						</tr>
+						<tr>
+							<td class="form_label" nowrap width="20%">供应商编号：</td>
+							<td width="30%">1356</td>
+							<td class="form_label" nowrap width="20%">供应商名称：</td>
+							<td width="30%">上海定海针水产食品发展股份有限公司</td>
+						</tr>
+						<tr>
+							<td class="form_label" nowrap width="20%">购方纳税人识别号：</td>
+							<td width="30%">310110736658550</td>
+							<td class="form_label" nowrap width="20%">供应商纳税人识别号：</td>
+							<td colspan="3">310110695776728</td>
+						</tr>
+						<tr>
+							<td class="form_label" nowrap width="20%">订单状态：</td>
+							<td width="30%">待收</td>
+							<td class="form_label" nowrap width="20%">订单号：</td>
+							<td width="30%">4301099</td>
+						</tr>
+						<tr>
+							<td class="form_label" nowrap width="20%">订单金额：</td>
+							<td width="30%">0.00</td>
+							<td class="form_label" nowrap width="20%">订单税额：</td>
+							<td width="30%">0.00</td>
+						</tr>
+						<tr>
+							<td class="form_label" nowrap width="20%">折扣率：</td>
+							<td width="30%">15.20</td>
+							<td class="form_label" nowrap width="20%">折扣金额：</td>
+							<td width="30%">0.00</td>
+						</tr>
+						<tr>
+							<td class="form_label">订单日期：</td>
+							<td>2014-10-28</td>
+							<td class="form_label" nowrap width="20%">预计收货日期：</td>
+							<td width="30%">2014-10-30</td>
+						</tr>
+						<tr>
+							<td class="form_label">实际收货日期：</td>
+							<td></td>
+							<td class="form_label" nowrap width="20%">原店号</td>
+							<td width="30%"></td>
+						</tr>
+						<tr>
+							<td class="form_label">课别：</td>
+							<td>185</td>
+							<td class="form_label" nowrap width="20%">备注</td>
+							<td width="30%"></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<input type="hidden" name="page.pageNo" id="pageNo" value="1" /><input type="hidden" name="page.totalPages" id="totalPages" value="-1" />
+		<table border="0" id="list_panel" width="100%" cellspacing="0" cellpadding="0" class="panel-table">
+			<tr>
+				<td height="20"><table border="0" width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="4px"><div class="panel-title-left"></div></td>
+							<td width="20px" class="panel-title"></td>
+							<td class="panel-title">订单货物明细信息</td>
+						</tr>
+					</table></td>
+			</tr>
+			<tr>
+				<td class="panel-body" valign="top">
+
+					<table id="row" class="table">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>商品号</th>
+								<th>商品名称</th>
+								<th>税率</th>
+								<th>单价</th>
+								<th>订单数量</th>
+								<th>收货数量</th>
+								<th>金额</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="odd">
+								<td class="display_centeralign">1</td>
+								<td class="display_leftalign">274462</td>
+								<td class="display_leftalign">定海针骨肉相连串320g</td>
+								<td class="display_rightalign">17.0</td>
+								<td class="display_rightalign">14.957</td>
+								<td class="display_rightalign">30.0</td>
+								<td class="display_rightalign">0.0</td>
+								<td class="display_rightalign">0.0</td>
+							</tr>
+							<tr class="even">
+								<td class="display_centeralign">2</td>
+								<td class="display_leftalign">274465</td>
+								<td class="display_leftalign">定海针原味鸡块300g</td>
+								<td class="display_rightalign">17.0</td>
+								<td class="display_rightalign">8.376</td>
+								<td class="display_rightalign">30.0</td>
+								<td class="display_rightalign">0.0</td>
+								<td class="display_rightalign">0.0</td>
+							</tr>
+							<tr class="odd">
+								<td class="display_centeralign">3</td>
+								<td class="display_leftalign">314819</td>
+								<td class="display_leftalign">定海针鳕鱼片250g</td>
+								<td class="display_rightalign">13.0</td>
+								<td class="display_rightalign">11.504</td>
+								<td class="display_rightalign">40.0</td>
+								<td class="display_rightalign">0.0</td>
+								<td class="display_rightalign">0.0</td>
+							</tr>
+						</tbody>
+					</table>
+					<div align="right">
+						<table width="100%">
+							<tr>
+								<td align="left">&nbsp;&nbsp;</td>
+								<td align="right"></td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<br><br>
+	</form>
+</body>
+</html>

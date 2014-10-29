@@ -2,7 +2,9 @@ package com.ls.grab;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.htmlparser.Node;
@@ -19,12 +21,14 @@ import org.htmlparser.tags.Span;
 import org.htmlparser.tags.TableColumn;
 import org.htmlparser.tags.TableHeader;
 import org.htmlparser.tags.TableRow;
+import org.htmlparser.tags.TableTag;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.visitors.NodeVisitor;
 
 import com.ls.entity.City;
 import com.ls.entity.Company;
 import com.ls.entity.Province;
+import com.ls.vo.Orders;
 
 public class HtmlParserUtilPlanB {
 
@@ -149,7 +153,7 @@ public class HtmlParserUtilPlanB {
 						LinkTag grnDetailLinkTag = (LinkTag) tag;
 						String onclickValue = grnDetailLinkTag.getAttribute("onclick");
 						if (StringUtils.isNotBlank(onclickValue) && onclickValue.startsWith("grnDetail")) {
-							int start = onclickValue.indexOf("'");
+							int start = onclickValue.indexOf("'") + 1;
 							String order = onclickValue.substring(start, onclickValue.length() - 2);
 							orderList.add(order);
 						}
@@ -166,6 +170,89 @@ public class HtmlParserUtilPlanB {
 
 		return orderList;
 	}
+	
+	public static Orders parseOrder(final String orderPage) {
+
+		final Orders order = new Orders();
+		final Map<String, String> headersMap = new HashMap<String, String>();
+		order.setOrderTitleMap(headersMap);
+		try {
+
+			Parser htmlParser = new Parser();
+			htmlParser.setInputHTML(orderPage);
+
+			NodeVisitor nodeVisitor = new NodeVisitor() {
+
+				@Override
+				public void visitTag(Tag tag) {
+
+					super.visitTag(tag);
+					
+					//parse title
+					TableTag titleTableTag = (TableTag) findNodeById(orderPage, "hide_table");
+					
+					Node[] trs = titleTableTag.getChildrenAsNodeArray();
+					
+					for (Node node : trs) {
+						if (node instanceof TableRow) {
+							TableRow row = (TableRow)node;
+							//every row has 4 td, name to value
+							Node[] tds = row.getChildrenAsNodeArray();
+							List<TableColumn> celList = new ArrayList<TableColumn>();
+							
+							for (int i = 0; i < tds.length; i++) {
+								if (tds[i] instanceof TableColumn) {
+									celList.add((TableColumn)tds[i]);
+								}
+							}
+							
+							headersMap.put(celList.get(0).getStringText().trim(), celList.get(1).getStringText().trim());
+							headersMap.put(celList.get(2).getStringText().trim(), celList.get(3).getStringText().trim());						
+
+						}
+					}
+					
+					//parse product detail
+					TableTag productTableTag = (TableTag) findNodeById(orderPage, "row");
+					TableRow[] rows = productTableTag.getRows();
+					List<Map<String, String>> productMaps = new ArrayList<Map<String,String>>();
+					List<String> headersList = new ArrayList<String>();
+					
+					for (TableRow tableRow : rows) {
+						
+						TableColumn[] columns = tableRow.getColumns();
+						if (columns.length == 0) {
+							TableHeader[] headers = tableRow.getHeaders();
+							for (int i = 0; i < headers.length; i++) {
+								headersList.add(headers[i].getStringText().trim());
+							}
+							
+						} else {
+							Map<String, String> dataMap = new HashMap<String, String>();
+							for (int i = 0; i < columns.length; i++) {
+								TableColumn tableColumn = columns[i];
+								dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
+							}
+							
+							productMaps.add(dataMap);
+						}
+					}
+					
+					order.setOrdersItemList(productMaps);
+					
+				}
+			};
+
+			htmlParser.visitAllNodesWith(nodeVisitor);
+
+		} catch (ParserException e) {
+
+			e.printStackTrace();
+		}
+
+		return order;
+	}
+	
 	public static String findCompanyName(String detailPageHtml) {
 
 		final StringBuilder comanyName = new StringBuilder();

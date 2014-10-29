@@ -83,18 +83,20 @@
 							<h2>欧尚手动抓取</h2>
 						</div>
 						<div class="content">
+							<form id="grabForm">
 							<div class="row">
 								<div class="six columns">
-									<label>开始时间</label> <input type="text" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
+									<label>开始时间</label> <input type="text" class="required" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
 								</div>
 								<div class="six columns">
-									<label>结束时间</label> <input type="password" class="addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
+									<label>结束时间</label> <input type="text" class="required" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
 								</div>
 							</div>
 							<br>
 							<div class="row">
 								<a class=" blue button" href="#" data-bind="click : startManually">开始抓取</a>
 							</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -107,7 +109,7 @@
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
 	<script>
 		$(document).ready(function() {
-
+			$('#grabForm').validate({});
 			var ConfigurationModel = function() {
 				
 				var self = this;
@@ -128,16 +130,18 @@
 				};
 				
 				self.startManually = function() {
-					$.ajax({
-						data : { manuallyStart: self.manuallyStart(), manuallyStop : self.manuallyStop()},
-						url : '/ls/startManually.ls',
-						success : function(data) {
-							alert(data);
-						},
-						error : function() {
-							
-						}
-					});
+					if ($('#grabForm').valid()) {
+						$.ajax({
+							data : { manuallyStart: self.manuallyStart(), manuallyStop : self.manuallyStop()},
+							url : '/ls/startManually.ls',
+							success : function(data) {
+								alert(data);
+							},
+							error : function() {
+								
+							}
+						});
+					}
 				};
 				self.startDateOnClose = function() {
 					
@@ -150,6 +154,8 @@
 
 			var model = new ConfigurationModel();
 			ko.applyBindings(model);
+			
+			
 		});
 	</script>
 </body>

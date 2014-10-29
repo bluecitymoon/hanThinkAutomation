@@ -8,3 +8,4 @@
 <script src="/ls/js/knockout-3.1.0.js"></script>
 <script src="/ls/js/jquery.loader.js"></script>
 <script src="/ls/js/common.js"></script>
+<script src="/ls/js/jquery.validate.js"></script>

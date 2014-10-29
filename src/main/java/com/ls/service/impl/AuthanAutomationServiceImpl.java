@@ -3,7 +3,8 @@ package com.ls.service.impl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Map;
+
+import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
@@ -14,14 +15,17 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
+import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
-
+@Service("authanService")
 public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
-	@Override
-	public Orders grabOrders(String start, String end) {
+	public List<Orders> grabOrders(String start, String end) {
+		
+		List<Orders> ordersList = Lists.newArrayList();
+		
 		try {
 			String url = "https://auchan.chinab2bi.com/security/login.hlt";
 
@@ -52,6 +56,23 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			button.click();
 
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end));
+			
+			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
+			
+			List<String> orderIdList = HtmlParserUtilPlanB.findOrderList(ordersListHtml);
+			
+			String orderDetailUrl = "https://auchan.chinab2bi.com/auchan/buyGrnQry/detail.hlt?grnid=";
+			for (String orderId : orderIdList) {
+				
+				String singleOrderDetail = orderDetailUrl + orderId;
+				final HtmlPage singleOrderDetailPage = webClient.getPage(singleOrderDetail);
+				
+				String singleOrderHtml = singleOrderDetailPage.getWebResponse().getContentAsString();
+				
+				Orders singleOrder = HtmlParserUtilPlanB.parseOrder(singleOrderHtml);
+				
+				ordersList.add(singleOrder);
+			}
 
 			webClient.closeAllWindows();
 		} catch (FailingHttpStatusCodeException e) {
@@ -67,13 +88,19 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return ordersList;
 	}
 
 	private String makeParametersToSearchOrderList(String start, String end) {
 		String basicTemplate = "https://auchan.chinab2bi.com/auchan/sellOrderMainQry/query.hlt?accountModel.vendorNo=1356&accountModel.dateType=0&accountModel.dateStart=" + start + "&accountModel.dateEnd=" + end + "&page.pageSize=10&page.pageNo=1&page.totalPages=-1";
 		
 		return basicTemplate;
+	}
+
+	public Orders grabSingleOrders(String start, String end) {
+
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
