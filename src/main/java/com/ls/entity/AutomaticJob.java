@@ -22,10 +22,14 @@ public class AutomaticJob implements Serializable {
 	protected String type;
 	protected String name;
 	protected String clientIp;
-	protected String customer;
 	protected String start;
 	protected String stop;
-	
+	protected String lastGrabStart;
+	protected String lastGrabEnd;
+	protected String username;
+	protected String password;
+	protected String status;
+	protected String interval;
 	public Integer getId() {
 	
 		return id;
@@ -54,16 +58,6 @@ public class AutomaticJob implements Serializable {
 	public void setClientIp(String clientIp) {
 	
 		this.clientIp = clientIp;
-	}
-	
-	public String getCustomer() {
-	
-		return customer;
-	}
-	
-	public void setCustomer(String customer) {
-	
-		this.customer = customer;
 	}
 	
 	public String getStart() {
@@ -95,6 +89,76 @@ public class AutomaticJob implements Serializable {
 	public void setType(String type) {
 	
 		this.type = type;
+	}
+
+	
+	public String getLastGrabStart() {
+	
+		return lastGrabStart;
+	}
+
+	
+	public void setLastGrabStart(String lastGrabStart) {
+	
+		this.lastGrabStart = lastGrabStart;
+	}
+
+	
+	public String getLastGrabEnd() {
+	
+		return lastGrabEnd;
+	}
+
+	
+	public void setLastGrabEnd(String lastGrabEnd) {
+	
+		this.lastGrabEnd = lastGrabEnd;
+	}
+
+	
+	public String getUsername() {
+	
+		return username;
+	}
+
+	
+	public void setUsername(String username) {
+	
+		this.username = username;
+	}
+
+	
+	public String getPassword() {
+	
+		return password;
+	}
+
+	
+	public void setPassword(String password) {
+	
+		this.password = password;
+	}
+
+	
+	public String getStatus() {
+	
+		return status;
+	}
+
+	
+	public void setStatus(String status) {
+	
+		this.status = status;
+	}
+
+	public String getInterval() {
+	
+		return interval;
+	}
+	
+	public void setInterval(String interval) {
+	
+		this.interval = interval;
 	}
 
 }
