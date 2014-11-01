@@ -2,11 +2,13 @@ package com.ls.service.impl;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -19,15 +21,36 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.collect.Lists;
+import com.ls.constants.AuthanConstants;
+import com.ls.entity.AutomaticJob;
+import com.ls.exception.ConfigurationException;
 import com.ls.grab.HtmlParserUtilPlanB;
+import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
+
 @Service("authanService")
 public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
-	public List<Orders> grabOrders(String start, String end) {
+	@Autowired
+	AutomaticJobRepository automaticJobRepository;
+	
+	public List<Orders> grabOrders(String start, String end) throws  ConfigurationException{
 		
 		List<Orders> ordersList = Lists.newArrayList();
+		AutomaticJob authanJob = automaticJobRepository.findByType(AuthanConstants.AUTHAN);
+		
+		if (null == authanJob) {
+			throw new ConfigurationException();
+		}
+		
+		authanJob.setStatus("正在导入数据");
+		authanJob.setLocked(true);
+		
+		automaticJobRepository.saveAndFlush(authanJob);
+		
+		Date now = new Date();
+		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 		
 		try {
 			String url = "https://auchan.chinab2bi.com/security/login.hlt";
@@ -35,11 +58,11 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 			webClient.getOptions().setJavaScriptEnabled(false);
 			// Get the first page
-			final HtmlPage page1 = webClient.getPage(url);
+			final HtmlPage loginPage = webClient.getPage(url);
 
 			// Get the form that we are dealing with and within that form,
 			// find the submit button and the field that we want to change.
-			final List<HtmlForm> forms = page1.getForms();
+			final List<HtmlForm> forms = loginPage.getForms();
 
 			HtmlForm form = null;
 			for (HtmlForm singleForm : forms) {
@@ -48,15 +71,16 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 				}
 			}
 
-			final HtmlSubmitInput button = form.getInputByName("Submit");
+			final HtmlSubmitInput loginButton = form.getInputByName("Submit");
 			final HtmlTextInput textField = form.getInputByName("j_username");
 			final HtmlPasswordInput passwordField = form.getInputByName("j_password");
 
 			// Change the value of the text field
-			textField.setValueAttribute("AC1356");
-			passwordField.setValueAttribute("shyf1356");
+			textField.setValueAttribute(authanJob.getUsername());
+			passwordField.setValueAttribute(authanJob.getPassword());
 
-			button.click();
+			//click login button
+			loginButton.click();
 
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null));
 			
@@ -102,7 +126,15 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
+		
+		Date endTime = new Date();
+		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
+		authanJob.setStatus("任务空闲中");
+		authanJob.setLocked(false);
+		
+		automaticJobRepository.saveAndFlush(authanJob);
+		
 		return ordersList;
 	}
 

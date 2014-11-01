@@ -343,7 +343,7 @@
 	ul.breadcrumbs li span { font-size: 11px; padding-left: 3px; }
 	ul.breadcrumbs li:first-child a,
 	ul.breadcrumbs li:first-child span { padding-left: 0; }
-	ul.breadcrumbs li:before { content: "â€º"; color: #FAFAFA; font-size: 60px; position: relative; top: -4px; display: block; float: left; }
+	ul.breadcrumbs li:before { content: "芒鈧"; color: #FAFAFA; font-size: 60px; position: relative; top: -4px; display: block; float: left; }
 	ul.breadcrumbs li:first-child:before { content: ""; }
 	ul.breadcrumbs li.current a { cursor: default; color: #666; font-weight: bold; }
 	ul.breadcrumbs li.disabled a { cursor: default; color: #AAA; }
@@ -484,437 +484,437 @@ a [class*=" icon-"] { display: inline; } */
 	/* Werner custom icons */
 
 	/* Wide Icons */
-	.icon-truck-poweronly:before { content: '\e804'; } /* 'î „' */
-	.icon-truck-van:before { content: '\e807'; } /* 'î ‡' */
-	.icon-truck-van-empty:before { content: '\e808'; } /* 'î ˆ' */
-	.icon-truck-tcu:before { content: '\e805'; } /* 'î …' */
-	.icon-truck-tcu-empty:before { content: '\e806'; } /* 'î †' */
-	.icon-truck-flatbed:before { content: '\e802'; } /* 'î ‚' */
-	.icon-truck-flatbed-empty:before { content: '\e803'; } /* 'î ƒ' */
+	.icon-truck-poweronly:before { content: '\e804'; } /* '卯聽鈥� */
+	.icon-truck-van:before { content: '\e807'; } /* '卯聽鈥� */
+	.icon-truck-van-empty:before { content: '\e808'; } /* '卯聽藛' */
+	.icon-truck-tcu:before { content: '\e805'; } /* '卯聽鈥� */
+	.icon-truck-tcu-empty:before { content: '\e806'; } /* '卯聽鈥� */
+	.icon-truck-flatbed:before { content: '\e802'; } /* '卯聽鈥� */
+	.icon-truck-flatbed-empty:before { content: '\e803'; } /* '卯聽茠' */
 
-	.icon-trailer:before { content: '\e815'; } /* 'î •' */
-	.icon-trailer-empty:before { content: '\e816'; } /* 'î –' */
-	.icon-trailer-tcu:before { content: '\e819'; } /* 'î ™' */
-	.icon-trailer-tcu-empty:before { content: '\e81a'; } /* 'î š' */
-	.icon-trailer-flatbed:before { content: '\e817'; } /* 'î —' */
-	.icon-trailer-flatbed-empty:before { content: '\e818'; } /* 'î ˜' */
+	.icon-trailer:before { content: '\e815'; } /* '卯聽鈥� */
+	.icon-trailer-empty:before { content: '\e816'; } /* '卯聽鈥� */
+	.icon-trailer-tcu:before { content: '\e819'; } /* '卯聽鈩� */
+	.icon-trailer-tcu-empty:before { content: '\e81a'; } /* '卯聽拧' */
+	.icon-trailer-flatbed:before { content: '\e817'; } /* '卯聽鈥� */
+	.icon-trailer-flatbed-empty:before { content: '\e818'; } /* '卯聽藴' */
 
-	.icon-ship:before { content: '\e814'; } /* 'î ”' */
-	.icon-train-alt:before { content: '\e800'; } /* 'î €' */
+	.icon-ship:before { content: '\e814'; } /* '卯聽鈥� */
+	.icon-train-alt:before { content: '\e800'; } /* '卯聽鈧� */
 
 	/* Normal width icons */
-	.icon-werner:before { content: '\e80a'; } /* 'î Š' */
-	.icon-werner-sign:before { content: '\e809'; } /* 'î ‰' */
-	.icon-ambulance:before { content: '\e80b'; } /* 'î ‹' */
-	.icon-ambulance-left:before { content: '\e94e'; } /* 'î¥Ž' */
-	.icon-biohazard:before { content: '\e80c'; } /* 'î Œ' */
-	.icon-canada:before { content: '\e80d'; } /* 'î �' */
-	.icon-fire:before { content: '\e80e'; } /* 'î Ž' */
-	.icon-fuel-pump:before { content: '\e80f'; } /* 'î �' */
-	.icon-gasoline:before { content: '\e810'; } /* 'î �' */
-	.icon-radiation:before { content: '\e811'; } /* 'î ‘' */
-	.icon-railroad:before { content: '\e812'; } /* 'î ’' */
-	.icon-railroad-crossing:before { content: '\e813'; } /* 'î “' */
-	.icon-train:before { content: '\e81b'; } /* 'î ›' */
-	.icon-truck:before { content: '\e801'; } /* 'î �' */
-	.icon-truck-left:before { content: '\e931'; } /* 'î¤±' */
+	.icon-werner:before { content: '\e80a'; } /* '卯聽艩' */
+	.icon-werner-sign:before { content: '\e809'; } /* '卯聽鈥� */
+	.icon-ambulance:before { content: '\e80b'; } /* '卯聽鈥� */
+	.icon-ambulance-left:before { content: '\e94e'; } /* '卯楼沤' */
+	.icon-biohazard:before { content: '\e80c'; } /* '卯聽艗' */
+	.icon-canada:before { content: '\e80d'; } /* '卯聽锟� */
+	.icon-fire:before { content: '\e80e'; } /* '卯聽沤' */
+	.icon-fuel-pump:before { content: '\e80f'; } /* '卯聽锟� */
+	.icon-gasoline:before { content: '\e810'; } /* '卯聽锟� */
+	.icon-radiation:before { content: '\e811'; } /* '卯聽鈥� */
+	.icon-railroad:before { content: '\e812'; } /* '卯聽鈥� */
+	.icon-railroad-crossing:before { content: '\e813'; } /* '卯聽鈥� */
+	.icon-train:before { content: '\e81b'; } /* '卯聽鈥� */
+	.icon-truck:before { content: '\e801'; } /* '卯聽锟� */
+	.icon-truck-left:before { content: '\e931'; } /* '卯陇卤' */
 
 	/* Default FontAwesome / fontello icons */
-	.icon-lemon:before { content: '\e98c'; } /* 'î¦Œ' */
-	.icon-glass:before { content: '\e81c'; } /* 'î œ' */
-	.icon-music:before { content: '\e81d'; } /* 'î �' */
-	.icon-search:before { content: '\e81e'; } /* 'î ž' */
-	.icon-envelope-alt:before { content: '\e81f'; } /* 'î Ÿ' */
-	.icon-envelope:before { content: '\e820'; } /* 'î  ' */
-	.icon-heart:before { content: '\e821'; } /* 'î ¡' */
-	.icon-heart-empty:before { content: '\e822'; } /* 'î ¢' */
-	.icon-star:before { content: '\e823'; } /* 'î £' */
-	.icon-star-empty:before { content: '\e824'; } /* 'î ¤' */
-	.icon-star-half:before { content: '\e825'; } /* 'î ¥' */
+	.icon-lemon:before { content: '\e98c'; } /* '卯娄艗' */
+	.icon-glass:before { content: '\e81c'; } /* '卯聽艙' */
+	.icon-music:before { content: '\e81d'; } /* '卯聽锟� */
+	.icon-search:before { content: '\e81e'; } /* '卯聽啪' */
+	.icon-envelope-alt:before { content: '\e81f'; } /* '卯聽鸥' */
+	.icon-envelope:before { content: '\e820'; } /* '卯聽聽' */
+	.icon-heart:before { content: '\e821'; } /* '卯聽隆' */
+	.icon-heart-empty:before { content: '\e822'; } /* '卯聽垄' */
+	.icon-star:before { content: '\e823'; } /* '卯聽拢' */
+	.icon-star-empty:before { content: '\e824'; } /* '卯聽陇' */
+	.icon-star-half:before { content: '\e825'; } /* '卯聽楼' */
 	.icon-star-half-empty:before,
-	.icon-star-half-full:before { content: '\e826'; } /* 'î ¦' */
-	.icon-user:before { content: '\e827'; } /* 'î §' */
-	.icon-group:before { content: '\e828'; } /* 'î ¨' */
-	.icon-male:before { content: '\e829'; } /* 'î ©' */
-	.icon-female:before { content: '\e82a'; } /* 'î ª' */
-	.icon-film:before { content: '\e82b'; } /* 'î «' */
-	.icon-facetime-video:before { content: '\e82c'; } /* 'î ¬' */
-	.icon-picture:before { content: '\e82d'; } /* 'î ­' */
-	.icon-camera:before { content: '\e82e'; } /* 'î ®' */
-	.icon-camera-retro:before { content: '\e82f'; } /* 'î ¯' */
-	.icon-th-large:before { content: '\e830'; } /* 'î °' */
-	.icon-th:before { content: '\e831'; } /* 'î ±' */
-	.icon-th-list:before { content: '\e832'; } /* 'î ²' */
-	.icon-ok:before { content: '\e833'; } /* 'î ³' */
-	.icon-ok-sign:before { content: '\e834'; } /* 'î ´' */
-	.icon-ok-circle:before { content: '\e835'; } /* 'î µ' */
-	.icon-check-sign:before { content: '\e836'; } /* 'î ¶' */
-	.icon-remove:before { content: '\e837'; } /* 'î ·' */
-	.icon-remove-sign:before { content: '\e838'; } /* 'î ¸' */
-	.icon-remove-circle:before { content: '\e839'; } /* 'î ¹' */
-	.icon-plus:before { content: '\e83a'; } /* 'î º' */
-	.icon-plus-sign:before { content: '\e83b'; } /* 'î »' */
-	.icon-plus-sign-alt:before { content: '\e83c'; } /* 'î ¼' */
-	.icon-expand-alt:before { content: '\e83d'; } /* 'î ½' */
-	.icon-minus:before { content: '\e83e'; } /* 'î ¾' */
-	.icon-minus-sign:before { content: '\e83f'; } /* 'î ¿' */
-	.icon-minus-sign-alt:before { content: '\e840'; } /* 'î¡€' */
-	.icon-check-minus:before { content: '\e841'; } /* 'î¡�' */
-	.icon-collapse-alt:before { content: '\e842'; } /* 'î¡‚' */
-	.icon-question:before { content: '\e843'; } /* 'î¡ƒ' */
-	.icon-question-sign:before { content: '\e844'; } /* 'î¡„' */
-	.icon-info-sign:before { content: '\e845'; } /* 'î¡…' */
-	.icon-info:before { content: '\e846'; } /* 'î¡†' */
-	.icon-home:before { content: '\e847'; } /* 'î¡‡' */
-	.icon-link:before { content: '\e848'; } /* 'î¡ˆ' */
-	.icon-unlink:before { content: '\e849'; } /* 'î¡‰' */
-	.icon-external-link:before { content: '\e84a'; } /* 'î¡Š' */
-	.icon-external-link-sign:before { content: '\e84b'; } /* 'î¡‹' */
+	.icon-star-half-full:before { content: '\e826'; } /* '卯聽娄' */
+	.icon-user:before { content: '\e827'; } /* '卯聽搂' */
+	.icon-group:before { content: '\e828'; } /* '卯聽篓' */
+	.icon-male:before { content: '\e829'; } /* '卯聽漏' */
+	.icon-female:before { content: '\e82a'; } /* '卯聽陋' */
+	.icon-film:before { content: '\e82b'; } /* '卯聽芦' */
+	.icon-facetime-video:before { content: '\e82c'; } /* '卯聽卢' */
+	.icon-picture:before { content: '\e82d'; } /* '卯聽颅' */
+	.icon-camera:before { content: '\e82e'; } /* '卯聽庐' */
+	.icon-camera-retro:before { content: '\e82f'; } /* '卯聽炉' */
+	.icon-th-large:before { content: '\e830'; } /* '卯聽掳' */
+	.icon-th:before { content: '\e831'; } /* '卯聽卤' */
+	.icon-th-list:before { content: '\e832'; } /* '卯聽虏' */
+	.icon-ok:before { content: '\e833'; } /* '卯聽鲁' */
+	.icon-ok-sign:before { content: '\e834'; } /* '卯聽麓' */
+	.icon-ok-circle:before { content: '\e835'; } /* '卯聽碌' */
+	.icon-check-sign:before { content: '\e836'; } /* '卯聽露' */
+	.icon-remove:before { content: '\e837'; } /* '卯聽路' */
+	.icon-remove-sign:before { content: '\e838'; } /* '卯聽赂' */
+	.icon-remove-circle:before { content: '\e839'; } /* '卯聽鹿' */
+	.icon-plus:before { content: '\e83a'; } /* '卯聽潞' */
+	.icon-plus-sign:before { content: '\e83b'; } /* '卯聽禄' */
+	.icon-plus-sign-alt:before { content: '\e83c'; } /* '卯聽录' */
+	.icon-expand-alt:before { content: '\e83d'; } /* '卯聽陆' */
+	.icon-minus:before { content: '\e83e'; } /* '卯聽戮' */
+	.icon-minus-sign:before { content: '\e83f'; } /* '卯聽驴' */
+	.icon-minus-sign-alt:before { content: '\e840'; } /* '卯隆鈧� */
+	.icon-check-minus:before { content: '\e841'; } /* '卯隆锟� */
+	.icon-collapse-alt:before { content: '\e842'; } /* '卯隆鈥� */
+	.icon-question:before { content: '\e843'; } /* '卯隆茠' */
+	.icon-question-sign:before { content: '\e844'; } /* '卯隆鈥� */
+	.icon-info-sign:before { content: '\e845'; } /* '卯隆鈥� */
+	.icon-info:before { content: '\e846'; } /* '卯隆鈥� */
+	.icon-home:before { content: '\e847'; } /* '卯隆鈥� */
+	.icon-link:before { content: '\e848'; } /* '卯隆藛' */
+	.icon-unlink:before { content: '\e849'; } /* '卯隆鈥� */
+	.icon-external-link:before { content: '\e84a'; } /* '卯隆艩' */
+	.icon-external-link-sign:before { content: '\e84b'; } /* '卯隆鈥� */
 	.icon-paperclip:before,
-	.icon-paper-clip:before { content: '\e84c'; } /* 'î¡Œ' */
-	.icon-lock:before { content: '\e84d'; } /* 'î¡�' */
-	.icon-unlock:before { content: '\e84e'; } /* 'î¡Ž' */
-	.icon-unlock-alt:before { content: '\e84f'; } /* 'î¡�' */
-	.icon-pushpin:before { content: '\e850'; } /* 'î¡�' */
-	.icon-eye-open:before { content: '\e851'; } /* 'î¡‘' */
-	.icon-eye-close:before { content: '\e852'; } /* 'î¡’' */
-	.icon-tag:before { content: '\e853'; } /* 'î¡“' */
-	.icon-tags:before { content: '\e854'; } /* 'î¡”' */
-	.icon-bookmark:before { content: '\e855'; } /* 'î¡•' */
-	.icon-bookmark-empty:before { content: '\e856'; } /* 'î¡–' */
-	.icon-flag:before { content: '\e857'; } /* 'î¡—' */
-	.icon-flag-alt:before { content: '\e858'; } /* 'î¡˜' */
-	.icon-flag-checkered:before { content: '\e859'; } /* 'î¡™' */
-	.icon-thumbs-up:before { content: '\e85a'; } /* 'î¡š' */
-	.icon-thumbs-down:before { content: '\e85b'; } /* 'î¡›' */
-	.icon-thumbs-up-alt:before { content: '\e85c'; } /* 'î¡œ' */
-	.icon-thumbs-down-alt:before { content: '\e85d'; } /* 'î¡�' */
-	.icon-download-alt:before { content: '\e85e'; } /* 'î¡ž' */
-	.icon-upload-alt:before { content: '\e85f'; } /* 'î¡Ÿ' */
-	.icon-cloud-download:before { content: '\e860'; } /* 'î¡ ' */
-	.icon-cloud-upload:before { content: '\e861'; } /* 'î¡¡' */
+	.icon-paper-clip:before { content: '\e84c'; } /* '卯隆艗' */
+	.icon-lock:before { content: '\e84d'; } /* '卯隆锟� */
+	.icon-unlock:before { content: '\e84e'; } /* '卯隆沤' */
+	.icon-unlock-alt:before { content: '\e84f'; } /* '卯隆锟� */
+	.icon-pushpin:before { content: '\e850'; } /* '卯隆锟� */
+	.icon-eye-open:before { content: '\e851'; } /* '卯隆鈥� */
+	.icon-eye-close:before { content: '\e852'; } /* '卯隆鈥� */
+	.icon-tag:before { content: '\e853'; } /* '卯隆鈥� */
+	.icon-tags:before { content: '\e854'; } /* '卯隆鈥� */
+	.icon-bookmark:before { content: '\e855'; } /* '卯隆鈥� */
+	.icon-bookmark-empty:before { content: '\e856'; } /* '卯隆鈥� */
+	.icon-flag:before { content: '\e857'; } /* '卯隆鈥� */
+	.icon-flag-alt:before { content: '\e858'; } /* '卯隆藴' */
+	.icon-flag-checkered:before { content: '\e859'; } /* '卯隆鈩� */
+	.icon-thumbs-up:before { content: '\e85a'; } /* '卯隆拧' */
+	.icon-thumbs-down:before { content: '\e85b'; } /* '卯隆鈥� */
+	.icon-thumbs-up-alt:before { content: '\e85c'; } /* '卯隆艙' */
+	.icon-thumbs-down-alt:before { content: '\e85d'; } /* '卯隆锟� */
+	.icon-download-alt:before { content: '\e85e'; } /* '卯隆啪' */
+	.icon-upload-alt:before { content: '\e85f'; } /* '卯隆鸥' */
+	.icon-cloud-download:before { content: '\e860'; } /* '卯隆聽' */
+	.icon-cloud-upload:before { content: '\e861'; } /* '卯隆隆' */
 	.icon-mail-reply:before,
-	.icon-reply:before { content: '\e862'; } /* 'î¡¢' */
+	.icon-reply:before { content: '\e862'; } /* '卯隆垄' */
 	.icon-mail-reply-all:before,
-	.icon-reply-all:before { content: '\e863'; } /* 'î¡£' */
+	.icon-reply-all:before { content: '\e863'; } /* '卯隆拢' */
 	.icon-mail-forward:before,
-	.icon-share-alt:before { content: '\e864'; } /* 'î¡¤' */
-	.icon-quote-left:before { content: '\e865'; } /* 'î¡¥' */
-	.icon-quote-right:before { content: '\e866'; } /* 'î¡¦' */
-	.icon-code:before { content: '\e867'; } /* 'î¡§' */
-	.icon-share:before { content: '\e868'; } /* 'î¡¨' */
-	.icon-share-sign:before { content: '\e869'; } /* 'î¡©' */
-	.icon-pencil:before { content: '\e86a'; } /* 'î¡ª' */
-	.icon-edit-sign:before { content: '\e86b'; } /* 'î¡«' */
-	.icon-edit:before { content: '\e86c'; } /* 'î¡¬' */
-	.icon-print:before { content: '\e86d'; } /* 'î¡­' */
-	.icon-retweet:before { content: '\e86e'; } /* 'î¡®' */
-	.icon-keyboard:before { content: '\e86f'; } /* 'î¡¯' */
-	.icon-gamepad:before { content: '\e870'; } /* 'î¡°' */
-	.icon-comment:before { content: '\e871'; } /* 'î¡±' */
-	.icon-comments:before { content: '\e872'; } /* 'î¡²' */
-	.icon-comment-alt:before { content: '\e873'; } /* 'î¡³' */
-	.icon-comments-alt:before { content: '\e874'; } /* 'î¡´' */
-	.icon-bell:before { content: '\e875'; } /* 'î¡µ' */
-	.icon-bell-alt:before { content: '\e876'; } /* 'î¡¶' */
-	.icon-exclamation:before { content: '\e877'; } /* 'î¡·' */
-	.icon-warning-sign:before { content: '\e878'; } /* 'î¡¸' */
-	.icon-exclamation-sign:before { content: '\e879'; } /* 'î¡¹' */
-	.icon-map-marker:before { content: '\e87a'; } /* 'î¡º' */
-	.icon-location-arrow:before { content: '\e87b'; } /* 'î¡»' */
-	.icon-compass:before { content: '\e87c'; } /* 'î¡¼' */
-	.icon-trash:before { content: '\e87d'; } /* 'î¡½' */
-	.icon-file-alt:before { content: '\e87e'; } /* 'î¡¾' */
-	.icon-copy:before { content: '\e87f'; } /* 'î¡¿' */
-	.icon-file-text-alt:before { content: '\e880'; } /* 'î¢€' */
-	.icon-file:before { content: '\e881'; } /* 'î¢�' */
-	.icon-file-text:before { content: '\e882'; } /* 'î¢‚' */
-	.icon-folder-close:before { content: '\e883'; } /* 'î¢ƒ' */
-	.icon-folder-open:before { content: '\e884'; } /* 'î¢„' */
-	.icon-folder-close-alt:before { content: '\e885'; } /* 'î¢…' */
-	.icon-folder-open-alt:before { content: '\e886'; } /* 'î¢†' */
-	.icon-archive:before { content: '\e887'; } /* 'î¢‡' */
-	.icon-rss:before { content: '\e888'; } /* 'î¢ˆ' */
-	.icon-rss-sign:before { content: '\e889'; } /* 'î¢‰' */
-	.icon-phone:before { content: '\e88a'; } /* 'î¢Š' */
-	.icon-phone-sign:before { content: '\e88b'; } /* 'î¢‹' */
-	.icon-reorder:before { content: '\e88c'; } /* 'î¢Œ' */
+	.icon-share-alt:before { content: '\e864'; } /* '卯隆陇' */
+	.icon-quote-left:before { content: '\e865'; } /* '卯隆楼' */
+	.icon-quote-right:before { content: '\e866'; } /* '卯隆娄' */
+	.icon-code:before { content: '\e867'; } /* '卯隆搂' */
+	.icon-share:before { content: '\e868'; } /* '卯隆篓' */
+	.icon-share-sign:before { content: '\e869'; } /* '卯隆漏' */
+	.icon-pencil:before { content: '\e86a'; } /* '卯隆陋' */
+	.icon-edit-sign:before { content: '\e86b'; } /* '卯隆芦' */
+	.icon-edit:before { content: '\e86c'; } /* '卯隆卢' */
+	.icon-print:before { content: '\e86d'; } /* '卯隆颅' */
+	.icon-retweet:before { content: '\e86e'; } /* '卯隆庐' */
+	.icon-keyboard:before { content: '\e86f'; } /* '卯隆炉' */
+	.icon-gamepad:before { content: '\e870'; } /* '卯隆掳' */
+	.icon-comment:before { content: '\e871'; } /* '卯隆卤' */
+	.icon-comments:before { content: '\e872'; } /* '卯隆虏' */
+	.icon-comment-alt:before { content: '\e873'; } /* '卯隆鲁' */
+	.icon-comments-alt:before { content: '\e874'; } /* '卯隆麓' */
+	.icon-bell:before { content: '\e875'; } /* '卯隆碌' */
+	.icon-bell-alt:before { content: '\e876'; } /* '卯隆露' */
+	.icon-exclamation:before { content: '\e877'; } /* '卯隆路' */
+	.icon-warning-sign:before { content: '\e878'; } /* '卯隆赂' */
+	.icon-exclamation-sign:before { content: '\e879'; } /* '卯隆鹿' */
+	.icon-map-marker:before { content: '\e87a'; } /* '卯隆潞' */
+	.icon-location-arrow:before { content: '\e87b'; } /* '卯隆禄' */
+	.icon-compass:before { content: '\e87c'; } /* '卯隆录' */
+	.icon-trash:before { content: '\e87d'; } /* '卯隆陆' */
+	.icon-file-alt:before { content: '\e87e'; } /* '卯隆戮' */
+	.icon-copy:before { content: '\e87f'; } /* '卯隆驴' */
+	.icon-file-text-alt:before { content: '\e880'; } /* '卯垄鈧� */
+	.icon-file:before { content: '\e881'; } /* '卯垄锟� */
+	.icon-file-text:before { content: '\e882'; } /* '卯垄鈥� */
+	.icon-folder-close:before { content: '\e883'; } /* '卯垄茠' */
+	.icon-folder-open:before { content: '\e884'; } /* '卯垄鈥� */
+	.icon-folder-close-alt:before { content: '\e885'; } /* '卯垄鈥� */
+	.icon-folder-open-alt:before { content: '\e886'; } /* '卯垄鈥� */
+	.icon-archive:before { content: '\e887'; } /* '卯垄鈥� */
+	.icon-rss:before { content: '\e888'; } /* '卯垄藛' */
+	.icon-rss-sign:before { content: '\e889'; } /* '卯垄鈥� */
+	.icon-phone:before { content: '\e88a'; } /* '卯垄艩' */
+	.icon-phone-sign:before { content: '\e88b'; } /* '卯垄鈥� */
+	.icon-reorder:before { content: '\e88c'; } /* '卯垄艗' */
 	.icon-gear:before,
-	.icon-cog:before { content: '\e88d'; } /* 'î¢�' */
+	.icon-cog:before { content: '\e88d'; } /* '卯垄锟� */
 	.icon-gears:before,
-	.icon-cogs:before { content: '\e88e'; } /* 'î¢Ž' */
-	.icon-wrench:before { content: '\e88f'; } /* 'î¢�' */
-	.icon-shopping-cart:before { content: '\e890'; } /* 'î¢�' */
-	.icon-calendar:before { content: '\e891'; } /* 'î¢‘' */
-	.icon-calendar-empty:before { content: '\e892'; } /* 'î¢’' */
-	.icon-signin:before { content: '\e893'; } /* 'î¢“' */
-	.icon-signout:before { content: '\e894'; } /* 'î¢”' */
-	.icon-microphone:before { content: '\e895'; } /* 'î¢•' */
-	.icon-microphone-off:before { content: '\e896'; } /* 'î¢–' */
-	.icon-volume-off:before { content: '\e897'; } /* 'î¢—' */
-	.icon-volume-down:before { content: '\e898'; } /* 'î¢˜' */
-	.icon-volume-up:before { content: '\e899'; } /* 'î¢™' */
-	.icon-headphones:before { content: '\e89a'; } /* 'î¢š' */
-	.icon-time:before { content: '\e89b'; } /* 'î¢›' */
-	.icon-lightbulb:before { content: '\e89c'; } /* 'î¢œ' */
-	.icon-ban-circle:before { content: '\e89d'; } /* 'î¢�' */
-	.icon-resize-full:before { content: '\e89e'; } /* 'î¢ž' */
-	.icon-fullscreen:before { content: '\e89f'; } /* 'î¢Ÿ' */
-	.icon-resize-small:before { content: '\e8a0'; } /* 'î¢ ' */
-	.icon-resize-vertical:before { content: '\e8a1'; } /* 'î¢¡' */
-	.icon-resize-horizontal:before { content: '\e8a2'; } /* 'î¢¢' */
-	.icon-move:before { content: '\e8a3'; } /* 'î¢£' */
-	.icon-zoom-in:before { content: '\e8a4'; } /* 'î¢¤' */
-	.icon-zoom-out:before { content: '\e8a5'; } /* 'î¢¥' */
-	.icon-download:before { content: '\e8a6'; } /* 'î¢¦' */
-	.icon-upload:before { content: '\e8a7'; } /* 'î¢§' */
-	.icon-caret-down:before { content: '\e8aa'; } /* 'î¢ª' */
-	.icon-caret-up:before { content: '\e8ab'; } /* 'î¢«' */
-	.icon-caret-left:before { content: '\e8ac'; } /* 'î¢¬' */
-	.icon-caret-right:before { content: '\e8ad'; } /* 'î¢­' */
-	.icon-chevron-down:before { content: '\e8ae'; } /* 'î¢®' */
-	.icon-chevron-left:before { content: '\e8af'; } /* 'î¢¯' */
-	.icon-chevron-right:before { content: '\e8b0'; } /* 'î¢°' */
-	.icon-chevron-up:before { content: '\e8b1'; } /* 'î¢±' */
-	.icon-angle-left:before { content: '\e8b2'; } /* 'î¢²' */
-	.icon-angle-right:before { content: '\e8b3'; } /* 'î¢³' */
-	.icon-angle-up:before { content: '\e8b4'; } /* 'î¢´' */
-	.icon-angle-down:before { content: '\e8b5'; } /* 'î¢µ' */
-	.icon-chevron-sign-left:before { content: '\e8b6'; } /* 'î¢¶' */
-	.icon-chevron-sign-right:before { content: '\e8b7'; } /* 'î¢·' */
-	.icon-chevron-sign-up:before { content: '\e8b8'; } /* 'î¢¸' */
-	.icon-chevron-sign-down:before { content: '\e8b9'; } /* 'î¢¹' */
-	.icon-double-angle-left:before { content: '\e8ba'; } /* 'î¢º' */
-	.icon-double-angle-right:before { content: '\e8bb'; } /* 'î¢»' */
-	.icon-double-angle-up:before { content: '\e8bc'; } /* 'î¢¼' */
-	.icon-double-angle-down:before { content: '\e8bd'; } /* 'î¢½' */
-	.icon-long-arrow-down:before { content: '\e8be'; } /* 'î¢¾' */
-	.icon-long-arrow-left:before { content: '\e8c0'; } /* 'î£€' */
-	.icon-long-arrow-right:before { content: '\e8bf'; } /* 'î¢¿' */
-	.icon-long-arrow-up:before { content: '\e8c1'; } /* 'î£�' */
-	.icon-arrow-down:before { content: '\e8c2'; } /* 'î£‚' */
-	.icon-arrow-left:before { content: '\e8c3'; } /* 'î£ƒ' */
-	.icon-arrow-right:before { content: '\e8c4'; } /* 'î£„' */
-	.icon-arrow-up:before { content: '\e8c5'; } /* 'î£…' */
-	.icon-hand-left:before { content: '\e8c7'; } /* 'î£‡' */
-	.icon-hand-up:before { content: '\e8c8'; } /* 'î£ˆ' */
-	.icon-hand-down:before { content: '\e8c9'; } /* 'î£‰' */
-	.icon-hand-right:before { content: '\e8c6'; } /* 'î£†' */
-	.icon-circle-arrow-left:before { content: '\e8ca'; } /* 'î£Š' */
-	.icon-circle-arrow-right:before { content: '\e8cb'; } /* 'î£‹' */
-	.icon-circle-arrow-up:before { content: '\e8cc'; } /* 'î£Œ' */
-	.icon-circle-arrow-down:before { content: '\e8cd'; } /* 'î£�' */
+	.icon-cogs:before { content: '\e88e'; } /* '卯垄沤' */
+	.icon-wrench:before { content: '\e88f'; } /* '卯垄锟� */
+	.icon-shopping-cart:before { content: '\e890'; } /* '卯垄锟� */
+	.icon-calendar:before { content: '\e891'; } /* '卯垄鈥� */
+	.icon-calendar-empty:before { content: '\e892'; } /* '卯垄鈥� */
+	.icon-signin:before { content: '\e893'; } /* '卯垄鈥� */
+	.icon-signout:before { content: '\e894'; } /* '卯垄鈥� */
+	.icon-microphone:before { content: '\e895'; } /* '卯垄鈥� */
+	.icon-microphone-off:before { content: '\e896'; } /* '卯垄鈥� */
+	.icon-volume-off:before { content: '\e897'; } /* '卯垄鈥� */
+	.icon-volume-down:before { content: '\e898'; } /* '卯垄藴' */
+	.icon-volume-up:before { content: '\e899'; } /* '卯垄鈩� */
+	.icon-headphones:before { content: '\e89a'; } /* '卯垄拧' */
+	.icon-time:before { content: '\e89b'; } /* '卯垄鈥� */
+	.icon-lightbulb:before { content: '\e89c'; } /* '卯垄艙' */
+	.icon-ban-circle:before { content: '\e89d'; } /* '卯垄锟� */
+	.icon-resize-full:before { content: '\e89e'; } /* '卯垄啪' */
+	.icon-fullscreen:before { content: '\e89f'; } /* '卯垄鸥' */
+	.icon-resize-small:before { content: '\e8a0'; } /* '卯垄聽' */
+	.icon-resize-vertical:before { content: '\e8a1'; } /* '卯垄隆' */
+	.icon-resize-horizontal:before { content: '\e8a2'; } /* '卯垄垄' */
+	.icon-move:before { content: '\e8a3'; } /* '卯垄拢' */
+	.icon-zoom-in:before { content: '\e8a4'; } /* '卯垄陇' */
+	.icon-zoom-out:before { content: '\e8a5'; } /* '卯垄楼' */
+	.icon-download:before { content: '\e8a6'; } /* '卯垄娄' */
+	.icon-upload:before { content: '\e8a7'; } /* '卯垄搂' */
+	.icon-caret-down:before { content: '\e8aa'; } /* '卯垄陋' */
+	.icon-caret-up:before { content: '\e8ab'; } /* '卯垄芦' */
+	.icon-caret-left:before { content: '\e8ac'; } /* '卯垄卢' */
+	.icon-caret-right:before { content: '\e8ad'; } /* '卯垄颅' */
+	.icon-chevron-down:before { content: '\e8ae'; } /* '卯垄庐' */
+	.icon-chevron-left:before { content: '\e8af'; } /* '卯垄炉' */
+	.icon-chevron-right:before { content: '\e8b0'; } /* '卯垄掳' */
+	.icon-chevron-up:before { content: '\e8b1'; } /* '卯垄卤' */
+	.icon-angle-left:before { content: '\e8b2'; } /* '卯垄虏' */
+	.icon-angle-right:before { content: '\e8b3'; } /* '卯垄鲁' */
+	.icon-angle-up:before { content: '\e8b4'; } /* '卯垄麓' */
+	.icon-angle-down:before { content: '\e8b5'; } /* '卯垄碌' */
+	.icon-chevron-sign-left:before { content: '\e8b6'; } /* '卯垄露' */
+	.icon-chevron-sign-right:before { content: '\e8b7'; } /* '卯垄路' */
+	.icon-chevron-sign-up:before { content: '\e8b8'; } /* '卯垄赂' */
+	.icon-chevron-sign-down:before { content: '\e8b9'; } /* '卯垄鹿' */
+	.icon-double-angle-left:before { content: '\e8ba'; } /* '卯垄潞' */
+	.icon-double-angle-right:before { content: '\e8bb'; } /* '卯垄禄' */
+	.icon-double-angle-up:before { content: '\e8bc'; } /* '卯垄录' */
+	.icon-double-angle-down:before { content: '\e8bd'; } /* '卯垄陆' */
+	.icon-long-arrow-down:before { content: '\e8be'; } /* '卯垄戮' */
+	.icon-long-arrow-left:before { content: '\e8c0'; } /* '卯拢鈧� */
+	.icon-long-arrow-right:before { content: '\e8bf'; } /* '卯垄驴' */
+	.icon-long-arrow-up:before { content: '\e8c1'; } /* '卯拢锟� */
+	.icon-arrow-down:before { content: '\e8c2'; } /* '卯拢鈥� */
+	.icon-arrow-left:before { content: '\e8c3'; } /* '卯拢茠' */
+	.icon-arrow-right:before { content: '\e8c4'; } /* '卯拢鈥� */
+	.icon-arrow-up:before { content: '\e8c5'; } /* '卯拢鈥� */
+	.icon-hand-left:before { content: '\e8c7'; } /* '卯拢鈥� */
+	.icon-hand-up:before { content: '\e8c8'; } /* '卯拢藛' */
+	.icon-hand-down:before { content: '\e8c9'; } /* '卯拢鈥� */
+	.icon-hand-right:before { content: '\e8c6'; } /* '卯拢鈥� */
+	.icon-circle-arrow-left:before { content: '\e8ca'; } /* '卯拢艩' */
+	.icon-circle-arrow-right:before { content: '\e8cb'; } /* '卯拢鈥� */
+	.icon-circle-arrow-up:before { content: '\e8cc'; } /* '卯拢艗' */
+	.icon-circle-arrow-down:before { content: '\e8cd'; } /* '卯拢锟� */
 	.icon-repeat:before,
-	.icon-rotate-right:before { content: '\e8ce'; } /* 'î£Ž' */
+	.icon-rotate-right:before { content: '\e8ce'; } /* '卯拢沤' */
 	.icon-undo:before,
-	.icon-rotate-left:before { content: '\e8cf'; } /* 'î£�' */
-	.icon-refresh:before { content: '\e8d0'; } /* 'î£�' */
-	.icon-level-up:before { content: '\e8d1'; } /* 'î£‘' */
-	.icon-level-down:before { content: '\e8d2'; } /* 'î£’' */
-	.icon-random:before { content: '\e8d3'; } /* 'î£“' */
-	.icon-exchange:before { content: '\e8d4'; } /* 'î£”' */
+	.icon-rotate-left:before { content: '\e8cf'; } /* '卯拢锟� */
+	.icon-refresh:before { content: '\e8d0'; } /* '卯拢锟� */
+	.icon-level-up:before { content: '\e8d1'; } /* '卯拢鈥� */
+	.icon-level-down:before { content: '\e8d2'; } /* '卯拢鈥� */
+	.icon-random:before { content: '\e8d3'; } /* '卯拢鈥� */
+	.icon-exchange:before { content: '\e8d4'; } /* '卯拢鈥� */
 	.icon-toggle-down:before,
-	.icon-collapse:before { content: '\e8d5'; } /* 'î£•' */
+	.icon-collapse:before { content: '\e8d5'; } /* '卯拢鈥� */
 	.icon-toggle-up:before,
-	.icon-collapse-top:before { content: '\e8d6'; } /* 'î£–' */
+	.icon-collapse-top:before { content: '\e8d6'; } /* '卯拢鈥� */
 	.icon-toggle-right:before,
-	.icon-expand:before { content: '\e8d7'; } /* 'î£—' */
+	.icon-expand:before { content: '\e8d7'; } /* '卯拢鈥� */
 	.icon-toggle-left:before,
-	.icon-collapse-left:before { content: '\e8d8'; } /* 'î£˜' */
-	.icon-play:before { content: '\e8d9'; } /* 'î£™' */
-	.icon-play-sign:before { content: '\e8da'; } /* 'î£š' */
-	.icon-play-circle:before { content: '\e8db'; } /* 'î£›' */
-	.icon-stop:before { content: '\e8dc'; } /* 'î£œ' */
-	.icon-pause:before { content: '\e8dd'; } /* 'î£�' */
-	.icon-step-forward:before { content: '\e8de'; } /* 'î£ž' */
-	.icon-fast-forward:before { content: '\e8df'; } /* 'î£Ÿ' */
-	.icon-step-backward:before { content: '\e8e0'; } /* 'î£ ' */
-	.icon-fast-backward:before { content: '\e8e1'; } /* 'î£¡' */
-	.icon-forward:before { content: '\e8e2'; } /* 'î£¢' */
-	.icon-backward:before { content: '\e8e3'; } /* 'î££' */
-	.icon-eject:before { content: '\e8e4'; } /* 'î£¤' */
-	.icon-screenshot:before { content: '\e8e5'; } /* 'î£¥' */
-	.icon-signal:before { content: '\e8e6'; } /* 'î£¦' */
-	.icon-trophy:before { content: '\e8e7'; } /* 'î£§' */
-	.icon-desktop:before { content: '\e8e8'; } /* 'î£¨' */
-	.icon-laptop:before { content: '\e8e9'; } /* 'î£©' */
-	.icon-tablet:before { content: '\e8ea'; } /* 'î£ª' */
-	.icon-mobile-phone:before { content: '\e8eb'; } /* 'î£«' */
-	.icon-inbox:before { content: '\e8ec'; } /* 'î£¬' */
-	.icon-globe:before { content: '\e8ed'; } /* 'î£­' */
-	.icon-sun:before { content: '\e8ee'; } /* 'î£®' */
-	.icon-cloud:before { content: '\e8ef'; } /* 'î£¯' */
-	.icon-bolt:before { content: '\e8f0'; } /* 'î£°' */
-	.icon-moon:before { content: '\e8f1'; } /* 'î£±' */
-	.icon-umbrella:before { content: '\e8f2'; } /* 'î£²' */
-	.icon-plane:before { content: '\e8f3'; } /* 'î£³' */
-	.icon-fighter-jet:before { content: '\e8f4'; } /* 'î£´' */
-	.icon-leaf:before { content: '\e8f5'; } /* 'î£µ' */
-	.icon-font:before { content: '\e8f6'; } /* 'î£¶' */
-	.icon-bold:before { content: '\e8f7'; } /* 'î£·' */
-	.icon-italic:before { content: '\e8f8'; } /* 'î£¸' */
-	.icon-text-height:before { content: '\e8f9'; } /* 'î£¹' */
-	.icon-text-width:before { content: '\e8fa'; } /* 'î£º' */
-	.icon-align-left:before { content: '\e8fb'; } /* 'î£»' */
-	.icon-align-center:before { content: '\e8fc'; } /* 'î£¼' */
-	.icon-align-right:before { content: '\e8fd'; } /* 'î£½' */
-	.icon-align-justify:before { content: '\e8fe'; } /* 'î£¾' */
-	.icon-list:before { content: '\e8ff'; } /* 'î£¿' */
-	.icon-indent-left:before { content: '\e900'; } /* 'î¤€' */
-	.icon-indent-right:before { content: '\e901'; } /* 'î¤�' */
-	.icon-list-ul:before { content: '\e902'; } /* 'î¤‚' */
-	.icon-list-ol:before { content: '\e903'; } /* 'î¤ƒ' */
-	.icon-strikethrough:before { content: '\e904'; } /* 'î¤„' */
-	.icon-underline:before { content: '\e905'; } /* 'î¤…' */
-	.icon-superscript:before { content: '\e906'; } /* 'î¤†' */
-	.icon-subscript:before { content: '\e907'; } /* 'î¤‡' */
-	.icon-table:before { content: '\e908'; } /* 'î¤ˆ' */
-	.icon-columns:before { content: '\e909'; } /* 'î¤‰' */
-	.icon-crop:before { content: '\e90a'; } /* 'î¤Š' */
-	.icon-cut:before { content: '\e90b'; } /* 'î¤‹' */
-	.icon-paste:before { content: '\e90c'; } /* 'î¤Œ' */
-	.icon-briefcase:before { content: '\e90d'; } /* 'î¤�' */
-	.icon-suitcase:before { content: '\e90e'; } /* 'î¤Ž' */
-	.icon-ellipsis-horizontal:before { content: '\e90f'; } /* 'î¤�' */
-	.icon-ellipsis-vertical:before { content: '\e910'; } /* 'î¤�' */
+	.icon-collapse-left:before { content: '\e8d8'; } /* '卯拢藴' */
+	.icon-play:before { content: '\e8d9'; } /* '卯拢鈩� */
+	.icon-play-sign:before { content: '\e8da'; } /* '卯拢拧' */
+	.icon-play-circle:before { content: '\e8db'; } /* '卯拢鈥� */
+	.icon-stop:before { content: '\e8dc'; } /* '卯拢艙' */
+	.icon-pause:before { content: '\e8dd'; } /* '卯拢锟� */
+	.icon-step-forward:before { content: '\e8de'; } /* '卯拢啪' */
+	.icon-fast-forward:before { content: '\e8df'; } /* '卯拢鸥' */
+	.icon-step-backward:before { content: '\e8e0'; } /* '卯拢聽' */
+	.icon-fast-backward:before { content: '\e8e1'; } /* '卯拢隆' */
+	.icon-forward:before { content: '\e8e2'; } /* '卯拢垄' */
+	.icon-backward:before { content: '\e8e3'; } /* '卯拢拢' */
+	.icon-eject:before { content: '\e8e4'; } /* '卯拢陇' */
+	.icon-screenshot:before { content: '\e8e5'; } /* '卯拢楼' */
+	.icon-signal:before { content: '\e8e6'; } /* '卯拢娄' */
+	.icon-trophy:before { content: '\e8e7'; } /* '卯拢搂' */
+	.icon-desktop:before { content: '\e8e8'; } /* '卯拢篓' */
+	.icon-laptop:before { content: '\e8e9'; } /* '卯拢漏' */
+	.icon-tablet:before { content: '\e8ea'; } /* '卯拢陋' */
+	.icon-mobile-phone:before { content: '\e8eb'; } /* '卯拢芦' */
+	.icon-inbox:before { content: '\e8ec'; } /* '卯拢卢' */
+	.icon-globe:before { content: '\e8ed'; } /* '卯拢颅' */
+	.icon-sun:before { content: '\e8ee'; } /* '卯拢庐' */
+	.icon-cloud:before { content: '\e8ef'; } /* '卯拢炉' */
+	.icon-bolt:before { content: '\e8f0'; } /* '卯拢掳' */
+	.icon-moon:before { content: '\e8f1'; } /* '卯拢卤' */
+	.icon-umbrella:before { content: '\e8f2'; } /* '卯拢虏' */
+	.icon-plane:before { content: '\e8f3'; } /* '卯拢鲁' */
+	.icon-fighter-jet:before { content: '\e8f4'; } /* '卯拢麓' */
+	.icon-leaf:before { content: '\e8f5'; } /* '卯拢碌' */
+	.icon-font:before { content: '\e8f6'; } /* '卯拢露' */
+	.icon-bold:before { content: '\e8f7'; } /* '卯拢路' */
+	.icon-italic:before { content: '\e8f8'; } /* '卯拢赂' */
+	.icon-text-height:before { content: '\e8f9'; } /* '卯拢鹿' */
+	.icon-text-width:before { content: '\e8fa'; } /* '卯拢潞' */
+	.icon-align-left:before { content: '\e8fb'; } /* '卯拢禄' */
+	.icon-align-center:before { content: '\e8fc'; } /* '卯拢录' */
+	.icon-align-right:before { content: '\e8fd'; } /* '卯拢陆' */
+	.icon-align-justify:before { content: '\e8fe'; } /* '卯拢戮' */
+	.icon-list:before { content: '\e8ff'; } /* '卯拢驴' */
+	.icon-indent-left:before { content: '\e900'; } /* '卯陇鈧� */
+	.icon-indent-right:before { content: '\e901'; } /* '卯陇锟� */
+	.icon-list-ul:before { content: '\e902'; } /* '卯陇鈥� */
+	.icon-list-ol:before { content: '\e903'; } /* '卯陇茠' */
+	.icon-strikethrough:before { content: '\e904'; } /* '卯陇鈥� */
+	.icon-underline:before { content: '\e905'; } /* '卯陇鈥� */
+	.icon-superscript:before { content: '\e906'; } /* '卯陇鈥� */
+	.icon-subscript:before { content: '\e907'; } /* '卯陇鈥� */
+	.icon-table:before { content: '\e908'; } /* '卯陇藛' */
+	.icon-columns:before { content: '\e909'; } /* '卯陇鈥� */
+	.icon-crop:before { content: '\e90a'; } /* '卯陇艩' */
+	.icon-cut:before { content: '\e90b'; } /* '卯陇鈥� */
+	.icon-paste:before { content: '\e90c'; } /* '卯陇艗' */
+	.icon-briefcase:before { content: '\e90d'; } /* '卯陇锟� */
+	.icon-suitcase:before { content: '\e90e'; } /* '卯陇沤' */
+	.icon-ellipsis-horizontal:before { content: '\e90f'; } /* '卯陇锟� */
+	.icon-ellipsis-vertical:before { content: '\e910'; } /* '卯陇锟� */
 	.icon-power-off:before,
-	.icon-off:before { content: '\e911'; } /* 'î¤‘' */
-	.icon-road:before { content: '\e912'; } /* 'î¤’' */
-	.icon-list-alt:before { content: '\e913'; } /* 'î¤“' */
-	.icon-qrcode:before { content: '\e914'; } /* 'î¤”' */
-	.icon-barcode:before { content: '\e915'; } /* 'î¤•' */
-	.icon-book:before { content: '\e916'; } /* 'î¤–' */
-	.icon-adjust:before { content: '\e917'; } /* 'î¤—' */
-	.icon-tint:before { content: '\e918'; } /* 'î¤˜' */
-	.icon-check:before { content: '\e919'; } /* 'î¤™' */
+	.icon-off:before { content: '\e911'; } /* '卯陇鈥� */
+	.icon-road:before { content: '\e912'; } /* '卯陇鈥� */
+	.icon-list-alt:before { content: '\e913'; } /* '卯陇鈥� */
+	.icon-qrcode:before { content: '\e914'; } /* '卯陇鈥� */
+	.icon-barcode:before { content: '\e915'; } /* '卯陇鈥� */
+	.icon-book:before { content: '\e916'; } /* '卯陇鈥� */
+	.icon-adjust:before { content: '\e917'; } /* '卯陇鈥� */
+	.icon-tint:before { content: '\e918'; } /* '卯陇藴' */
+	.icon-check:before { content: '\e919'; } /* '卯陇鈩� */
 	.icon-unchecked:before,
-	.icon-check-empty:before { content: '\e91a'; } /* 'î¤š' */
-	.icon-circle:before { content: '\e91b'; } /* 'î¤›' */
-	.icon-circle-blank:before { content: '\e91c'; } /* 'î¤œ' */
-	.icon-dot-circled:before { content: '\e91d'; } /* 'î¤�' */
-	.icon-asterisk:before { content: '\e91e'; } /* 'î¤ž' */
-	.icon-gift:before { content: '\e91f'; } /* 'î¤Ÿ' */
-	.icon-fire-1:before { content: '\e920'; } /* 'î¤ ' */
-	.icon-magnet:before { content: '\e921'; } /* 'î¤¡' */
-	.icon-bar-chart:before { content: '\e922'; } /* 'î¤¢' */
-	.icon-ticket:before { content: '\e923'; } /* 'î¤£' */
-	.icon-credit-card:before { content: '\e924'; } /* 'î¤¤' */
-	.icon-save:before { content: '\e925'; } /* 'î¤¥' */
-	.icon-bullhorn:before { content: '\e926'; } /* 'î¤¦' */
-	.icon-hdd:before { content: '\e927'; } /* 'î¤§' */
-	.icon-key:before { content: '\e928'; } /* 'î¤¨' */
-	.icon-code-fork:before { content: '\e929'; } /* 'î¤©' */
-	.icon-rocket:before { content: '\e92a'; } /* 'î¤ª' */
-	.icon-bug:before { content: '\e92b'; } /* 'î¤«' */
-	.icon-certificate:before { content: '\e92c'; } /* 'î¤¬' */
-	.icon-tasks:before { content: '\e92d'; } /* 'î¤­' */
-	.icon-filter:before { content: '\e92e'; } /* 'î¤®' */
-	.icon-beaker:before { content: '\e92f'; } /* 'î¤¯' */
-	.icon-magic:before { content: '\e930'; } /* 'î¤°' */
-	.icon-money:before { content: '\e932'; } /* 'î¤²' */
+	.icon-check-empty:before { content: '\e91a'; } /* '卯陇拧' */
+	.icon-circle:before { content: '\e91b'; } /* '卯陇鈥� */
+	.icon-circle-blank:before { content: '\e91c'; } /* '卯陇艙' */
+	.icon-dot-circled:before { content: '\e91d'; } /* '卯陇锟� */
+	.icon-asterisk:before { content: '\e91e'; } /* '卯陇啪' */
+	.icon-gift:before { content: '\e91f'; } /* '卯陇鸥' */
+	.icon-fire-1:before { content: '\e920'; } /* '卯陇聽' */
+	.icon-magnet:before { content: '\e921'; } /* '卯陇隆' */
+	.icon-bar-chart:before { content: '\e922'; } /* '卯陇垄' */
+	.icon-ticket:before { content: '\e923'; } /* '卯陇拢' */
+	.icon-credit-card:before { content: '\e924'; } /* '卯陇陇' */
+	.icon-save:before { content: '\e925'; } /* '卯陇楼' */
+	.icon-bullhorn:before { content: '\e926'; } /* '卯陇娄' */
+	.icon-hdd:before { content: '\e927'; } /* '卯陇搂' */
+	.icon-key:before { content: '\e928'; } /* '卯陇篓' */
+	.icon-code-fork:before { content: '\e929'; } /* '卯陇漏' */
+	.icon-rocket:before { content: '\e92a'; } /* '卯陇陋' */
+	.icon-bug:before { content: '\e92b'; } /* '卯陇芦' */
+	.icon-certificate:before { content: '\e92c'; } /* '卯陇卢' */
+	.icon-tasks:before { content: '\e92d'; } /* '卯陇颅' */
+	.icon-filter:before { content: '\e92e'; } /* '卯陇庐' */
+	.icon-beaker:before { content: '\e92f'; } /* '卯陇炉' */
+	.icon-magic:before { content: '\e930'; } /* '卯陇掳' */
+	.icon-money:before { content: '\e932'; } /* '卯陇虏' */
 	.icon-eur:before,
-	.icon-euro:before { content: '\e933'; } /* 'î¤³' */
+	.icon-euro:before { content: '\e933'; } /* '卯陇鲁' */
 	.icon-gbp:before,
-	.icon-pound:before { content: '\e934'; } /* 'î¤´' */
+	.icon-pound:before { content: '\e934'; } /* '卯陇麓' */
 	.icon-usd:before,
-	.icon-dollar:before { content: '\e935'; } /* 'î¤µ' */
+	.icon-dollar:before { content: '\e935'; } /* '卯陇碌' */
 	.icon-inr:before,
-	.icon-rupee:before { content: '\e936'; } /* 'î¤¶' */
+	.icon-rupee:before { content: '\e936'; } /* '卯陇露' */
 	.icon-renminbi:before,
 	.icon-rmb:before,
 	.icon-cny:before,
 	.icon-jpy:before,
-	.icon-yen:before { content: '\e937'; } /* 'î¤·' */
+	.icon-yen:before { content: '\e937'; } /* '卯陇路' */
 	.icon-ruble:before,
 	.icon-rouble:before,
-	.icon-rub:before { content: '\e938'; } /* 'î¤¸' */
+	.icon-rub:before { content: '\e938'; } /* '卯陇赂' */
 	.icon-turkish-lira:before,
-	.icon-try:before { content: '\e939'; } /* 'î¤¹' */
+	.icon-try:before { content: '\e939'; } /* '卯陇鹿' */
 	.icon-krw:before,
-	.icon-won:before { content: '\e93a'; } /* 'î¤º' */
+	.icon-won:before { content: '\e93a'; } /* '卯陇潞' */
 	.icon-btc:before,
-	.icon-bitcoin:before { content: '\e93b'; } /* 'î¤»' */
-	.icon-sort:before { content: '\e93c'; } /* 'î¤¼' */
-	.icon-sort-down:before { content: '\e93d'; } /* 'î¤½' */
-	.icon-sort-up:before { content: '\e93e'; } /* 'î¤¾' */
-	.icon-sort-by-attributes:before { content: '\e93f'; } /* 'î¤¿' */
-	.icon-sort-by-attributes-alt:before { content: '\e940'; } /* 'î¥€' */
-	.icon-sort-by-alphabet:before { content: '\e941'; } /* 'î¥�' */
-	.icon-sort-by-alphabet-alt:before { content: '\e942'; } /* 'î¥‚' */
-	.icon-sort-by-order:before { content: '\e943'; } /* 'î¥ƒ' */
-	.icon-sort-by-order-alt:before { content: '\e944'; } /* 'î¥„' */
-	.icon-legal:before { content: '\e945'; } /* 'î¥…' */
-	.icon-dashboard:before { content: '\e946'; } /* 'î¥†' */
-	.icon-sitemap:before { content: '\e947'; } /* 'î¥‡' */
-	.icon-spinner:before { content: '\e948'; } /* 'î¥ˆ' */
-	.icon-coffee:before { content: '\e949'; } /* 'î¥‰' */
-	.icon-food:before { content: '\e94a'; } /* 'î¥Š' */
-	.icon-beer:before { content: '\e94b'; } /* 'î¥‹' */
-	.icon-user-md:before { content: '\e94c'; } /* 'î¥Œ' */
-	.icon-stethoscope:before { content: '\e94d'; } /* 'î¥�' */
-	.icon-medkit:before { content: '\e94f'; } /* 'î¥�' */
-	.icon-h-sigh:before { content: '\e950'; } /* 'î¥�' */
-	.icon-hospital:before { content: '\e951'; } /* 'î¥‘' */
-	.icon-building:before { content: '\e952'; } /* 'î¥’' */
-	.icon-smile:before { content: '\e953'; } /* 'î¥“' */
-	.icon-frown:before { content: '\e954'; } /* 'î¥”' */
-	.icon-meh:before { content: '\e955'; } /* 'î¥•' */
-	.icon-anchor:before { content: '\e956'; } /* 'î¥–' */
-	.icon-terminal:before { content: '\e957'; } /* 'î¥—' */
-	.icon-eraser:before { content: '\e958'; } /* 'î¥˜' */
-	.icon-puzzle-piece:before { content: '\e959'; } /* 'î¥™' */
-	.icon-shield:before { content: '\e95a'; } /* 'î¥š' */
-	.icon-fire-extinguisher:before { content: '\e95b'; } /* 'î¥›' */
-	.icon-bullseye:before { content: '\e95c'; } /* 'î¥œ' */
-	.icon-wheelchair:before { content: '\e95d'; } /* 'î¥�' */
-	.icon-adn:before { content: '\e95e'; } /* 'î¥ž' */
-	.icon-android:before { content: '\e95f'; } /* 'î¥Ÿ' */
-	.icon-apple:before { content: '\e960'; } /* 'î¥ ' */
-	.icon-bitbucket:before { content: '\e961'; } /* 'î¥¡' */
-	.icon-bitbucket-squared:before { content: '\e962'; } /* 'î¥¢' */
-	.icon-css3:before { content: '\e963'; } /* 'î¥£' */
-	.icon-dribbble:before { content: '\e964'; } /* 'î¥¤' */
-	.icon-dropbox:before { content: '\e965'; } /* 'î¥¥' */
-	.icon-facebook:before { content: '\e966'; } /* 'î¥¦' */
-	.icon-facebook-squared:before { content: '\e967'; } /* 'î¥§' */
-	.icon-flickr:before { content: '\e968'; } /* 'î¥¨' */
-	.icon-foursquare:before { content: '\e969'; } /* 'î¥©' */
-	.icon-github:before { content: '\e96a'; } /* 'î¥ª' */
-	.icon-github-squared:before { content: '\e96b'; } /* 'î¥«' */
-	.icon-github-circled:before { content: '\e96c'; } /* 'î¥¬' */
-	.icon-gittip:before { content: '\e96d'; } /* 'î¥­' */
-	.icon-gplus-squared:before { content: '\e96e'; } /* 'î¥®' */
-	.icon-gplus:before { content: '\e96f'; } /* 'î¥¯' */
-	.icon-html5:before { content: '\e970'; } /* 'î¥°' */
-	.icon-instagramm:before { content: '\e971'; } /* 'î¥±' */
-	.icon-linkedin-squared:before { content: '\e972'; } /* 'î¥²' */
-	.icon-linux:before { content: '\e973'; } /* 'î¥³' */
-	.icon-linkedin:before { content: '\e974'; } /* 'î¥´' */
-	.icon-maxcdn:before { content: '\e975'; } /* 'î¥µ' */
-	.icon-pagelines:before { content: '\e976'; } /* 'î¥¶' */
-	.icon-pinterest-circled:before { content: '\e977'; } /* 'î¥·' */
-	.icon-pinterest-squared:before { content: '\e978'; } /* 'î¥¸' */
-	.icon-renren:before { content: '\e979'; } /* 'î¥¹' */
-	.icon-skype:before { content: '\e97a'; } /* 'î¥º' */
-	.icon-stackexchange:before { content: '\e97b'; } /* 'î¥»' */
-	.icon-stackoverflow:before { content: '\e97c'; } /* 'î¥¼' */
-	.icon-trello:before { content: '\e97d'; } /* 'î¥½' */
-	.icon-tumblr:before { content: '\e97e'; } /* 'î¥¾' */
-	.icon-tumblr-squared:before { content: '\e97f'; } /* 'î¥¿' */
-	.icon-twitter-squared:before { content: '\e980'; } /* 'î¦€' */
-	.icon-twitter:before { content: '\e981'; } /* 'î¦�' */
-	.icon-vimeo-squared:before { content: '\e982'; } /* 'î¦‚' */
-	.icon-vkontakte:before { content: '\e983'; } /* 'î¦ƒ' */
-	.icon-weibo:before { content: '\e984'; } /* 'î¦„' */
-	.icon-windows:before { content: '\e985'; } /* 'î¦…' */
-	.icon-xing:before { content: '\e986'; } /* 'î¦†' */
-	.icon-xing-squared:before { content: '\e987'; } /* 'î¦‡' */
-	.icon-youtube:before { content: '\e988'; } /* 'î¦ˆ' */
-	.icon-youtube-squared:before { content: '\e989'; } /* 'î¦‰' */
-	.icon-youtube-play:before { content: '\e98a'; } /* 'î¦Š' */
-	.icon-sign-blank:before { content: '\e98b'; } /* 'î¦‹' */
-	.icon-left-circled2:before { content: '\e8a8'; } /* 'î¢¨' */
-	.icon-right-circled2:before { content: '\e8a9'; } /* 'î¢©' */
+	.icon-bitcoin:before { content: '\e93b'; } /* '卯陇禄' */
+	.icon-sort:before { content: '\e93c'; } /* '卯陇录' */
+	.icon-sort-down:before { content: '\e93d'; } /* '卯陇陆' */
+	.icon-sort-up:before { content: '\e93e'; } /* '卯陇戮' */
+	.icon-sort-by-attributes:before { content: '\e93f'; } /* '卯陇驴' */
+	.icon-sort-by-attributes-alt:before { content: '\e940'; } /* '卯楼鈧� */
+	.icon-sort-by-alphabet:before { content: '\e941'; } /* '卯楼锟� */
+	.icon-sort-by-alphabet-alt:before { content: '\e942'; } /* '卯楼鈥� */
+	.icon-sort-by-order:before { content: '\e943'; } /* '卯楼茠' */
+	.icon-sort-by-order-alt:before { content: '\e944'; } /* '卯楼鈥� */
+	.icon-legal:before { content: '\e945'; } /* '卯楼鈥� */
+	.icon-dashboard:before { content: '\e946'; } /* '卯楼鈥� */
+	.icon-sitemap:before { content: '\e947'; } /* '卯楼鈥� */
+	.icon-spinner:before { content: '\e948'; } /* '卯楼藛' */
+	.icon-coffee:before { content: '\e949'; } /* '卯楼鈥� */
+	.icon-food:before { content: '\e94a'; } /* '卯楼艩' */
+	.icon-beer:before { content: '\e94b'; } /* '卯楼鈥� */
+	.icon-user-md:before { content: '\e94c'; } /* '卯楼艗' */
+	.icon-stethoscope:before { content: '\e94d'; } /* '卯楼锟� */
+	.icon-medkit:before { content: '\e94f'; } /* '卯楼锟� */
+	.icon-h-sigh:before { content: '\e950'; } /* '卯楼锟� */
+	.icon-hospital:before { content: '\e951'; } /* '卯楼鈥� */
+	.icon-building:before { content: '\e952'; } /* '卯楼鈥� */
+	.icon-smile:before { content: '\e953'; } /* '卯楼鈥� */
+	.icon-frown:before { content: '\e954'; } /* '卯楼鈥� */
+	.icon-meh:before { content: '\e955'; } /* '卯楼鈥� */
+	.icon-anchor:before { content: '\e956'; } /* '卯楼鈥� */
+	.icon-terminal:before { content: '\e957'; } /* '卯楼鈥� */
+	.icon-eraser:before { content: '\e958'; } /* '卯楼藴' */
+	.icon-puzzle-piece:before { content: '\e959'; } /* '卯楼鈩� */
+	.icon-shield:before { content: '\e95a'; } /* '卯楼拧' */
+	.icon-fire-extinguisher:before { content: '\e95b'; } /* '卯楼鈥� */
+	.icon-bullseye:before { content: '\e95c'; } /* '卯楼艙' */
+	.icon-wheelchair:before { content: '\e95d'; } /* '卯楼锟� */
+	.icon-adn:before { content: '\e95e'; } /* '卯楼啪' */
+	.icon-android:before { content: '\e95f'; } /* '卯楼鸥' */
+	.icon-apple:before { content: '\e960'; } /* '卯楼聽' */
+	.icon-bitbucket:before { content: '\e961'; } /* '卯楼隆' */
+	.icon-bitbucket-squared:before { content: '\e962'; } /* '卯楼垄' */
+	.icon-css3:before { content: '\e963'; } /* '卯楼拢' */
+	.icon-dribbble:before { content: '\e964'; } /* '卯楼陇' */
+	.icon-dropbox:before { content: '\e965'; } /* '卯楼楼' */
+	.icon-facebook:before { content: '\e966'; } /* '卯楼娄' */
+	.icon-facebook-squared:before { content: '\e967'; } /* '卯楼搂' */
+	.icon-flickr:before { content: '\e968'; } /* '卯楼篓' */
+	.icon-foursquare:before { content: '\e969'; } /* '卯楼漏' */
+	.icon-github:before { content: '\e96a'; } /* '卯楼陋' */
+	.icon-github-squared:before { content: '\e96b'; } /* '卯楼芦' */
+	.icon-github-circled:before { content: '\e96c'; } /* '卯楼卢' */
+	.icon-gittip:before { content: '\e96d'; } /* '卯楼颅' */
+	.icon-gplus-squared:before { content: '\e96e'; } /* '卯楼庐' */
+	.icon-gplus:before { content: '\e96f'; } /* '卯楼炉' */
+	.icon-html5:before { content: '\e970'; } /* '卯楼掳' */
+	.icon-instagramm:before { content: '\e971'; } /* '卯楼卤' */
+	.icon-linkedin-squared:before { content: '\e972'; } /* '卯楼虏' */
+	.icon-linux:before { content: '\e973'; } /* '卯楼鲁' */
+	.icon-linkedin:before { content: '\e974'; } /* '卯楼麓' */
+	.icon-maxcdn:before { content: '\e975'; } /* '卯楼碌' */
+	.icon-pagelines:before { content: '\e976'; } /* '卯楼露' */
+	.icon-pinterest-circled:before { content: '\e977'; } /* '卯楼路' */
+	.icon-pinterest-squared:before { content: '\e978'; } /* '卯楼赂' */
+	.icon-renren:before { content: '\e979'; } /* '卯楼鹿' */
+	.icon-skype:before { content: '\e97a'; } /* '卯楼潞' */
+	.icon-stackexchange:before { content: '\e97b'; } /* '卯楼禄' */
+	.icon-stackoverflow:before { content: '\e97c'; } /* '卯楼录' */
+	.icon-trello:before { content: '\e97d'; } /* '卯楼陆' */
+	.icon-tumblr:before { content: '\e97e'; } /* '卯楼戮' */
+	.icon-tumblr-squared:before { content: '\e97f'; } /* '卯楼驴' */
+	.icon-twitter-squared:before { content: '\e980'; } /* '卯娄鈧� */
+	.icon-twitter:before { content: '\e981'; } /* '卯娄锟� */
+	.icon-vimeo-squared:before { content: '\e982'; } /* '卯娄鈥� */
+	.icon-vkontakte:before { content: '\e983'; } /* '卯娄茠' */
+	.icon-weibo:before { content: '\e984'; } /* '卯娄鈥� */
+	.icon-windows:before { content: '\e985'; } /* '卯娄鈥� */
+	.icon-xing:before { content: '\e986'; } /* '卯娄鈥� */
+	.icon-xing-squared:before { content: '\e987'; } /* '卯娄鈥� */
+	.icon-youtube:before { content: '\e988'; } /* '卯娄藛' */
+	.icon-youtube-squared:before { content: '\e989'; } /* '卯娄鈥� */
+	.icon-youtube-play:before { content: '\e98a'; } /* '卯娄艩' */
+	.icon-sign-blank:before { content: '\e98b'; } /* '卯娄鈥� */
+	.icon-left-circled2:before { content: '\e8a8'; } /* '卯垄篓' */
+	.icon-right-circled2:before { content: '\e8a9'; } /* '卯垄漏' */
 
 /* PANELS */
 /* ------------------------------------------------------ */
@@ -1088,7 +1088,7 @@ a [class*=" icon-"] { display: inline; } */
 	/* Increase bottom border of site-nav when sub-navigation is present */
 	.site-nav.sub-nav { border-bottom: 32px solid #DDD; }
 
-/* â†“â†“ jQuery tabs code doesn't really fit here... move to module tabs? Its own section?? */
+/* 芒鈥犫�芒鈥犫� jQuery tabs code doesn't really fit here... move to module tabs? Its own section?? */
 .ui-tabs{ position: relative; padding: 0; font-size: 1em; zoom: 1; }
 
 .ui-tabs .ui-tabs-nav{ margin-bottom: 0; padding: 0; }
@@ -1107,7 +1107,7 @@ a [class*=" icon-"] { display: inline; } */
 
 .site-nav .ui-tabs-nav li a{ font-weight: bold; color: #FFF; text-transform: uppercase; }
 .site-nav .ui-tabs-nav li a:hover{ color: #e5e5e5; -webkit-transition: color .15s ease-in-out; -moz-transition: color .15s ease-in-out; -o-transition: color .15s ease-in-out; }
-/* â†‘â†‘ jQuery tabs code doesn't really fit here... move to module tabs? Its own section?? */
+/* 芒鈥犫�芒鈥犫� jQuery tabs code doesn't really fit here... move to module tabs? Its own section?? */
 
 .site-nav ul{ position: relative; height: 30px; margin: 0; line-height: 1; }
 .site-nav li{ float: left; margin: 0; }
@@ -1989,7 +1989,7 @@ input[type="submit"].postfix{ height: 28px; }
 .ui-dialog-xlarge{ width: 800px !important; max-width: 800px; }
 
 #jquery-loader-background{ background-color: #000; }
-#jquery-loader.black-with-image{ padding-top: 35px; text-align: center; background: url(../images/ajax-loader-white.gif) no-repeat center #000; z-index: 15; border-radius: 5px; opacity: 0.9; }
+#jquery-loader.black-with-image{ padding-top: 35px; text-align: center; background: url(../images/ajax-loader-large-white.gif) no-repeat center #000; z-index: 15; border-radius: 5px; opacity: 0.9; }
 .load-text{ background: #000; padding: 5px 15px 15px; margin-top: 28px; color: #ccc; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; }
 
 .ui-widget-overlay{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; opacity: .8; }

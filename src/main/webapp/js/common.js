@@ -15,6 +15,7 @@ Common.prototype.loadAjaxLoader = function(message) {
 Common.prototype.closeAjaxLoader = function() {
 	$.loader("close");
 };
+
 $(function() {
 	
 	Messenger.options = {

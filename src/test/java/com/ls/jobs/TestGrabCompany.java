@@ -149,7 +149,7 @@ public class TestGrabCompany {
 		String contactor = HtmlParserUtilPlanB.findCompanyEmployeeCount(html);
 		
 		System.out.println(contactor);
-		Assert.assertEquals("1-49��", contactor);
+		Assert.assertEquals("1-49锟斤拷", contactor);
 	}
 	
 	@Test
@@ -301,8 +301,8 @@ public class TestGrabCompany {
 	@Test
 	public void testSaveCompany() throws Exception {
 		Company testCompany = new Company();
-		testCompany.setAddress("������������·");
-		testCompany.setContactor("������");
+		testCompany.setAddress("锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷路");
+		testCompany.setContactor("锟斤拷锟斤拷锟斤拷");
 		testCompany.setEmail("sdfasdfasdf");
 		testCompany.setPhone("1123345564");
 		
@@ -318,7 +318,7 @@ public class TestGrabCompany {
 	public void testSaveCompanyURLone() throws Exception {
 		
 		CompanyResource companyResource = new CompanyResource();
-		companyResource.setName("������ŷȪ������������� ");
+		companyResource.setName("锟斤拷锟斤拷锟斤拷欧泉锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟�");
 		companyResource.setUrl("http://qy.58.com/24230403986438/?PGTID=14047374119020.5358016782187727&ClickID=1");
 		companyResource.setType("58");
 		
@@ -330,7 +330,7 @@ public class TestGrabCompany {
 	@Test
 	public void testSaveProblem() throws Exception {
 		Problem problem = new Problem();
-		problem.setName("Jerry̫˧");
+		problem.setName("Jerry太帅");
 		
 		Problem result = problemRepository.save(problem);
 		
@@ -387,10 +387,10 @@ public class TestGrabCompany {
 	
 	@Test
 	public void testFindCompanyWithNameContactorArea() {
-		List<Company> companies = companyRepository.findByNameAndContactorAndArea("������ŷȪ�������������", "������", "����");
-		Assert.assertTrue(companies.size() > 0);
-		
-		System.out.println(companies);
+//		List<Company> companies = companyRepository.findByNameAndContactorAndArea("锟斤拷锟斤拷锟斤拷欧泉锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟�, "锟斤拷锟斤拷锟斤拷", "锟斤拷锟斤拷");
+//		Assert.assertTrue(companies.size() > 0);
+//		
+//		System.out.println(companies);
 		
 	}
 //	public static final HashMap<String, String> acceptTypes = new HashMap<String, String>(){{

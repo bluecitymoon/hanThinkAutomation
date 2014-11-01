@@ -55,7 +55,7 @@
 										<label>每天的抓取截止时间</label> <input type="text" data-bind="value : stop" />
 									</div>
 									<div class="two columns">
-										<label>间隔(Hour)</label> <input type="text" class="required" data-bind="value : interval" />
+										<label>间隔(Hour)</label> <input type="text" class="required" data-bind="value : restartInHours" />
 									</div>
 								</div>
 								<div class="row">
@@ -71,7 +71,7 @@
 										<label>登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
 									</div>
 									<div class="six columns">
-										<label>登陆密码</label> <input type="password" class="required" data-bind="value : password" />
+										<label>登陆密码</label> <input type="text" class="required" data-bind="value : password" />
 									</div>
 								</div>
 								<div class="row">
@@ -116,8 +116,10 @@
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
 	<script>
 		$(document).ready(function() {
+			
 			$('#grabForm').validate({});
 			$('#jobForm').validate({});
+			
 			var Job = function() {
 				var self = this;
 				self.status = '';
@@ -125,7 +127,7 @@
 				self.clientIp = '';
 				self.start = '';
 				self.stop = '';
-				self.interval = '';
+				self.restartInHours = '';
 				self.lastGrabStart = '';
 				self.lastGrabEnd = '';
 				self.username = '';
@@ -139,11 +141,40 @@
 				self.job = ko.observable(new Job());
 				self.manuallyStart = ko.observable('');
 				self.manuallyStop = ko.observable('');
+				
+				self.reloadConfiguration = function() {
+					$.ajax({
+						url : '/ls/readConfiguration.ls',
+						success : function(data) {
+							
+							self.job(data);
+							
+							Messenger().post("已成功加载配置数据。");
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown) {
+								console.debug(XMLHttpRequest);
+						}
+					});
+				};
+				
+				self.reloadConfiguration();
+				
 				self.save = function(item, event) {
 					
-					
 					if ($('#jobForm').valid()) {
-						
+						$.ajax({
+							method : 'post',
+							data : {
+								job : JSON.stringify(self.job())
+							},
+							url : '/ls/saveAutomaticJob.ls',
+							success : function(data) {
+								Messenger().post("配置信息已经成功保存！");
+							},
+							error : function(XMLHttpRequest, textStatus, errorThrown) {
+								Messenger().post("啊？！出错了，赶紧去联系管理员吧。");
+							}
+						});
 					} else {
 						
 						Messenger().post({
@@ -164,9 +195,11 @@
 							url : '/ls/startManually.ls',
 							success : function(data) {
 								Messenger().post("已成功抓取！");
+								self.reloadConfiguration();
+								
 							},
-							error : function() {
-
+							error : function(XMLHttpRequest, textStatus, errorThrown) {
+								Messenger().post("抓取失败！");
 							}
 						});
 					}
@@ -182,6 +215,12 @@
 
 			var model = new ConfigurationModel();
 			ko.applyBindings(model);
+			
+			$(document).ajaxStart(function(){
+				 Common.prototype.loadAjaxLoader("操作正在执行，请耐心等候！");
+	         }).ajaxStop(function(){
+	        	 Common.prototype.closeAjaxLoader();
+	         });
 
 		});
 	</script>

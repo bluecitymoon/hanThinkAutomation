@@ -29,7 +29,9 @@ public class AutomaticJob implements Serializable {
 	protected String username;
 	protected String password;
 	protected String status;
-	protected String interval;
+	protected Integer restartInHours;
+	protected Boolean locked;
+	
 	public Integer getId() {
 	
 		return id;
@@ -151,14 +153,20 @@ public class AutomaticJob implements Serializable {
 		this.status = status;
 	}
 
-	public String getInterval() {
-	
-		return interval;
+	public Integer getRestartInHours() {
+		return restartInHours;
 	}
-	
-	public void setInterval(String interval) {
-	
-		this.interval = interval;
+
+	public void setRestartInHours(Integer restartInHours) {
+		this.restartInHours = restartInHours;
+	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 
 }

@@ -213,33 +213,38 @@ public class HtmlParserUtilPlanB {
 					}
 					
 					//parse product detail
-					TableTag productTableTag = (TableTag) findNodeById(orderPage, "row");
-					TableRow[] rows = productTableTag.getRows();
-					List<Map<String, String>> productMaps = new ArrayList<Map<String,String>>();
-					List<String> headersList = new ArrayList<String>();
+					Node productTableTagNode =  findNodeById(orderPage, "row");
 					
-					for (TableRow tableRow : rows) {
+					if (productTableTagNode != null) {
+						TableTag productTableTag = (TableTag) productTableTagNode;
 						
-						TableColumn[] columns = tableRow.getColumns();
-						if (columns.length == 0) {
-							TableHeader[] headers = tableRow.getHeaders();
-							for (int i = 0; i < headers.length; i++) {
-								headersList.add(headers[i].getStringText().trim());
+						TableRow[] rows = productTableTag.getRows();
+						
+						List<Map<String, String>> productMaps = new ArrayList<Map<String, String>>();
+						List<String> headersList = new ArrayList<String>();
+
+						for (TableRow tableRow : rows) {
+
+							TableColumn[] columns = tableRow.getColumns();
+							if (columns.length == 0) {
+								TableHeader[] headers = tableRow.getHeaders();
+								for (int i = 0; i < headers.length; i++) {
+									headersList.add(headers[i].getStringText().trim());
+								}
+
+							} else {
+								Map<String, String> dataMap = new HashMap<String, String>();
+								for (int i = 0; i < columns.length; i++) {
+									TableColumn tableColumn = columns[i];
+									dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
+								}
+
+								productMaps.add(dataMap);
 							}
-							
-						} else {
-							Map<String, String> dataMap = new HashMap<String, String>();
-							for (int i = 0; i < columns.length; i++) {
-								TableColumn tableColumn = columns[i];
-								dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
-							}
-							
-							productMaps.add(dataMap);
 						}
+
+						order.setOrdersItemList(productMaps);
 					}
-					
-					order.setOrdersItemList(productMaps);
-					
 				}
 			};
 

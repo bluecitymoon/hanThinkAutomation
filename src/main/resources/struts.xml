@@ -127,8 +127,26 @@
 			<result name="success" type="json">
 				<param name="root">orders</param>
 			</result>
+			<result name="error" type="json">
+				<param name="root">actionErrors</param>
+			</result>
 		</action>
-		
+		<action name="saveAutomaticJob" class="auchanAction" method="saveAutomaticJob">
+			<result name="success" type="json">
+				<param name="root">automaticJob</param>
+			</result>
+			<result name="error" type="json">
+				<param name="root">actionErrors</param>
+			</result>
+		</action>
+		<action name="readConfiguration" class="auchanAction" method="readConfiguration">
+			<result name="success" type="json">
+				<param name="root">automaticJob</param>
+			</result>
+			<result name="error" type="json">
+				<param name="root">actionErrors</param>
+			</result>
+		</action>
 	</package>
 
 	<include file="data-struts.xml" />
