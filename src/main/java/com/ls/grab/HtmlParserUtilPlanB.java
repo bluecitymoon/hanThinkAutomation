@@ -49,15 +49,15 @@ public class HtmlParserUtilPlanB {
 		// e.printStackTrace();
 		// }
 	}
-	
+
 	public static Div findFirstOneWithClassName(String html, final String className) {
 		Node[] nodes = null;
 		try {
 			Parser htmlParser = new Parser();
 			htmlParser.setInputHTML(html);
-			
+
 			nodes = htmlParser.extractAllNodesThatMatch(new NodeFilter() {
-				
+
 				public boolean accept(Node node) {
 					if (node instanceof Div && StringUtils.isNotBlank(((Div) node).getAttribute("class")) && ((Div) node).getAttribute("class").equalsIgnoreCase(className)) {
 						return true;
@@ -65,18 +65,18 @@ public class HtmlParserUtilPlanB {
 					return false;
 				}
 			}).toNodeArray();
-			
+
 		} catch (ParserException e) {
 			return null;
 		}
-		
+
 		if (nodes != null && nodes.length > 0) {
 			return (Div) nodes[0];
 		}
-		
+
 		return null;
 	}
-	
+
 	public static List<Company> findPagedCompanyList(String wholeCityPageHTML) {
 
 		final List<Company> companyList = new ArrayList<Company>();
@@ -98,26 +98,26 @@ public class HtmlParserUtilPlanB {
 						Company company = new Company();
 						company.setName(StringUtils.trimToEmpty(tag.getAttribute("title")));
 						company.setfEurl(tag.getAttribute("href"));
-						
+
 						Node nodeLink = linkTag.getParent().getParent();
-						
+
 						Node[] nodes = nodeLink.getChildren().toNodeArray();
-						
+
 						for (int i = 0; i < nodes.length; i++) {
 							Node node = nodes[i];
-							
+
 							if (node instanceof DefinitionListBullet) {
-								
+
 								DefinitionListBullet nodeTranslated = (DefinitionListBullet) node;
 								String className = nodeTranslated.getAttribute("class");
-								if (className!= null && className.equals("w96")) {
+								if (className != null && className.equals("w96")) {
 									company.setArea(nodeTranslated.getStringText());
 								}
-								if (className!= null && className.equals("w68")) {
+								if (className != null && className.equals("w68")) {
 									company.setPublishDate(nodeTranslated.getStringText());
 								}
 							}
-							
+
 						}
 						companyList.add(company);
 					}
@@ -170,94 +170,88 @@ public class HtmlParserUtilPlanB {
 
 		return orderList;
 	}
-	
-	public static Orders parseOrder(final String orderPage) {
+
+	public static Orders parseOrder(final String orderPage) throws ParserException {
 
 		final Orders order = new Orders();
 		final Map<String, String> headersMap = new HashMap<String, String>();
 		order.setOrderTitleMap(headersMap);
-		try {
 
-			Parser htmlParser = new Parser();
-			htmlParser.setInputHTML(orderPage);
+		Parser htmlParser = new Parser();
+		htmlParser.setInputHTML(orderPage);
 
-			NodeVisitor nodeVisitor = new NodeVisitor() {
+		NodeVisitor nodeVisitor = new NodeVisitor() {
 
-				@Override
-				public void visitTag(Tag tag) {
+			@Override
+			public void visitTag(Tag tag) {
 
-					super.visitTag(tag);
-					
-					//parse title
-					TableTag titleTableTag = (TableTag) findNodeById(orderPage, "hide_table");
-					
-					Node[] trs = titleTableTag.getChildrenAsNodeArray();
-					
-					for (Node node : trs) {
-						if (node instanceof TableRow) {
-							TableRow row = (TableRow)node;
-							//every row has 4 td, name to value
-							Node[] tds = row.getChildrenAsNodeArray();
-							List<TableColumn> celList = new ArrayList<TableColumn>();
-							
-							for (int i = 0; i < tds.length; i++) {
-								if (tds[i] instanceof TableColumn) {
-									celList.add((TableColumn)tds[i]);
-								}
-							}
-							
-							headersMap.put(celList.get(0).getStringText().trim(), celList.get(1).getStringText().trim());
-							headersMap.put(celList.get(2).getStringText().trim(), celList.get(3).getStringText().trim());						
+				super.visitTag(tag);
 
-						}
-					}
-					
-					//parse product detail
-					Node productTableTagNode =  findNodeById(orderPage, "row");
-					
-					if (productTableTagNode != null) {
-						TableTag productTableTag = (TableTag) productTableTagNode;
-						
-						TableRow[] rows = productTableTag.getRows();
-						
-						List<Map<String, String>> productMaps = new ArrayList<Map<String, String>>();
-						List<String> headersList = new ArrayList<String>();
+				// parse title
+				TableTag titleTableTag = (TableTag) findNodeById(orderPage, "hide_table");
 
-						for (TableRow tableRow : rows) {
+				Node[] trs = titleTableTag.getChildrenAsNodeArray();
 
-							TableColumn[] columns = tableRow.getColumns();
-							if (columns.length == 0) {
-								TableHeader[] headers = tableRow.getHeaders();
-								for (int i = 0; i < headers.length; i++) {
-									headersList.add(headers[i].getStringText().trim());
-								}
+				for (Node node : trs) {
+					if (node instanceof TableRow) {
+						TableRow row = (TableRow) node;
+						// every row has 4 td, name to value
+						Node[] tds = row.getChildrenAsNodeArray();
+						List<TableColumn> celList = new ArrayList<TableColumn>();
 
-							} else {
-								Map<String, String> dataMap = new HashMap<String, String>();
-								for (int i = 0; i < columns.length; i++) {
-									TableColumn tableColumn = columns[i];
-									dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
-								}
-
-								productMaps.add(dataMap);
+						for (int i = 0; i < tds.length; i++) {
+							if (tds[i] instanceof TableColumn) {
+								celList.add((TableColumn) tds[i]);
 							}
 						}
 
-						order.setOrdersItemList(productMaps);
+						headersMap.put(celList.get(0).getStringText().trim(), celList.get(1).getStringText().trim());
+						headersMap.put(celList.get(2).getStringText().trim(), celList.get(3).getStringText().trim());
+
 					}
 				}
-			};
 
-			htmlParser.visitAllNodesWith(nodeVisitor);
+				// parse product detail
+				Node productTableTagNode = findNodeById(orderPage, "row");
 
-		} catch (ParserException e) {
+				if (productTableTagNode != null) {
+					TableTag productTableTag = (TableTag) productTableTagNode;
 
-			e.printStackTrace();
-		}
+					TableRow[] rows = productTableTag.getRows();
+
+					List<Map<String, String>> productMaps = new ArrayList<Map<String, String>>();
+					List<String> headersList = new ArrayList<String>();
+
+					for (TableRow tableRow : rows) {
+
+						TableColumn[] columns = tableRow.getColumns();
+						if (columns.length == 0) {
+							TableHeader[] headers = tableRow.getHeaders();
+							for (int i = 0; i < headers.length; i++) {
+								headersList.add(headers[i].getStringText().trim());
+							}
+
+						} else {
+							Map<String, String> dataMap = new HashMap<String, String>();
+							for (int i = 0; i < columns.length; i++) {
+								TableColumn tableColumn = columns[i];
+								dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
+							}
+
+							productMaps.add(dataMap);
+						}
+					}
+
+					order.setOrdersItemList(productMaps);
+				}
+			}
+		};
+
+		htmlParser.visitAllNodesWith(nodeVisitor);
 
 		return order;
 	}
-	
+
 	public static String findCompanyName(String detailPageHtml) {
 
 		final StringBuilder comanyName = new StringBuilder();
@@ -434,11 +428,11 @@ public class HtmlParserUtilPlanB {
 			e.printStackTrace();
 		}
 		System.out.println(contactorsEmailSrcBuilder.toString());
-		
+
 		return contactorsEmailSrcBuilder.toString();
 
 	}
-	
+
 	public static List<Province> findCities(final String detailPageHtml) {
 		final List<Province> provinces = new ArrayList<Province>();
 
@@ -452,52 +446,49 @@ public class HtmlParserUtilPlanB {
 				private static final long serialVersionUID = 7680728721047912165L;
 
 				public boolean accept(Node node) {
-					
-					if (node instanceof DefinitionList ) {
-						
+
+					if (node instanceof DefinitionList) {
+
 						DefinitionList cityList = ((DefinitionList) node);
-						if (StringUtils.isNotBlank(cityList.getAttribute("id") ) && cityList.getAttribute("id") .equals("clist")) {
+						if (StringUtils.isNotBlank(cityList.getAttribute("id")) && cityList.getAttribute("id").equals("clist")) {
 							Node[] nodelist = cityList.getChildren().toNodeArray();
-							
+
 							for (int i = 0; i < nodelist.length; i++) {
 								if (nodelist[i] instanceof DefinitionListBullet) {
-									
+
 									DefinitionListBullet definitionListBullet = (DefinitionListBullet) nodelist[i];
-									
-									if (definitionListBullet.getStringText().equals("安徽") || 
-										definitionListBullet.getStringText().equals("江苏") ||
-										definitionListBullet.getStringText().equals("浙江") ) 
-									{
+
+									if (definitionListBullet.getStringText().equals("安徽") || definitionListBullet.getStringText().equals("江苏") || definitionListBullet.getStringText().equals("浙江")) {
 										Province province = new Province();
 										province.setName(definitionListBullet.getStringText());
-										
+
 										DefinitionListBullet subCities = (DefinitionListBullet) nodelist[i + 1];
-										
+
 										Node[] cityLinks = subCities.getChildren().toNodeArray();
 										List<City> cities = new ArrayList<City>();
 										for (int j = 0; j < cityLinks.length; j++) {
 											if (cityLinks[j] instanceof LinkTag) {
-												
+
 												LinkTag cityLink = (LinkTag) cityLinks[j];
-												
+
 												City city = new City();
 												city.setName(cityLink.getStringText());
 												city.setUrl(cityLink.getAttribute("href"));
 												city.setProvince(province);
-												
+
 												cities.add(city);
 											}
-											
+
 										}
-										
+
 										province.setCitys(cities);
-										
+
 										provinces.add(province);
 									}
 								}
 							}
 						}
-					
+
 					}
 					return false;
 				}
@@ -506,7 +497,7 @@ public class HtmlParserUtilPlanB {
 		} catch (ParserException e) {
 			e.printStackTrace();
 		}
-		
+
 		return provinces;
 
 	}
@@ -674,12 +665,11 @@ public class HtmlParserUtilPlanB {
 
 		return address.toString();
 
-	
 	}
-	
+
 	public static String findCompanyEmployeeCount(String detailPageHtml) {
 		final StringBuilder description = new StringBuilder();
-		
+
 		try {
 
 			Parser htmlParser = new Parser();
@@ -715,9 +705,9 @@ public class HtmlParserUtilPlanB {
 							// find his name after title found!!
 							if (contactorHeaderFound && current instanceof TableColumn) {
 								TableColumn td = (org.htmlparser.tags.TableColumn) current;
-								
+
 								description.append(td.getStringText().trim());
-								
+
 								return true;
 							}
 
@@ -733,10 +723,10 @@ public class HtmlParserUtilPlanB {
 
 		return description.toString();
 	}
-	
+
 	public static String findCompanyDescription(String html) {
 		Div descriptionDiv = findFirstOneWithClassName(html, "compIntro");
-		
+
 		return descriptionDiv == null ? "" : descriptionDiv.getStringText();
 	}
 }

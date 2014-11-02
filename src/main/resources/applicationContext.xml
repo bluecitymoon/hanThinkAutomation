@@ -16,7 +16,9 @@
     http://www.springframework.org/schema/tx 
     http://www.springframework.org/schema/tx/spring-tx-3.0.xsd 
     http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd  ">
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd  
+    http://www.springframework.org/schema/task 
+    http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 	<!-- 启动spring的注解功能 -->
 	<context:annotation-config />
 	<!--激活spring的自动扫描功能 -->
@@ -53,12 +55,15 @@
 	<bean name="schedulerJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass" value="com.ls.jobs.TestJob" />
 	</bean>
-	
-	<bean name="grabFeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<!-- 
+	<bean name="authanAutomationQuartzJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.ls.jobs.AuthanAutomationQuartzJob" />
+	</bean>
+	 -->
+	<!--  <bean name="grabFeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass" value="com.ls.jobs.fe.GrabFeJob" />
 	</bean>
 
-	<!-- Cron Trigger, run every 10 seconds -->
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="schedulerJob" />
 		<property name="cronExpression" value="0/10 * * * * ?" />
@@ -68,19 +73,17 @@
 		<property name="jobDetail" ref="grabFeJob" />
 		<property name="cronExpression" value="0/10 * * * * ?" />
 	</bean>
+	-->
 	
-	<!-- DI -->
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="jobDetails">
 			<list>
-				<ref bean="schedulerJob" />
-				<ref bean="grabFeJob" />
+				<!-- <ref bean="authanAutomationQuartzJob" />  -->
 			</list>
 		</property>
 		<property name="triggers">
 			<list>
-				<!-- 
-				<ref bean="cronTrigger" />
+				<ref bean="authanAutomaticJobTrigger" />	<!-- 
 				<ref bean="grabFeJobTrigger"/>
 				 -->
 			</list>

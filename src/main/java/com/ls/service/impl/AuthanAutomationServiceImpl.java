@@ -8,6 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.htmlparser.util.ParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,8 @@ import com.ls.vo.Orders;
 @Service("authanService")
 public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
+	private Logger logger = LoggerFactory.getLogger(AuthanAutomationServiceImpl.class);
+	
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
 	
@@ -41,6 +46,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		AutomaticJob authanJob = automaticJobRepository.findByType(AuthanConstants.AUTHAN);
 		
 		if (null == authanJob) {
+			logger.error("configuration for job authan is not good.");
 			throw new ConfigurationException();
 		}
 		
@@ -111,22 +117,28 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 				
 				String singleOrderHtml = singleOrderDetailPage.getWebResponse().getContentAsString();
 				
-				Orders singleOrder = HtmlParserUtilPlanB.parseOrder(singleOrderHtml);
-				
-				ordersList.add(singleOrder);
+				Orders singleOrder = null;
+				try {
+					singleOrder = HtmlParserUtilPlanB.parseOrder(singleOrderHtml);
+					ordersList.add(singleOrder);
+				} catch (ParserException e) {
+					logger.error("parse error for order id " + orderId + ", " + singleOrderDetail);
+				}
 			}
 
 			webClient.closeAllWindows();
 			
 		} catch (FailingHttpStatusCodeException e) {
-			e.printStackTrace();
+			loggerError(e, start, end);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			loggerError(e, start, end);
 		} catch (ElementNotFoundException e) {
-			e.printStackTrace();
+			loggerError(e, start, end);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+			loggerError(e, start, end);
+		} catch (Exception e) {
+			logger.error("grab order failed for start : "+ start +" end : " + end + ", meets unexpected exception!! error message is -> " + e.getMessage());
+		}
 		
 		Date endTime = new Date();
 		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
@@ -138,6 +150,10 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		return ordersList;
 	}
 
+	private void loggerError(Exception e, String start, String end) {
+		logger.error("grab order failed for start : "+ start +" end : " + end + " error message is -> " + e.getMessage());
+	}
+	
 	private String makeParametersToSearchOrderList(String start, String end, Integer currentPageNumber) {
 		if (null == currentPageNumber) {
 			currentPageNumber = 1;
