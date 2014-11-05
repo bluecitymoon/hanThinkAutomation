@@ -25,7 +25,7 @@ public class TestWebServices {
 	@Test
 	public void testGrabCompanyList() throws Exception {
 		
-		String xml = Files.toString(new File("D:\\workspace\\hanThinkAutomation\\src\\main\\resources\\test.xml"), Charset.defaultCharset());
+		String xml = Files.toString(new File("D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\resources\\test.xml"), Charset.defaultCharset());
 		
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		
@@ -33,12 +33,14 @@ public class TestWebServices {
 		InputStream is = new ByteArrayInputStream(b,0,b.length);
 		
 		HttpPost request = new HttpPost("http://hanthink.gnway.org:88/hanthinkserver/service1.asmx");
-		
+		request.setHeader("Content-Type", " text/xml; charset=utf-8");
 		request.setEntity(new InputStreamEntity(is));
 		
 		HttpResponse response = httpClient.execute(request);
 		
 		System.out.println(response.toString());
+		System.out.println(response.getStatusLine().getStatusCode());
+		
 	}
 	
 

@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ParameterAware;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -121,4 +124,15 @@ public class BaseAction extends ActionSupport implements ParameterAware {
 		return resultMap;
 	}
 
+	/**
+	 * set the status code of the http response
+	 * this is to help the ajax call to identity if there is any error
+	 * occured in the server.
+	 * 
+	 * @param status
+	 */
+	public void setHttpResponseStatusCode(int status) {
+		ServletActionContext.getResponse().setStatus(status);
+	}
+	
 }

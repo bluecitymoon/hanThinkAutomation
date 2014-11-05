@@ -20,9 +20,6 @@ import com.ls.vo.Orders;
 @Component("auchanAction")
 public class AuchanAutomationAction extends BaseAction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7537597127706997734L;
 
 	private List<Orders> orders;
@@ -44,10 +41,11 @@ public class AuchanAutomationAction extends BaseAction {
 			orders = authanAutomationService.grabOrders(manuallyStart, manuallyStop);
 			
 		} catch (ConfigurationException e) {
-			addActionError("配置信息错误！");
-			
+			addActionError(e.getMessage());
+			setHttpResponseStatusCode(400);
 			return ERROR;
 		} catch (Exception e) {
+			setHttpResponseStatusCode(500);
 			addActionError("抓取过程中出现意外错误，请重试或者联系管理员。");
 		}
 

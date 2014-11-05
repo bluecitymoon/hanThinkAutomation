@@ -91,6 +91,17 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null));
 			
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
+			String userNameNotExists = "用户不存在,请重试";
+			String passwordWrong = "密码错误,请重试";
+			
+			if (ordersListHtml.contains(passwordWrong)) {
+				throw new ConfigurationException("配置的密码不正确!");
+			}
+			
+			if (ordersListHtml.contains(userNameNotExists)) {
+				throw new ConfigurationException("配置的用户名不存在!");
+			}
+			
 			List<String> orderIdList = HtmlParserUtilPlanB.findOrderList(ordersListHtml);
 			
 			Integer totalPageCount = getTotalPageCount(ordersListHtml);

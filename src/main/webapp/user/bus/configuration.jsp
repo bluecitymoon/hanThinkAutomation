@@ -74,9 +74,11 @@
 										<label>登陆密码</label> <input type="text" class="required" data-bind="value : password" />
 									</div>
 								</div>
+								<hr>
 								<div class="row">
 									<div class="twelve columns centered">
-										<a class="small blue button" href="#" data-bind="click : $root.save">保存</a>
+										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> 
+										<a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">测试用户名密码</a> 
 									</div>
 								</div>
 							</div>
@@ -92,10 +94,27 @@
 							<form id="grabForm">
 								<div class="row">
 									<div class="six columns">
-										<label>开始时间</label> <input type="text" class="required" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
+										<label>开始时间</label>
+										<div class="row collapse">
+											<div class="ten columns">
+												<input type="text" id="manuallyStart" class="required addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
+											</div>
+											<div class="two columns">
+												<a href="javascript:void(0);" id="manuallyStart-btn"><span class="button-addon postfix" title="Choose Date"><i class="icon-calendar"></i></span></a>
+											</div>
+										</div>
+
 									</div>
 									<div class="six columns">
-										<label>结束时间</label> <input type="text" class="required" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
+										<label>结束时间</label>
+										<div class="row collapse">
+											<div class="ten columns">
+												<input type="text" id="manuallyStop" class="required addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
+											</div>
+											<div class="two columns">
+												<a id="manuallyStop-btn" href="javascript:void(0);"><span class="button-addon postfix" title="Choose Date"><i class="icon-calendar"></i></span></a>
+											</div>
+										</div>
 									</div>
 								</div>
 								<br>
@@ -116,113 +135,140 @@
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
 	<script>
 		$(document).ready(function() {
-			
-			$('#grabForm').validate({});
-			$('#jobForm').validate({});
-			
-			var Job = function() {
-				var self = this;
-				self.status = '';
-				self.name = '';
-				self.clientIp = '';
-				self.start = '';
-				self.stop = '';
-				self.restartInHours = '';
-				self.lastGrabStart = '';
-				self.lastGrabEnd = '';
-				self.username = '';
-				self.password = '';
-				self.type = 'authan';
-			};
 
-			var ConfigurationModel = function() {
+					$('#grabForm').validate({});
+					$('#jobForm').validate({});
 
-				var self = this;
-				self.job = ko.observable(new Job());
-				self.manuallyStart = ko.observable('');
-				self.manuallyStop = ko.observable('');
-				
-				self.reloadConfiguration = function() {
-					$.ajax({
-						url : '/ls/readConfiguration.ls',
-						success : function(data) {
-							
-							self.job(data);
-							
-							Messenger().post("已成功加载配置数据。");
-						},
-						error : function(XMLHttpRequest, textStatus, errorThrown) {
-								console.debug(XMLHttpRequest);
-						}
-					});
-				};
-				
-				self.reloadConfiguration();
-				
-				self.save = function(item, event) {
-					
-					if ($('#jobForm').valid()) {
-						$.ajax({
-							method : 'post',
-							data : {
-								job : JSON.stringify(self.job())
-							},
-							url : '/ls/saveAutomaticJob.ls',
-							success : function(data) {
-								Messenger().post("配置信息已经成功保存！");
-							},
-							error : function(XMLHttpRequest, textStatus, errorThrown) {
-								Messenger().post("啊？！出错了，赶紧去联系管理员吧。");
+					var Job = function() {
+						var self = this;
+						self.status = '';
+						self.name = '';
+						self.clientIp = '';
+						self.start = '';
+						self.stop = '';
+						self.restartInHours = '';
+						self.lastGrabStart = '';
+						self.lastGrabEnd = '';
+						self.username = '';
+						self.password = '';
+						self.type = 'authan';
+					};
+
+					var ConfigurationModel = function() {
+
+						var self = this;
+						self.job = ko.observable(new Job());
+						self.manuallyStart = ko.observable('');
+						self.manuallyStop = ko.observable('');
+
+						self.reloadConfiguration = function() {
+							$.ajax({
+								url : '/ls/readConfiguration.ls',
+								success : function(data) {
+
+									self.job(data);
+
+									Messenger().post("已成功加载配置数据。");
+								},
+								error : function(XMLHttpRequest, textStatus,
+										errorThrown) {
+									console.debug(XMLHttpRequest);
+								}
+							});
+						};
+
+						self.reloadConfiguration();
+
+						self.save = function(item, event) {
+
+							if ($('#jobForm').valid()) {
+								$.ajax({
+									method : 'post',
+									data : {
+										job : JSON.stringify(self.job())
+									},
+									url : '/ls/saveAutomaticJob.ls',
+									success : function(data) {
+										Messenger().post("配置信息已经成功保存！");
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrown) {
+										Messenger().post("啊？！出错了，赶紧去联系管理员吧。");
+									}
+								});
+							} else {
+
+								Messenger().post({
+									message : '你有些必填选项没填！',
+									type : 'error',
+									showCloseButton : true
+								});
 							}
-						});
-					} else {
+						};
+
+						self.startManually = function() {
+							if ($('#grabForm').valid()) {
+								$.ajax({
+									data : {
+										manuallyStart : self.manuallyStart(),
+										manuallyStop : self.manuallyStop()
+									},
+									url : '/ls/startManually.ls',
+									success : function(data) {
+										Messenger().post("已成功抓取！");
+										self.reloadConfiguration();
+
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrown) {
+										Messenger().post("抓取失败！");
+									}
+								});
+							}
+						};
+						self.startDateOnClose = function() {
+
+							$('#manuallyStart').valid();
+						};
+
+						self.endDateOnClose = function() {
+							$('#manuallyStop').valid();
+						};
 						
-						Messenger().post({
-							  message: '你有些必填选项没填！',
-							  type: 'error',
-							  showCloseButton: true
-						});
-					}
-				};
+						self.testUsernamePassword = function() {
+							Messenger().post({
+								message : '尚未开发的功能！',
+								type : 'error',
+								showCloseButton : true
+							});
+						};
+					};
 
-				self.startManually = function() {
-					if ($('#grabForm').valid()) {
-						$.ajax({
-							data : {
-								manuallyStart : self.manuallyStart(),
-								manuallyStop : self.manuallyStop()
-							},
-							url : '/ls/startManually.ls',
-							success : function(data) {
-								Messenger().post("已成功抓取！");
-								self.reloadConfiguration();
-								
-							},
-							error : function(XMLHttpRequest, textStatus, errorThrown) {
-								Messenger().post("抓取失败！");
-							}
-						});
-					}
-				};
-				self.startDateOnClose = function() {
+					var model = new ConfigurationModel();
+					ko.applyBindings(model);
 
-				};
-
-				self.endDateOnClose = function() {
-
-				};
-			};
-
-			var model = new ConfigurationModel();
-			ko.applyBindings(model);
-			
-			$(document).ajaxStart(function(){
-				 Common.prototype.loadAjaxLoader("操作正在执行，请耐心等候！");
-	         }).ajaxStop(function(){
-	        	 Common.prototype.closeAjaxLoader();
-	         });
-
-		});
+					$(document).ajaxStart(function() {
+						Common.prototype.loadAjaxLoader("操作正在执行，请耐心等候！");
+					}).ajaxStop(function() {
+						Common.prototype.closeAjaxLoader();
+					});
+					
+					$("#manuallyStop-btn").click( function(){
+					    if ( $("#manuallyStop").datepicker("widget").is(":visible") ) {
+					        $("#manuallyStop").datepicker("hide");
+					    } else {
+					        $("#manuallyStop").datepicker("show");
+					    }
+					});
+					$("#manuallyStart-btn").click( function(){
+					    if ( $("#manuallyStart").datepicker("widget").is(":visible") ) {
+					        $("#manuallyStart").datepicker("hide");
+					    } else {
+					        $("#manuallyStart").datepicker("show");
+					    }
+					});
+					
+				});
 	</script>
 </body>
 </html>

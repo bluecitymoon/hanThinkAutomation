@@ -41,7 +41,6 @@ public class AuthanAutomaticJobTrigger extends SimpleTriggerBean implements Appl
 
 	}
 
-	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}

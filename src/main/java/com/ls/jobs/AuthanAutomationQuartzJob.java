@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Service;
 
-@Service("authanAutomationQuartzJob")
 public class AuthanAutomationQuartzJob extends QuartzJobBean implements ApplicationContextAware {
 	private ApplicationContext applicationContext = null;
 	@Override
@@ -17,7 +16,6 @@ public class AuthanAutomationQuartzJob extends QuartzJobBean implements Applicat
 
 	}
 
-	@Override
 	public void setApplicationContext(ApplicationContext ApplicationContext) throws BeansException {
 		this.applicationContext = ApplicationContext;
 	}
