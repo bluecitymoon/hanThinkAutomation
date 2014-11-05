@@ -1,13 +1,23 @@
 package com.ls.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +141,10 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 				Orders singleOrder = null;
 				try {
 					singleOrder = HtmlParserUtilPlanB.parseOrder(singleOrderHtml);
+					singleOrder.getOrderTitleMap().put("id", orderId);
+					
 					ordersList.add(singleOrder);
+					
 				} catch (ParserException e) {
 					logger.error("parse error for order id " + orderId + ", " + singleOrderDetail);
 				}
@@ -161,6 +174,56 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		return ordersList;
 	}
 
+	private String compositeOrderToXml(List<Orders> orders) {
+		
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		for (Orders singleOrder : orders) {
+			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
+			
+			String maintableTemplate = new String(AuthanConstants.getMainTable());
+			
+			String orderNumber = StringUtils.isEmpty(titleMap.get("订单号："))? "" : titleMap.get("订单号：");
+			String id = StringUtils.isEmpty(titleMap.get("id"))? "" : titleMap.get("id");
+			String date = StringUtils.isEmpty(titleMap.get("订单日期："))? "" : titleMap.get("订单日期：");
+			String arriveDate = StringUtils.isEmpty(titleMap.get("预计收货日期："))? "" : titleMap.get("预计收货日期：");
+			
+			maintableTemplate = maintableTemplate.replaceAll("@orderNumber@", orderNumber);
+			maintableTemplate = maintableTemplate.replaceAll("@id@", id);
+			maintableTemplate = maintableTemplate.replaceAll("@date@", date);
+			maintableTemplate = maintableTemplate.replaceAll("@arriveDate@", arriveDate);
+			stringBuilder.append(maintableTemplate);
+			
+			List<Map<String, String>> productsMap = singleOrder.getOrdersItemList();
+			
+			for (Map<String, String> product : productsMap) {
+				String zibiaoTemplate = new String(AuthanConstants.getChildTable());
+				
+				String productNumber = getStringByKeyOrNull("商品号", product);
+				String description = getStringByKeyOrNull("商品名称", product);
+				String count = getStringByKeyOrNull("订单数量", product);
+				String price = getStringByKeyOrNull("单价", product);
+				String total = getStringByKeyOrNull("金额", product);
+				String taxRate = getStringByKeyOrNull("税率", product);
+				
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@id@", id);
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@productNumber@", productNumber);
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@description@", description);
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@price@", price);
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@total@", total);
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@count@", count);
+				zibiaoTemplate = zibiaoTemplate.replaceAll("@taxRate@", taxRate);
+				
+				stringBuilder.append(zibiaoTemplate);
+			}
+		}
+		
+		return stringBuilder.toString();
+	}
+	
+	private String getStringByKeyOrNull(String key, Map<String, String> titleMap) {
+		return StringUtils.isEmpty(titleMap.get(key))? "" : titleMap.get(key);
+	}
 	private void loggerError(Exception e, String start, String end) {
 		logger.error("grab order failed for start : "+ start +" end : " + end + " error message is -> " + e.getMessage());
 	}
@@ -213,8 +276,35 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 	
 	public Orders grabSingleOrders(String start, String end) {
 
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String postDataToWebService(String start, String end) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		List<Orders> orders = grabOrders(start, end);
+		
+		String data =  compositeOrderToXml(orders);
+		System.out.println(data);
+		String bigView = new String(AuthanConstants.getBigView());
+		
+		bigView = bigView.replaceAll("@dataForYou@", data);
+		
+		HttpClient httpClient = HttpClientBuilder.create().build();
+
+		byte[] b = bigView.getBytes("utf-8");
+		
+		InputStream is = new ByteArrayInputStream(b, 0, b.length);
+
+		HttpPost request = new HttpPost("http://hanthink.gnway.org:88/hanthinkserver/service1.asmx");
+		request.setHeader("Content-Type", " text/xml; charset=utf-8");
+		request.setEntity(new InputStreamEntity(is));
+
+		HttpResponse response = httpClient.execute(request);
+
+		System.out.println(response.toString());
+		System.out.println(response.getStatusLine().getStatusCode());
+		
+		return "" + response.getStatusLine().getStatusCode();
 	}
 
 }

@@ -22,7 +22,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 	private static final long serialVersionUID = 7537597127706997734L;
 
-	private List<Orders> orders;
+	private String orders;
 
 	private AutomaticJob automaticJob;
 
@@ -38,7 +38,7 @@ public class AuchanAutomationAction extends BaseAction {
 		String manuallyStop = getParameter("manuallyStop");
 
 		try {
-			orders = authanAutomationService.grabOrders(manuallyStart, manuallyStop);
+			orders = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop);
 			
 		} catch (ConfigurationException e) {
 			addActionError(e.getMessage());
@@ -81,12 +81,12 @@ public class AuchanAutomationAction extends BaseAction {
 		return SUCCESS;
 	}
 
-	public List<Orders> getOrders() {
+	public String getOrders() {
 
 		return orders;
 	}
 
-	public void setOrders(List<Orders> orders) {
+	public void setOrders(String orders) {
 
 		this.orders = orders;
 	}

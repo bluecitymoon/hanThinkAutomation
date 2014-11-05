@@ -1,0 +1,14 @@
+<xsdingdanzibiao>
+	<zhubiaoid>@id@</zhubiaoid>
+	<huohao>@productNumber@</huohao>
+	<tiaoxingma></tiaoxingma>
+	<shangpinmiaoshu>@description@</shangpinmiaoshu>
+	<shuliang>@count@</shuliang>
+	<huansuanlv1></huansuanlv1>
+	<xiangshu></xiangshu>
+	<hanshuidanjia></hanshuidanjia>
+	<hanshuijine></hanshuijine>
+	<buhanshuidanjia>@price@</buhanshuidanjia>
+	<buhanshuijine>@total@</buhanshuijine>
+	<shuilv>@taxRate@</shuilv>
+</xsdingdanzibiao>

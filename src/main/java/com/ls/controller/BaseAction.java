@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ParameterAware;
