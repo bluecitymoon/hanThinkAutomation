@@ -7,6 +7,8 @@
       <zhangtaoming>${htDbName}</zhangtaoming>
       <danjuxml>
       <![CDATA[
+      		<?xml version="1.0" standalone="yes"?>
+      		<NewDataSet>
 			<#list orders as order>
 				<#assign titleMap = order.orderTitleMap/>
 				<xsdingdanzhubiao>
@@ -49,6 +51,7 @@
 					</#list>
 				</#if>
 			</#list>
+			</NewDataSet>
 		]]>
        </danjuxml>
     </daorudanju>

@@ -93,16 +93,16 @@ public class TestGrabCompany {
 		
 		System.out.println(orderList);
 	}
-	
-	@Test
-	public void testReadDetail() throws Exception {
-		String file = "D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\detail.html";
-		
-		Orders orders = HtmlParserUtilPlanB.parseOrder(Files.toString(new File(file), Charset.defaultCharset()));
-		
-		System.out.println(orders.toString());
-		
-	}
+//	
+//	@Test
+//	public void testReadDetail() throws Exception {
+//		String file = "D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\detail.html";
+//		
+//		Orders orders = HtmlParserUtilPlanB.parseOrder(Files.toString(new File(file), Charset.defaultCharset()));
+//		
+//		System.out.println(orders.toString());
+//		
+//	}
 	
 	@Test
 	public void testGrabOrderDetail() throws Exception {

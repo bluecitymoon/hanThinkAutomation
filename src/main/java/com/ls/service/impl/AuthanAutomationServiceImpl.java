@@ -1,12 +1,10 @@
 package com.ls.service.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +36,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
 import com.ls.exception.ConfigurationException;
@@ -109,15 +106,9 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null));
 
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
-			String userNameNotExists = "用户不存在,请重试";
-			String passwordWrong = "密码错误,请重试";
 
 			if (ordersListHtml.contains("j_username") && ordersListHtml.contains("j_password")) {
 				throw new ConfigurationException("配置的用户名密码无法登陆欧尚系统！");
-			}
-
-			if (ordersListHtml.contains(userNameNotExists)) {
-				throw new ConfigurationException("配置的用户名不存在!");
 			}
 
 			List<String> orderIdList = HtmlParserUtilPlanB.findOrderList(ordersListHtml);
@@ -197,11 +188,6 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		
 	}
 
-	private String getStringByKeyOrNull(String key, Map<String, String> titleMap) {
-
-		return StringUtils.isEmpty(titleMap.get(key)) ? "" : titleMap.get(key);
-	}
-
 	private void loggerError(Exception e, String start, String end) {
 
 		logger.error("grab order failed for start : " + start + " end : " + end + " error message is -> " + e.getMessage());
@@ -279,10 +265,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 		HttpResponse response = httpClient.execute(request);
 
-		System.out.println(response.toString());
-		System.out.println(response.getStatusLine().getStatusCode());
-
-		return "" + response.getStatusLine().getStatusCode();
+		return data;
 	}
 
 }
