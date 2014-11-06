@@ -135,16 +135,26 @@
 			<result name="success" type="json">
 				<param name="root">automaticJob</param>
 			</result>
+			<result name="input" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
 			<result name="error" type="json">
-				<param name="root">actionErrors</param>
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
 			</result>
 		</action>
 		<action name="readConfiguration" class="auchanAction" method="readConfiguration">
 			<result name="success" type="json">
 				<param name="root">automaticJob</param>
 			</result>
+			<result name="input" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
 			<result name="error" type="json">
-				<param name="root">actionErrors</param>
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
 			</result>
 		</action>
 	</package>

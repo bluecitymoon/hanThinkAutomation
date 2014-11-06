@@ -9,11 +9,13 @@ import org.apache.http.client.ClientProtocolException;
 import com.ls.exception.ConfigurationException;
 import com.ls.vo.Orders;
 
+import freemarker.template.TemplateException;
+
 public interface AuthanAutomationService {
 	
 	public Orders grabSingleOrders(String start, String end);
 	
 	public List<Orders> grabOrders(String start, String end) throws ConfigurationException;
 	
-	public String postDataToWebService(String start, String end) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException;
+	public String postDataToWebService(String start, String end) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException, TemplateException;
 }

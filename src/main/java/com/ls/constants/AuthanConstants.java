@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 
+import freemarker.template.Configuration;
+
 public class AuthanConstants {
 
 	public static final String AUTHAN = "authan";
@@ -17,6 +19,8 @@ public class AuthanConstants {
 	public static String CHILD_TABLE_TEMPLATE = null;
 	
 	public static String BIG_VIEW = null;
+	
+	public static Configuration anchanConfiguration = null;
 
 	public static String readResource(String fileName) {
 		InputStream in = ClassLoader.getSystemResourceAsStream(fileName);
@@ -56,5 +60,13 @@ public class AuthanConstants {
 		}
 		
 		return CHILD_TABLE_TEMPLATE;
+	}
+	
+	public static Configuration getAnchanConfiguration() {
+		if (anchanConfiguration == null) {
+			anchanConfiguration = new Configuration();
+			anchanConfiguration.setDefaultEncoding("GBK");
+		}
+		return anchanConfiguration;
 	}
 }

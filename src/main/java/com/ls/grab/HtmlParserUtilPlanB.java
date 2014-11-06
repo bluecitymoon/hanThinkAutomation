@@ -171,7 +171,7 @@ public class HtmlParserUtilPlanB {
 		return orderList;
 	}
 
-	public static Orders parseOrder(final String orderPage) throws ParserException {
+	public static Orders parseOrder(final String orderPage, final String orderId) throws ParserException {
 
 		final Orders order = new Orders();
 		final Map<String, String> headersMap = new HashMap<String, String>();
@@ -237,7 +237,8 @@ public class HtmlParserUtilPlanB {
 								TableColumn tableColumn = columns[i];
 								dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
 							}
-
+							dataMap.put("id", orderId);
+							
 							productMaps.add(dataMap);
 						}
 					}
