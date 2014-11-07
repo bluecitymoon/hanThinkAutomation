@@ -2,6 +2,7 @@ package com.ls.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -9,12 +10,25 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ClientProtocolException;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.ScheduleBuilder;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.spi.MutableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
 import com.ls.exception.ConfigurationException;
+import com.ls.jobs.AuthanAutomationQuartzJob;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
 
@@ -42,6 +56,12 @@ public class AuchanAutomationAction extends BaseAction {
 
 		try {
 			orders = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop);
+			
+			String mode = automaticJobRepository.findByType(AuthanConstants.AUTHAN).getMode();
+			
+			if (StringUtils.isEmpty(mode) || !mode.equals("debug")) {
+				orders = "";
+			}
 
 		} catch (ConfigurationException e) {
 			addActionError(e.getMessage());
@@ -91,6 +111,28 @@ public class AuchanAutomationAction extends BaseAction {
 		return SUCCESS;
 	}
 
+	public String startupJob() {
+
+		try {
+			
+			JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).withIdentity("authan").build();
+			
+			ScheduleBuilder<?> simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1).repeatForever();
+			
+			Trigger trigger = TriggerBuilder.newTrigger().withSchedule(simpleScheduleBuilder).build();
+			
+			Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+			
+			
+			scheduler.start();
+			scheduler.scheduleJob(jobDetail, trigger);
+			
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}
+	
 	public String getOrders() {
 
 		return orders;

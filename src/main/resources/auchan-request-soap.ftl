@@ -7,51 +7,51 @@
       <zhangtaoming>${htDbName}</zhangtaoming>
       <danjuxml>
       <![CDATA[
-      		<?xml version="1.0" standalone="yes"?>
-      		<NewDataSet>
-			<#list orders as order>
-				<#assign titleMap = order.orderTitleMap/>
-				<xsdingdanzhubiao>
-					<id>${titleMap['id']}</id>
-					<changbian></changbian>
-					<#if titleMap['¶©µ¥ºÅ£º']??>
-						<kehudanhao>${titleMap['¶©µ¥ºÅ£º']}</kehudanhao>
-					<#else>
-						<kehudanhao></kehudanhao>	
-					</#if>
-					<#if titleMap['¶©µ¥ÈÕÆÚ£º']??>
-						<riqi>${titleMap['¶©µ¥ÈÕÆÚ£º']}</riqi>
-					<#else>
-						<riqi></riqi>	
-					</#if>
-					<#if titleMap['Ô¤¼ÆÊÕ»õÈÕÆÚ£º']??>
-						<daohuoriqi>${titleMap['Ô¤¼ÆÊÕ»õÈÕÆÚ£º']}</daohuoriqi>
-					<#else>
-						<daohuoriqi></daohuoriqi>	
-					</#if>
-					<dizhi></dizhi>
-				</xsdingdanzhubiao>
-				<#if order.ordersItemList??>
-				<#assign productList = order.ordersItemList/>
-					<#list productList as product>
-						<xsdingdanzibiao>
-							<zhubiaoid>${product['id']}</zhubiaoid>
-							<huohao>${product['ÉÌÆ·ºÅ']}</huohao>
-							<tiaoxingma></tiaoxingma>
-							<shangpinmiaoshu>${product['ÉÌÆ·Ãû³Æ']}</shangpinmiaoshu>
-							<shuliang>${product['¶©µ¥ÊıÁ¿']}</shuliang>
-							<huansuanlv1></huansuanlv1>
-							<xiangshu></xiangshu>
-							<hanshuidanjia></hanshuidanjia>
-							<hanshuijine></hanshuijine>
-							<buhanshuidanjia>${product['µ¥¼Û']}</buhanshuidanjia>
-							<buhanshuijine>${product['½ğ¶î']}</buhanshuijine>
-							<shuilv>${product['Ë°ÂÊ']}</shuilv>
-						</xsdingdanzibiao>
-					</#list>
-				</#if>
-			</#list>
-			</NewDataSet>
+<?xml version="1.0" encoding="utf-8"?>
+<NewDataSet>
+	<#list orders as order>
+	<#assign titleMap = order.orderTitleMap/>
+	<xsdingdanzhubiao>
+		<id>${titleMap['id']}</id>
+		<changbian></changbian>
+		<#if titleMap['è®¢å•å·ï¼š']??>
+		<kehudanhao>${titleMap['è®¢å•å·ï¼š']}</kehudanhao>
+		<#else>
+		<kehudanhao></kehudanhao>
+		</#if>
+		<#if titleMap['è®¢å•æ—¥æœŸï¼š']??>
+		<riqi>${titleMap['è®¢å•æ—¥æœŸï¼š']}</riqi>
+		<#else>
+		<riqi></riqi>
+		</#if>
+		<#if titleMap['é¢„è®¡æ”¶è´§æ—¥æœŸï¼š']??>
+		<daohuoriqi>${titleMap['é¢„è®¡æ”¶è´§æ—¥æœŸï¼š']}</daohuoriqi>
+		<#else>
+		<daohuoriqi></daohuoriqi>
+		</#if>
+		<dizhi>${titleMap['é—¨åº—åï¼š']}</dizhi>
+	</xsdingdanzhubiao>
+	<#if order.ordersItemList??>
+	<#assign productList = order.ordersItemList/>
+	<#list productList as product>
+	<xsdingdanzibiao>
+		<zhubiaoid>${product['id']}</zhubiaoid>
+		<huohao>${product['å•†å“å·']}</huohao>
+		<tiaoxingma></tiaoxingma>
+		<shangpinmiaoshu>${product['å•†å“åç§°']}</shangpinmiaoshu>
+		<shuliang>${product['è®¢å•æ•°é‡']}</shuliang>
+		<huansuanlv1></huansuanlv1>
+		<xiangshu></xiangshu>
+		<hanshuidanjia></hanshuidanjia>
+		<hanshuijine></hanshuijine>
+		<buhanshuidanjia>${product['å•ä»·']}</buhanshuidanjia>
+		<buhanshuijine>${product['é‡‘é¢']}</buhanshuijine>
+		<shuilv>${product['ç¨ç‡']}</shuilv>
+	</xsdingdanzibiao>
+	</#list>
+	</#if>
+	</#list>
+</NewDataSet>      		
 		]]>
        </danjuxml>
     </daorudanju>

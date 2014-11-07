@@ -65,7 +65,7 @@ public class AuthanConstants {
 	public static Configuration getAnchanConfiguration() {
 		if (anchanConfiguration == null) {
 			anchanConfiguration = new Configuration();
-			anchanConfiguration.setDefaultEncoding("GBK");
+			anchanConfiguration.setDefaultEncoding("UTF-8");
 		}
 		return anchanConfiguration;
 	}

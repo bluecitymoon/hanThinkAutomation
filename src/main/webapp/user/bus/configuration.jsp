@@ -78,8 +78,8 @@
 								<hr>
 								<div class="row">
 									<div class="twelve columns centered">
-										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> 
-										<a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">测试用户名密码</a> 
+										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> <a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">测试用户名密码</a>
+										<a href="#" class="tertiary line gray" data-bind="click : $root.startupJob">启动自动导入任务</a>
 									</div>
 								</div>
 							</div>
@@ -129,12 +129,10 @@
 					</div>
 				</div>
 			</div>
-			
-			<div class="row">
-				<label for="xmlContent">XML Message</label>
-				<div><pre id="xmlContent"class="brush: xml">
-				<?xml version="1.0" encoding=\"utf-8\"?>\r\n<soap:Envelope xmlns:xsi=\"http:\/\/www.w3.org\/2001\/XMLSchema-instance\" xmlns:xsd=\"http:\/\/www.w3.org\/2001\/XMLSchema\" xmlns:soap=\"http:\/\/schemas.xmlsoap.org\/soap\/envelope\/\">\r\n  <soap:Body>\r\n    <daorudanju xmlns=\"http:\/\/HanThink.com\/\">\r\n      <dengluming>Admin<\/dengluming>\r\n      <denglumima>E1CCjc7z+m3nmqvYlGnc+LcM8t4=<\/denglumima>\r\n      <zhangtaoming>测试帐套<\/zhangtaoming>\r\n      <danjuxml>\r\n      <![CDATA[\r\n      \t\t<?xml version=\"1.0\" standalone=\"yes\"?>\r\n      \t\t<NewDataSet>\r\n\t\t\t\t<xsdingdanzhubiao>\r\n\t\t\t\t\t<id>235317474<\/id>\r\n\t\t\t\t\t<changbian><\/changbian>\r\n\t\t\t\t\t\t<kehudanhao>4308042<\/kehudanhao>\r\n\t\t\t\t\t\t<riqi>2014-11-04<\/riqi>\r\n\t\t\t\t\t\t<daohuoriqi>2014-11-06<\/daohuoriqi>\r\n\t\t\t\t\t<dizhi><\/dizhi>\r\n\t\t\t\t<\/xsdingdanzhubiao>\r\n\t\t\t\t\t\t<xsdingdanzibiao>\r\n\t\t\t\t\t\t\t<zhubiaoid>235317474<\/zhubiaoid>\r\n\t\t\t\t\t\t\t<huohao>274468<\/huohao>\r\n\t\t\t\t\t\t\t<tiaoxingma><\/tiaoxingma>\r\n\t\t\t\t\t\t\t<shangpinmiaoshu>定海针奥尔良翅中400g<\/shangpinmiaoshu>\r\n\t\t\t\t\t\t\t<shuliang>20.0<\/shuliang>\r\n\t\t\t\t\t\t\t<huansuanlv1><\/huansuanlv1>\r\n\t\t\t\t\t\t\t<xiangshu><\/xiangshu>\r\n\t\t\t\t\t\t\t<hanshuidanjia><\/hanshuidanjia>\r\n\t\t\t\t\t\t\t<hanshuijine><\/hanshuijine>\r\n\t\t\t\t\t\t\t<buhanshuidanjia>22.65<\/buhanshuidanjia>\r\n\t\t\t\t\t\t\t<buhanshuijine>0.0<\/buhanshuijine>\r\n\t\t\t\t\t\t\t<shuilv>17.0<\/shuilv>\r\n\t\t\t\t\t\t<\/xsdingdanzibiao>\r\n\t\t\t\t\t\t<xsdingdanzibiao>\r\n\t\t\t\t\t\t\t<zhubiaoid>235317474<\/zhubiaoid>\r\n\t\t\t\t\t\t\t<huohao>236348<\/huohao>\r\n\t\t\t\t\t\t\t<tiaoxingma><\/tiaoxingma>\r\n\t\t\t\t\t\t\t<shangpinmiaoshu>定海针虾丸250<\/shangpinmiaoshu>\r\n\t\t\t\t\t\t\t<shuliang>40.0<\/shuliang>\r\n\t\t\t\t\t\t\t<huansuanlv1><\/huansuanlv1>\r\n\t\t\t\t\t\t\t<xiangshu><\/xiangshu>\r\n\t\t\t\t\t\t\t<hanshuidanjia><\/hanshuidanjia>\r\n\t\t\t\t\t\t\t<hanshuijine><\/hanshuijine>\r\n\t\t\t\t\t\t\t<buhanshuidanjia>7.125<\/buhanshuidanjia>\r\n\t\t\t\t\t\t\t<buhanshuijine>0.0<\/buhanshuijine>\r\n\t\t\t\t\t\t\t<shuilv>17.0<\/shuilv>\r\n\t\t\t\t\t\t<\/xsdingdanzibiao>\r\n\t\t\t\t\t\t<xsdingdanzibiao>\r\n\t\t\t\t\t\t\t<zhubiaoid>235317474<\/zhubiaoid>\r\n\t\t\t\t\t\t\t<huohao>236383<\/huohao>\r\n\t\t\t\t\t\t\t<tiaoxingma><\/tiaoxingma>\r\n\t\t\t\t\t\t\t<shangpinmiaoshu>定海针贡丸250<\/shangpinmiaoshu>\r\n\t\t\t\t\t\t\t<shuliang>20.0<\/shuliang>\r\n\t\t\t\t\t\t\t<huansuanlv1><\/huansuanlv1>\r\n\t\t\t\t\t\t\t<xiangshu><\/xiangshu>\r\n\t\t\t\t\t\t\t<hanshuidanjia><\/hanshuidanjia>\r\n\t\t\t\t\t\t\t<hanshuijine><\/hanshuijine>\r\n\t\t\t\t\t\t\t<buhanshuidanjia>9.4375<\/buhanshuidanjia>\r\n\t\t\t\t\t\t\t<buhanshuijine>0.0<\/buhanshuijine>\r\n\t\t\t\t\t\t\t<shuilv>17.0<\/shuilv>\r\n\t\t\t\t\t\t<\/xsdingdanzibiao>\r\n\t\t\t<\/NewDataSet>\r\n\t\t]]>\r\n       <\/danjuxml>\r\n    <\/daorudanju>\r\n  <\/soap:Body>\r\n<\/soap:Envelope>
-				</pre></div>
+
+			<div class="row" id="console">
+				<label for="xmlContent">Console XML Message</label>
+				<textarea id="xmlContent" class="tall" placeholder="This is a tall text area" name="ex-textarea-4"></textarea>
 			</div>
 		</div>
 	</section>
@@ -144,14 +142,14 @@
 	<script src="/ls/js/syntaxHighlighter/shCore.js"></script>
 	<script src="/ls/js/syntaxHighlighter/shBrushCss.js"></script>
 	<script src="/ls/js/syntaxHighlighter/shBrushXml.js"></script>
-	
+
 	<script>
-		$(document).ready(function() {
+		$(document).ready(
+				function() {
 
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
-					SyntaxHighlighter.all();
-					
+					$('#console').hide();
 					var Job = function() {
 						var self = this;
 						self.status = '';
@@ -182,6 +180,9 @@
 									self.job(data);
 
 									Messenger().post("已成功加载配置数据。");
+									if (data.mode == 'debug') {
+										$('#console').show();
+									}
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
@@ -229,9 +230,9 @@
 									url : '/ls/startManually.ls',
 									success : function(data) {
 										Messenger().post("已成功抓取！");
-										$('#xmlContent').html(data);
+										$('#xmlContent').text(data);
 										SyntaxHighlighter.highlight();
-										
+
 										self.reloadConfiguration();
 
 									},
@@ -250,12 +251,37 @@
 						self.endDateOnClose = function() {
 							$('#manuallyStop').valid();
 						};
-						
+
 						self.testUsernamePassword = function() {
 							Messenger().post({
 								message : '尚未开发的功能！',
 								type : 'error',
 								showCloseButton : true
+							});
+						};
+						
+						self.startupJob = function() {
+							
+							$.ajax({
+								method : 'post',
+								data : {
+									job : JSON.stringify(self.job())
+								},
+								url : '/ls/startupJob.ls',
+								success : function(data) {
+									Messenger().post({
+										message : '尚未开发的功能！',
+										showCloseButton : true
+									});
+								},
+								error : function(XMLHttpRequest,
+										textStatus, errorThrown) {
+									Messenger().post({
+										message : '尚未开发的功能！',
+										type : 'error',
+										showCloseButton : true
+									});
+								}
 							});
 						};
 					};
@@ -268,21 +294,25 @@
 					}).ajaxStop(function() {
 						Common.prototype.closeAjaxLoader();
 					});
-					
-					$("#manuallyStop-btn").click( function(){
-					    if ( $("#manuallyStop").datepicker("widget").is(":visible") ) {
-					        $("#manuallyStop").datepicker("hide");
-					    } else {
-					        $("#manuallyStop").datepicker("show");
-					    }
-					});
-					$("#manuallyStart-btn").click( function(){
-					    if ( $("#manuallyStart").datepicker("widget").is(":visible") ) {
-					        $("#manuallyStart").datepicker("hide");
-					    } else {
-					        $("#manuallyStart").datepicker("show");
-					    }
-					});
+
+					$("#manuallyStop-btn").click(
+							function() {
+								if ($("#manuallyStop").datepicker("widget").is(
+										":visible")) {
+									$("#manuallyStop").datepicker("hide");
+								} else {
+									$("#manuallyStop").datepicker("show");
+								}
+							});
+					$("#manuallyStart-btn").click(
+							function() {
+								if ($("#manuallyStart").datepicker("widget")
+										.is(":visible")) {
+									$("#manuallyStart").datepicker("hide");
+								} else {
+									$("#manuallyStart").datepicker("show");
+								}
+							});
 					//SyntaxHighlighter.all();
 				});
 	</script>

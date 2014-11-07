@@ -31,6 +31,7 @@ public class AutomaticJob implements Serializable {
 	protected String status;
 	protected Integer restartInHours;
 	protected Boolean locked;
+	protected String mode;
 	
 	public Integer getId() {
 	
@@ -167,6 +168,16 @@ public class AutomaticJob implements Serializable {
 
 	public void setLocked(Boolean locked) {
 		this.locked = locked;
+	}
+
+	public String getMode() {
+	
+		return mode;
+	}
+	
+	public void setMode(String mode) {
+	
+		this.mode = mode;
 	}
 
 }

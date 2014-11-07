@@ -24,6 +24,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
+import com.ls.controller.AuchanAutomationAction;
 import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
 
@@ -123,6 +124,14 @@ public class TestWebServices {
 		//AuthanAutomationService authanAutomationService = new AuthanAutomationServiceImpl();
 		String code = authanAutomationService.postDataToWebService("2014-11-3", "2014-11-6");
 		System.out.println(code);
+		
+	}
+	
+	@Test
+	public void testAuchanTrigger() throws Exception {
+		
+		AuchanAutomationAction action = new AuchanAutomationAction();
+		System.out.println(action.startupJob());
 		
 	}
 	
