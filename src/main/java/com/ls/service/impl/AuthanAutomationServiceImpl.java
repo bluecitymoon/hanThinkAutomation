@@ -55,10 +55,10 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
 
-	public List<Orders> grabOrders(String start, String end) throws ConfigurationException {
+	public List<Orders> grabOrders(String start, String end, String dbName) throws ConfigurationException {
 
 		List<Orders> ordersList = Lists.newArrayList();
-		AutomaticJob authanJob = automaticJobRepository.findByType(AuthanConstants.AUTHAN);
+		AutomaticJob authanJob = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
 
 		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
@@ -104,7 +104,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			loginButton.click();
 
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null));
-
+		
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
 
 			if (ordersListHtml.contains("j_username") && ordersListHtml.contains("j_password")) {
@@ -173,7 +173,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		return ordersList;
 	}
 
-	private String compositeOrderToXml(List<Orders> orders) throws IOException, TemplateException {
+	private String compositeOrderToXml(List<Orders> orders, String dbName) throws IOException, TemplateException {
 		
 		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("src/main/resources/auchan-request-soap.ftl");
 		
@@ -181,7 +181,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		
 		data.put("htUsername", "Admin");
 		data.put("htPassword", "E1CCjc7z+m3nmqvYlGnc+LcM8t4=");
-		data.put("htDbName", "测试帐套");
+		data.put("htDbName", dbName);
 		data.put("orders", orders);
 		
 		return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
@@ -245,13 +245,11 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		return null;
 	}
 
-	public String postDataToWebService(String start, String end) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException, TemplateException {
+	public String postDataToWebService(String start, String end, String dbName) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException, TemplateException {
 
-		List<Orders> orders = grabOrders(start, end);
+		List<Orders> orders = grabOrders(start, end, dbName);
 
-		String data = compositeOrderToXml(orders);
-		
-		//Files.write(data.getBytes(), new File("D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\resources\\data.xml"));
+		String data = compositeOrderToXml(orders, dbName);
 
 		HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -260,7 +258,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		InputStream is = new ByteArrayInputStream(b, 0, b.length);
 
 		HttpPost request = new HttpPost("http://hanthink.gnway.org:88/hanthinkserver/service1.asmx");
-		request.setHeader("Content-Type", " text/xml; charset=gbk");
+		request.setHeader("Content-Type", " text/xml; charset=UTF-8");
 		request.setEntity(new InputStreamEntity(is));
 
 		HttpResponse response = httpClient.execute(request);

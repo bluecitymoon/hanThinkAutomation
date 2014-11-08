@@ -171,7 +171,33 @@
 				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
 			</result>
 		</action>
-		
+		<action name="readJobList" class="auchanAction" method="readJobList">
+			<result name="success" type="json">
+				 <param name="root">jobList</param>
+			</result>
+			<result name="input" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
+			<result name="error" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
+		</action>
+		<action name="deleteJob" class="auchanAction" method="deleteJob">
+			<result name="success" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
+			<result name="input" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
+			<result name="error" type="json">
+				 <param name="ignoreHierarchy">false</param>
+				 <param name="includeProperties">actionErrors\[\d+\],fieldErrors\..+$,actionMessages\[\d+\]</param>
+			</result>
+		</action>
 	</package>
 
 	<include file="data-struts.xml" />

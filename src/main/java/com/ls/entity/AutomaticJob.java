@@ -32,6 +32,9 @@ public class AutomaticJob implements Serializable {
 	protected Integer restartInHours;
 	protected Boolean locked;
 	protected String mode;
+	protected String dbName;
+	protected String dbUsernname;
+	protected String dbPassword;
 	
 	public Integer getId() {
 	
@@ -178,6 +181,30 @@ public class AutomaticJob implements Serializable {
 	public void setMode(String mode) {
 	
 		this.mode = mode;
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
+	public String getDbUsernname() {
+		return dbUsernname;
+	}
+
+	public void setDbUsernname(String dbUsernname) {
+		this.dbUsernname = dbUsernname;
+	}
+
+	public String getDbPassword() {
+		return dbPassword;
+	}
+
+	public void setDbPassword(String dbPassword) {
+		this.dbPassword = dbPassword;
 	}
 
 }

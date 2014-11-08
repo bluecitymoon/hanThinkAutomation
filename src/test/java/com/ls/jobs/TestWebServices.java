@@ -122,8 +122,8 @@ public class TestWebServices {
 	public void testSendData() throws Exception {
 		
 		//AuthanAutomationService authanAutomationService = new AuthanAutomationServiceImpl();
-		String code = authanAutomationService.postDataToWebService("2014-11-3", "2014-11-6");
-		System.out.println(code);
+		//String code = authanAutomationService.postDataToWebService("2014-11-3", "2014-11-6");
+		//System.out.println(code);
 		
 	}
 	

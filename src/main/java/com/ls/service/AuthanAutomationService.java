@@ -15,7 +15,7 @@ public interface AuthanAutomationService {
 	
 	public Orders grabSingleOrders(String start, String end);
 	
-	public List<Orders> grabOrders(String start, String end) throws ConfigurationException;
+	public List<Orders> grabOrders(String start, String end, String dbName) throws ConfigurationException;
 	
-	public String postDataToWebService(String start, String end) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException, TemplateException;
+	public String postDataToWebService(String start, String end, String dbName) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException, TemplateException;
 }
