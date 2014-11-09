@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import freemarker.template.Configuration;
 
@@ -21,6 +24,8 @@ public class AuthanConstants {
 	public static String BIG_VIEW = null;
 	
 	public static Configuration anchanConfiguration = null;
+	
+	public static Set<String> startedJobIdentityList = new HashSet<String>();
 
 	public static String readResource(String fileName) {
 		InputStream in = ClassLoader.getSystemResourceAsStream(fileName);

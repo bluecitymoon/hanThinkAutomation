@@ -93,8 +93,11 @@
 								<hr>
 								<div class="row">
 									<div class="twelve columns centered">
-										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> <a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">测试用户名密码</a>
+										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> 
+										<!-- 
+										<a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">测试用户名密码</a>
 										<a href="#" class="tertiary line gray" data-bind="click : $root.startupJob">启动自动导入任务</a>
+										 -->
 									</div>
 								</div>
 							</div>
@@ -189,11 +192,19 @@
 		</div>
 	</section>
 
-	<s:include value="/jsps/common/footer.jsp" />
+	<!-- Footer -->
+<footer role="footer">
+	<div class="container">
+		<div class="row">
+			<div class="eight columns">
+				<p>Copyright &copy; 2009 - 2013 HanThink Technology. All rights reserved.</p>
+			</div>
+			<div class="four columns"></div>
+		</div>
+	</div>
+</footer>
+
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
-	<script src="/ls/js/syntaxHighlighter/shCore.js"></script>
-	<script src="/ls/js/syntaxHighlighter/shBrushCss.js"></script>
-	<script src="/ls/js/syntaxHighlighter/shBrushXml.js"></script>
 
 	<script>
 		$(document).ready(
@@ -202,8 +213,11 @@
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
 					$('#console').hide();
+					
 					var Job = function() {
+						
 						var self = this;
+						
 						self.id = '';
 						self.status = '';
 						self.name = '';
@@ -242,7 +256,7 @@
 							
 							if (result) {
 								$.ajax({
-									url : '/ls/deleteJob.ls',
+									url : '/ls/deleteJob.action',
 									data : {
 										job : JSON.stringify(item)
 									},
@@ -252,7 +266,6 @@
 									},
 									error : function(XMLHttpRequest, textStatus,
 											errorThrown) {
-										console.debug(XMLHttpRequest);
 									}
 								});
 							}
@@ -263,17 +276,25 @@
 								data : {
 									job : JSON.stringify(item)
 								},
-								url : '/ls/startupJob.ls',
+								url : '/ls/startupJob.action',
 								success : function(data) {
-									Messenger().post({
-										message : '尚未开发的功能！',
-										showCloseButton : true
-									});
+									if (data.message) {
+										Messenger().post({
+											message : data.message,
+											type : 'error',
+											showCloseButton : true
+										});
+									} else {
+										Messenger().post({
+											message : '任务<b class="label green">'+ item.dbName +'</b>已经成功启动！',
+											showCloseButton : true
+										});
+									}
 								},
 								error : function(XMLHttpRequest,
 										textStatus, errorThrown) {
 									Messenger().post({
-										message : '尚未开发的功能！',
+										message : '启动任务失败,' + errorThrown,
 										type : 'error',
 										showCloseButton : true
 									});
@@ -282,11 +303,35 @@
 							
 						};
 						self.stopJob = function(item, event) {
-							self.job(item);
 							
-							Messenger().post({
-								message : ('<b class="label green">' + item.dbName + '</b> 加载成功!'),
-								showCloseButton : true
+							$.ajax({
+								method : 'post',
+								data : {
+									job : JSON.stringify(item)
+								},
+								url : '/ls/shutDownJob.action',
+								success : function(data) {
+									if (data.message) {
+										Messenger().post({
+											message : data.message,
+											type : 'error',
+											showCloseButton : true
+										});
+									} else {
+										Messenger().post({
+											message : '任务<b class="label green">'+ item.dbName +'</b>已经成功关闭！',
+											showCloseButton : true
+										});
+									}
+								},
+								error : function(XMLHttpRequest,
+										textStatus, errorThrown) {
+									Messenger().post({
+										message : '错误：	' + errorThrown,
+										type : 'error',
+										showCloseButton : true
+									});
+								}
 							});
 						};
 						self.clearForm = function() {
@@ -295,20 +340,17 @@
 						
 						self.reloadJobList = function() {
 							$.ajax({
-								url : '/ls/readJobList.ls',
+								url : '/ls/readJobList.action',
 								success : function(data) {
-				
-									try {
+										try {
 										self.jobList(data);
+										Messenger().post("已成功加载任务列表");
 									} catch(e) {
 										Messenger().post({
 											message : ('加载任务列表失败，' + e),
 											showCloseButton : true
 										});
 									}
-									
-				
-									Messenger().post("已成功加载任务列表");
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
@@ -327,10 +369,20 @@
 									data : {
 										job : JSON.stringify(self.job())
 									},
-									url : '/ls/saveAutomaticJob.ls',
+									url : '/ls/saveAutomaticJob.action',
 									success : function(data) {
-										Messenger().post("配置信息已经成功保存！");
-										self.reloadJobList();
+										
+										if (data.message) {
+											Messenger().post({
+												message : data.message,
+												type : 'error',
+												showCloseButton : true
+											});
+										} else {
+											self.reloadJobList();
+											Messenger().post("配置信息已经成功保存！");
+										}
+										
 										
 									},
 									error : function(XMLHttpRequest,
@@ -356,7 +408,7 @@
 										manuallyStop : self.manuallyStop(),
 										manuallyDbName : self.manuallyDbName()
 									},
-									url : '/ls/startManually.ls',
+									url : '/ls/startManually.action',
 									success : function(data) {
 										Messenger().post("已成功抓取！");
 										if(data) {
@@ -395,7 +447,7 @@
 								data : {
 									job : JSON.stringify(self.job())
 								},
-								url : '/ls/startupJob.ls',
+								url : '/ls/startupJob.action',
 								success : function(data) {
 									Messenger().post({
 										message : '尚未开发的功能！',

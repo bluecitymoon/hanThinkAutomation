@@ -75,11 +75,8 @@ public class AutomaticJobManager {
 						getJobDetailMap().put(dbName, jobDetail);
 					}
 				}
-				
-				
 			}
 		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -107,6 +104,12 @@ public class AutomaticJobManager {
 				logger.error("can't create schedular." + e.getMessage());
 				
 				return null;
+			}
+			try {
+				scheduler.start();
+			} catch (SchedulerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return scheduler;

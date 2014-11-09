@@ -50,7 +50,7 @@
 	</filter>
 	<filter-mapping>
   		<filter-name>OpenEntityManagerInViewFilter</filter-name>
-  		<url-pattern>*.ls</url-pattern>
+  		<url-pattern>*.action</url-pattern>
  	</filter-mapping>
 	<filter>
 		<filter-name>struts2</filter-name>
@@ -58,7 +58,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>struts2</filter-name>
-		<url-pattern>*.ls</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	
 	<welcome-file-list>

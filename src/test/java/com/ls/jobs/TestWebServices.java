@@ -18,6 +18,11 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.SchedulerException;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -132,6 +137,22 @@ public class TestWebServices {
 		
 		AuchanAutomationAction action = new AuchanAutomationAction();
 		System.out.println(action.startupJob());
+		
+	}
+	
+	@Test
+	public void testTrigger() {
+		
+		JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).withIdentity("key1", "").build();
+		CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(12, 11).build();
+		singleTrigger.setName("");
+		
+		try {
+			AutomaticJobManager.getScheduler().scheduleJob(jobDetail, singleTrigger);
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	

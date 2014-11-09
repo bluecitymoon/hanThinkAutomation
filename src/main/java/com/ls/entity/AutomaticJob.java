@@ -35,6 +35,7 @@ public class AutomaticJob implements Serializable {
 	protected String dbName;
 	protected String dbUsernname;
 	protected String dbPassword;
+	protected Boolean autoJobRunning;
 	
 	public Integer getId() {
 	
@@ -205,6 +206,14 @@ public class AutomaticJob implements Serializable {
 
 	public void setDbPassword(String dbPassword) {
 		this.dbPassword = dbPassword;
+	}
+
+	public Boolean getAutoJobRunning() {
+		return autoJobRunning;
+	}
+
+	public void setAutoJobRunning(Boolean autoJobRunning) {
+		this.autoJobRunning = autoJobRunning;
 	}
 
 }
