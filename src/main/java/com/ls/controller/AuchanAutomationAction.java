@@ -18,6 +18,8 @@ import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -42,6 +44,8 @@ public class AuchanAutomationAction extends BaseAction {
 
 	private List<AutomaticJob> jobList;
 
+	private Logger logger = LoggerFactory.getLogger(AuchanAutomationAction.class);
+	
 	@Autowired
 	private AutomaticJobRepository automaticJobRepository;
 
@@ -54,8 +58,20 @@ public class AuchanAutomationAction extends BaseAction {
 		String manuallyStop = getParameter("manuallyStop");
 		String dbName = getParameter("manuallyDbName");
 
+		logger.debug("test log");
 		try {
-			AutomaticJob job = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
+			
+			AutomaticJob job = null;
+			try {
+				job = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
+			} catch (javax.persistence.NonUniqueResultException e) {
+				
+				response = ResponseVo.newFailMessage("抓取失败，你可能配置了多个同名帐套的自动任务。");
+				logger.error(response.toString());
+				
+				return SUCCESS;
+			}	
+			
 			if (job == null) {
 				response = ResponseVo.newFailMessage("不存在帐套[" + dbName + "]");
 				
@@ -69,11 +85,18 @@ public class AuchanAutomationAction extends BaseAction {
 			if (StringUtils.isEmpty(mode) || !mode.equals("debug") && response.getType().equals(ResponseVo.MessageType.SUCCESS.name())) {
 				
 				response.setMessage("200OK");
-			} 
+			} else {
+				response.setMode("debug");
+			}
 
+		
 		} catch (Exception e) {
 			
-			response = ResponseVo.newFailMessage("抓取过程中出现意外错误，请重试或者联系技术人员。");
+			response = ResponseVo.newFailMessage("抓取过程中出现意外错误，请重试或者联系技术人员。" + e.getMessage());
+			
+			logger.error(response.toString());
+			logger.error(e.getMessage());
+			
 			return SUCCESS;
 		}
 
@@ -94,6 +117,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 		jobList = automaticJobRepository.findByType(AuthanConstants.AUTHAN);
 
+		
 		makeGeneralSuccessResponse();
 		return SUCCESS;
 	}
@@ -213,8 +237,13 @@ public class AuchanAutomationAction extends BaseAction {
 			jobInDb.setStatus("启动失败");
 			automaticJobRepository.saveAndFlush(jobInDb);
 			
+			logger.error("start up job failed.");
+			logger.error(jobInDb.toString());
+			
 		}
 
+		makeGeneralSuccessResponse();
+		
 		return SUCCESS;
 	}
 	
@@ -232,6 +261,9 @@ public class AuchanAutomationAction extends BaseAction {
 			
 		} catch (SchedulerException e) {
 			setMessage(e.getMessage());
+			
+			logger.error("shut down job failed");
+			logger.error(requestJob.toString());
 		} finally {
 			requestJob.setStatus("未启动");
 			requestJob.setAutoJobRunning(false);

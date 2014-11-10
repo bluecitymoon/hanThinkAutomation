@@ -244,14 +244,13 @@
 	<script>
 		$(document).ready( function() {
 			$("#moduleTabs").tabs();
+			$('#console').hide();
 			
 			$('#jobListTable').dataTable({
-			    "bJQueryUI": false,
-			    "sScrollX": "100%",
-			    "sPaginationType": "full_numbers",
-			    "oLanguage": {
-			        "sSearch": "搜索"
-			    }
+			    "paging":   false,
+		        "ordering": false,
+		        "info":     false,
+		        "searching" : false
 			});
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
@@ -378,6 +377,7 @@
 						self.clearForm = function() {
 							var job = new Job();
 							job.status = '新创建';
+							job.clientEnd = '/hanthinkserver/service1.asmx';
 							self.job(job);
 						};
 						
@@ -445,11 +445,12 @@
 									url : '/ls/startManually.action',
 									success : function(data) {
 										Messenger().post("已成功抓取！");
-										if(data && data.response &&data.response.mode == 'debug') {
-											$('#xmlContent').text(data);
+										if(data && data.message &&data.mode == 'debug') {
+											$('#xmlContent').text(data.message);
 											$('#console').show();
+										} else {
+											handleResponse(data);
 										}
-										handleResponse(data);
 										
 									},
 									error : function(XMLHttpRequest,
@@ -502,19 +503,21 @@
 		
 		function handleResponse(response) {
 			
-			if (response.type == 'SUCCESS') {
-				Messenger().post({
-					message : response.message,
-					showCloseButton : true
-				});
-			} else if (response.type == 'FAIL') {
-				Messenger().post({
-					message : response.message,
-					showCloseButton : true,
-					type : 'error'
-				});
+			if (response) {
+				
+				if (response.type == 'SUCCESS') {
+					Messenger().post({
+						message : response.message,
+						showCloseButton : true
+					});
+				} else if (response.type == 'FAIL') {
+					Messenger().post({
+						message : response.message,
+						showCloseButton : true,
+						type : 'error'
+					});
+				}
 			}
-			
 		}
 	</script>
 </body>

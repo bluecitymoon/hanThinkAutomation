@@ -229,4 +229,11 @@ public class AutomaticJob implements Serializable {
 		this.clientEnd = clientEnd;
 	}
 
+	@Override
+	public String toString() {
+
+		return "AutomaticJob [id=" + id + ", type=" + type + ", name=" + name + ", clientIp=" + clientIp + ", clientEnd=" + clientEnd + ", start=" + start + ", stop=" + stop + ", lastGrabStart=" + lastGrabStart + ", lastGrabEnd=" + lastGrabEnd + ", username=" + username + ", password=" + password + ", status=" + status +
+			", restartInHours=" + restartInHours + ", locked=" + locked + ", mode=" + mode + ", dbName=" + dbName + ", dbUsernname=" + dbUsernname + ", dbPassword=" + dbPassword + ", autoJobRunning=" + autoJobRunning + "]";
+	}
+
 }

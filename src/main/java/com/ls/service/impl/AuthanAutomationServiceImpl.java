@@ -3,7 +3,6 @@ package com.ls.service.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -259,11 +258,15 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("任务配置出现了问题：" + e.getMessage());
 			
+			logger.error("postDataToWebService error" + responseVo.toString());
+			
 			return responseVo;
 			
 		} catch (Exception e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("获取元数据时候出错了：" + e.getMessage());
+			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			
 			return responseVo;
 		}
@@ -274,17 +277,17 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		} catch (IOException e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("封装模板时候出现IO异常：" + e.getMessage());
-			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		} catch (TemplateException e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("封装模板时候出现异常：" + e.getMessage());
-			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		} catch (Exception e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("封装模板时候出现异常：" + e.getMessage());
-			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		}
 		
@@ -298,17 +301,17 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		} catch (ClientProtocolException e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
-			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		} catch (IOException e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
-			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		} catch (Exception e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
-			
+			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		}
 		responseVo.setType(ResponseVo.MessageType.SUCCESS.name());
