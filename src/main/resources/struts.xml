@@ -16,22 +16,22 @@
 		
 		<action name="startManually" class="auchanAction" method="startManually">
 			<result name="success" type="json">
-				<param name="root">orders</param>
+				<param name="root">response</param>
 			</result>
 		</action>
 		<action name="saveAutomaticJob" class="auchanAction" method="saveAutomaticJob">
 			<result name="success" type="json">
-				<param name="root">automaticJob</param>
+				<param name="root">response</param>
 			</result>
 		</action>
 		<action name="startupJob" class="auchanAction" method="startupJob">
 			<result name="success" type="json">
-				 <param name="root">message</param>
+				 <param name="root">response</param>
 			</result>
 		</action>
 		<action name="shutDownJob" class="auchanAction" method="shutDownJob">
 			<result name="success" type="json">
-				 <param name="root">message</param>
+				 <param name="root">response</param>
 			</result>
 		</action>
 		<action name="readJobList" class="auchanAction" method="readJobList">
@@ -41,7 +41,7 @@
 		</action>
 		<action name="deleteJob" class="auchanAction" method="deleteJob">
 			<result name="success" type="json">
-				 <param name="root">message</param>
+				 <param name="root">response</param>
 			</result>
 		</action>
 	</package>

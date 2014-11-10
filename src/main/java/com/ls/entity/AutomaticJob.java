@@ -22,6 +22,7 @@ public class AutomaticJob implements Serializable {
 	protected String type;
 	protected String name;
 	protected String clientIp;
+	protected String clientEnd;
 	protected String start;
 	protected String stop;
 	protected String lastGrabStart;
@@ -214,6 +215,18 @@ public class AutomaticJob implements Serializable {
 
 	public void setAutoJobRunning(Boolean autoJobRunning) {
 		this.autoJobRunning = autoJobRunning;
+	}
+
+	
+	public String getClientEnd() {
+	
+		return clientEnd;
+	}
+
+	
+	public void setClientEnd(String clientEnd) {
+	
+		this.clientEnd = clientEnd;
 	}
 
 }

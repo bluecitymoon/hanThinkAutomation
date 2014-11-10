@@ -1,46 +1,51 @@
 package com.ls.jobs;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
-import org.apache.http.client.ClientProtocolException;
+import org.apache.commons.lang.StringUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.ls.exception.ConfigurationException;
+import com.ls.constants.AuthanConstants;
+import com.ls.entity.AutomaticJob;
 import com.ls.service.AuthanAutomationService;
-
-import freemarker.template.TemplateException;
+import com.ls.vo.ResponseVo;
 
 public class AuthanAutomationQuartzJob implements Job {
 
 	private AuthanAutomationService authanAutzmationService;
-
+	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
+	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
-		try {
 			authanAutzmationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("authanAutomationService");
+			
+			AutomaticJob authanJob = (AutomaticJob)context.getJobDetail().getJobDataMap().get("jobWillRun");
 
-			String content = authanAutzmationService.postDataToWebService("2014-11-4", "2014-11-4", "测试帐套");
-			System.out.println(content);
+			String lastRunDate = authanJob.getLastGrabEnd();
+			
+			if (StringUtils.isEmpty(lastRunDate)) {
+				lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(new Date());
+			} 
+			
+			String now = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(new Date());
+			
+			ResponseVo responseVo = null;
+			
+			try {
+				
+				responseVo = authanAutzmationService.postDataToWebService(lastRunDate, now, authanJob.getDbName());
+				
+			} catch (Exception e) {
+				logger.error(AuthanConstants.HANTHINK_TIME_FORMATTER.format(new Date()));
+				logger.error(responseVo.getType());
+				logger.error(responseVo.getMessage());
+				logger.error(e.getMessage());
+			}
 
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 }

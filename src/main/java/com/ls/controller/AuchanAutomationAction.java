@@ -1,7 +1,5 @@
 package com.ls.controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +9,6 @@ import javax.annotation.Resource;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -27,13 +24,11 @@ import org.springframework.stereotype.Component;
 
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
-import com.ls.exception.ConfigurationException;
 import com.ls.jobs.AuthanAutomationQuartzJob;
 import com.ls.jobs.AutomaticJobManager;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
-
-import freemarker.template.TemplateException;
+import com.ls.vo.ResponseVo;
 
 @Component("auchanAction")
 @Scope("prototype")
@@ -41,7 +36,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 	private static final long serialVersionUID = 7537597127706997734L;
 
-	private String orders;
+	private ResponseVo response;
 
 	private AutomaticJob automaticJob;
 
@@ -62,36 +57,23 @@ public class AuchanAutomationAction extends BaseAction {
 		try {
 			AutomaticJob job = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
 			if (job == null) {
-				setMessage("不存在帐套[" + dbName + "]");
+				response = ResponseVo.newFailMessage("不存在帐套[" + dbName + "]");
+				
 				return SUCCESS;
 			}
-
+ 
 			String mode = job.getMode();
 
-			String response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, dbName);
-			if (StringUtils.isEmpty(mode) || !mode.equals("debug")) {
-				orders = "";
-			} else {
-				orders = response;
-			}
+			response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, dbName);
+			
+			if (StringUtils.isEmpty(mode) || !mode.equals("debug") && response.getType().equals(ResponseVo.MessageType.SUCCESS.name())) {
+				
+				response.setMessage("200OK");
+			} 
 
-		} catch (ConfigurationException e) {
-			setMessage(e.getMessage());
-			return SUCCESS;
-		} catch (UnsupportedEncodingException e) {
-			setMessage(e.getMessage());
-			return SUCCESS;
-		} catch (ClientProtocolException e) {
-			setMessage(e.getMessage());
-			return SUCCESS;
-		} catch (IOException e) {
-			setMessage(e.getMessage());
-			return SUCCESS;
-		} catch (TemplateException e) {
-			setMessage(e.getMessage());
-			return SUCCESS;
 		} catch (Exception e) {
-			setMessage("抓取过程中出现意外错误，请重试或者联系管理员。");
+			
+			response = ResponseVo.newFailMessage("抓取过程中出现意外错误，请重试或者联系技术人员。");
 			return SUCCESS;
 		}
 
@@ -102,6 +84,8 @@ public class AuchanAutomationAction extends BaseAction {
 		String id = getParameter("jobId");
 
 		automaticJob = automaticJobRepository.findOne(Integer.valueOf(id));
+		
+		makeGeneralSuccessResponse();
 
 		return SUCCESS;
 	}
@@ -110,6 +94,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 		jobList = automaticJobRepository.findByType(AuthanConstants.AUTHAN);
 
+		makeGeneralSuccessResponse();
 		return SUCCESS;
 	}
 
@@ -120,7 +105,8 @@ public class AuchanAutomationAction extends BaseAction {
 
 			setMessage("Job is missing.");
 
-			return SUCCESS;
+			response = ResponseVo.newFailMessage("请求数据错误");
+			
 		} else {
 			
 			AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
@@ -135,6 +121,7 @@ public class AuchanAutomationAction extends BaseAction {
 //			} else {
 				
 				this.automaticJob = automaticJobRepository.saveAndFlush(automaticJob);
+				makeGeneralSuccessResponse();
 //			}
 		}
 
@@ -147,6 +134,8 @@ public class AuchanAutomationAction extends BaseAction {
 
 		automaticJobRepository.delete(automaticJob);
 
+		makeGeneralSuccessResponse();
+		
 		return SUCCESS;
 	}
 
@@ -157,12 +146,14 @@ public class AuchanAutomationAction extends BaseAction {
 		AutomaticJob jobInDb = automaticJobRepository.findOne(jobRequest.getId());
 
 		if (jobInDb.getAutoJobRunning()!= null && jobInDb.getAutoJobRunning()) {
-			setMessage("该任务已经启动！");
+			
+			makeGeneralFailResponse("该任务已经启动！");
 			return SUCCESS;
 		}
 
 		JobDataMap jobDataMap = new JobDataMap();
 		jobDataMap.put("authanAutomationService", authanAutomationService);
+		jobDataMap.put("jobWillRun", jobInDb);
 
 		try {
 			String startHourAndMin = jobInDb.getStart();
@@ -176,7 +167,7 @@ public class AuchanAutomationAction extends BaseAction {
 			int endMin = Integer.valueOf(end[1]);
 
 			if (startHour > endHour) {
-				setMessage("起始时间错误");
+				makeGeneralFailResponse("起始时间错误");
 				return SUCCESS;
 			}
 			int restartInHours = jobInDb.getRestartInHours();
@@ -200,7 +191,7 @@ public class AuchanAutomationAction extends BaseAction {
 					singleTrigger.setGroup(jobInDb.getDbName());
 					Scheduler scheduler = AutomaticJobManager.getScheduler();
 					if (null == scheduler) {
-						setMessage("获取任务调度失败！");
+						makeGeneralFailResponse("获取任务调度失败！");
 						return SUCCESS;
 					} else {
 						scheduler.scheduleJob(jobDetail, singleTrigger);
@@ -217,7 +208,7 @@ public class AuchanAutomationAction extends BaseAction {
 			
 		} catch (Exception e) {
 			
-			setMessage("配置信息有误 : " + e.getMessage());
+			makeGeneralFailResponse("配置信息有误 : " + e.getMessage());
 			jobInDb.setAutoJobRunning(false);
 			jobInDb.setStatus("启动失败");
 			automaticJobRepository.saveAndFlush(jobInDb);
@@ -252,13 +243,12 @@ public class AuchanAutomationAction extends BaseAction {
 			}
 		}
 		
+		makeGeneralSuccessResponse();
+		
 		return SUCCESS;
 	}
 
-	public String getOrders() {
-
-		return orders;
-	}
+	
 
 	private AutomaticJob getJobdetailsFromRequest() {
 
@@ -268,9 +258,19 @@ public class AuchanAutomationAction extends BaseAction {
 		return automaticJob;
 	}
 
-	public void setOrders(String orders) {
-
-		this.orders = orders;
+	private void makeGeneralSuccessResponse() {
+		response = ResponseVo.newSuccessMessage(null);
+	}
+	
+	private void makeGeneralSuccessResponse(String message) {
+		response = ResponseVo.newSuccessMessage(message);
+	}
+	private void makeGeneralFailResponse() {
+		response = ResponseVo.newFailMessage(null);
+	}
+	
+	private void makeGeneralFailResponse(String message) {
+		response = ResponseVo.newFailMessage(message);
 	}
 
 	public AutomaticJob getAutomaticJob() {
@@ -289,6 +289,17 @@ public class AuchanAutomationAction extends BaseAction {
 
 	public void setJobList(List<AutomaticJob> jobList) {
 		this.jobList = jobList;
+	}
+
+	
+	public ResponseVo getResponse() {
+	
+		return response;
+	}
+
+	public void setResponse(ResponseVo response) {
+	
+		this.response = response;
 	}
 
 }

@@ -155,7 +155,7 @@
 								<h2>欧尚任务中心</h2>
 							</div>
 							<div class="content">
-								<table class="dataTable">						
+								<table id="jobListTable" class="clean">						
 									<thead>
 										<tr>
 											<th>帐套名</th>
@@ -205,15 +205,21 @@
 </footer>
 
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
-
+	<script src="/ls/js/jquery.dataTables.js"></script>
 	<script>
-		$(document).ready(
-				function() {
+		$(document).ready( function() {
 
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
 					$('#console').hide();
-					
+					$('#jobListTable').dataTable({
+					    "bJQueryUI": false,
+					    "sScrollX": "100%",
+					    "sPaginationType": "full_numbers",
+					    "oLanguage": {
+					        "sSearch": "搜索"
+					    }
+					});
 					var Job = function() {
 						
 						var self = this;

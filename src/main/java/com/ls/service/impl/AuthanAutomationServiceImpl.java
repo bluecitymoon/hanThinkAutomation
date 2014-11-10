@@ -43,6 +43,7 @@ import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
+import com.ls.vo.ResponseVo;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -245,25 +246,98 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		return null;
 	}
 
-	public String postDataToWebService(String start, String end, String dbName) throws ConfigurationException, UnsupportedEncodingException, ClientProtocolException, IOException, TemplateException {
+	public ResponseVo postDataToWebService(String start, String end, String dbName) {
 
-		List<Orders> orders = grabOrders(start, end, dbName);
+		ResponseVo responseVo = ResponseVo.newResponse();
+		
+		List<Orders> orders;
+		try {
+			orders = grabOrders(start, end, dbName);
+			
+		} catch (ConfigurationException e) {
+			
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("任务配置出现了问题：" + e.getMessage());
+			
+			return responseVo;
+			
+		} catch (Exception e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("获取元数据时候出错了：" + e.getMessage());
+			
+			return responseVo;
+		}
 
-		String data = compositeOrderToXml(orders, dbName);
+		String data;
+		try {
+			data = compositeOrderToXml(orders, dbName);
+		} catch (IOException e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("封装模板时候出现IO异常：" + e.getMessage());
+			
+			return responseVo;
+		} catch (TemplateException e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("封装模板时候出现异常：" + e.getMessage());
+			
+			return responseVo;
+		} catch (Exception e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("封装模板时候出现异常：" + e.getMessage());
+			
+			return responseVo;
+		}
+		
+		AutomaticJob job = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
+		
+		String url = job.getClientIp() + job.getClientEnd();
+		HttpResponse response = null;
+		try {
+			response = postWebService(url, data);
+			
+		} catch (ClientProtocolException e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
+			
+			return responseVo;
+		} catch (IOException e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
+			
+			return responseVo;
+		} catch (Exception e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
+			
+			return responseVo;
+		}
+		responseVo.setType(ResponseVo.MessageType.SUCCESS.name());
+		responseVo.setMessage(data);
+		
+		return responseVo;
+	}
 
+	public HttpResponse postWebService(String url, String xmlData) throws ClientProtocolException, IOException {
+		
+		HttpResponse response = null;
 		HttpClient httpClient = HttpClientBuilder.create().build();
 
-		byte[] b = data.getBytes("utf-8");
+		byte[] b = xmlData.getBytes("utf-8");
 
 		InputStream is = new ByteArrayInputStream(b, 0, b.length);
 
-		HttpPost request = new HttpPost("http://hanthink.gnway.org:88/hanthinkserver/service1.asmx");
+		HttpPost request = new HttpPost(url);
+		
 		request.setHeader("Content-Type", " text/xml; charset=UTF-8");
 		request.setEntity(new InputStreamEntity(is));
 
-		HttpResponse response = httpClient.execute(request);
+		response = httpClient.execute(request);
+		
+		return response;
+	}
+	public AutomaticJob getJobByDbName(String dbName) {
 
-		return data;
+		return automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
 	}
 
 }

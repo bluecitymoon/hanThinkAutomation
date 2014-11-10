@@ -15,8 +15,12 @@ public class AuthanConstants {
 
 	public static final String AUTHAN = "authan";
 	public static final String HANTHINK_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	
+	public static final String HANTHINK_DATE_FORMAT_QUERY = "yyyy-MM-dd";
 
 	public static final SimpleDateFormat HANTHINK_TIME_FORMATTER = new SimpleDateFormat(HANTHINK_DATE_FORMAT);
+	
+	public static final SimpleDateFormat HANTHINK_TIME_FORMATTER_QUERY = new SimpleDateFormat(HANTHINK_DATE_FORMAT_QUERY);
 
 	public static String MAIN_TABLE_TEMPLATE = null;
 	public static String CHILD_TABLE_TEMPLATE = null;

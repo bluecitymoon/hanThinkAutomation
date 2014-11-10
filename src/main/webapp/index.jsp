@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/ls/css/style-theme.css" media="print" />
 <link rel="stylesheet" href="/ls/css/messenger.css">
 <link rel="stylesheet" href="/ls/css/messenger-theme-flat.css">
+<link rel="stylesheet" href="/ls/css/jquery.dataTables.css">
 <script src="/ls/js/jquery-1.10.2.js"></script>
 <script src="/ls/js/jquery-ui-1.10.4.custom.js"></script>
 <script src="/ls/js/knockout-3.1.0.js"></script>
@@ -77,7 +78,7 @@
 									</h2>
 								</div>
 								<div class="content">
-									<table class="clean" id="jobListTable">
+									<table class="display compact" id="jobListTable">
 									<thead>
 										<tr>
 											<th class="text-center">帐套名</th>
@@ -249,7 +250,7 @@
 			    "sScrollX": "100%",
 			    "sPaginationType": "full_numbers",
 			    "oLanguage": {
-			        "sSearch": "Filter"
+			        "sSearch": "搜索"
 			    }
 			});
 					$('#grabForm').validate({});
@@ -300,12 +301,17 @@
 										job : JSON.stringify(item)
 									},
 									success : function(data) {
-										Messenger().post("删除成功！");
+										handleResponse(data);
+										
 										self.reloadJobList();
 									},
 									error : function(XMLHttpRequest, textStatus,
 											errorThrown) {
-										console.debug(XMLHttpRequest);
+										
+										Messenger().post({
+											message : XMLHttpRequest,
+											showCloseButton : true
+										});
 									}
 								});
 							}
@@ -319,18 +325,8 @@
 								},
 								url : '/ls/startupJob.action',
 								success : function(data) {
-									if (data) {
-										Messenger().post({
-											message : '启动任务失败,' + data,
-											type : 'error',
-											showCloseButton : true
-										});
-									} else {
-										Messenger().post({
-											message : '任务已经成功启动！',
-											showCloseButton : true
-										});
-									}
+									
+									handleResponse(data);
 									
 									self.reloadJobList();
 									
@@ -355,9 +351,9 @@
 								},
 								url : '/ls/shutDownJob.action',
 								success : function(data) {
-									if (data && data.message) {
+									if (data && data.type== 'fail') {
 										Messenger().post({
-											message : data.message,
+											message : data.response.message,
 											type : 'error',
 											showCloseButton : true
 										});
@@ -418,18 +414,9 @@
 									},
 									url : '/ls/saveAutomaticJob.action',
 									success : function(data) {
+										handleResponse(data);
 										
-										if (data.actionErrors) {
-											Messenger().post({
-												message : data.actionErrors,
-												type : 'error',
-												showCloseButton : true
-											});
-										} else {
-											self.reloadJobList();
-											Messenger().post("配置信息已经成功保存！");
-										}
-										
+										self.reloadJobList();
 										
 									},
 									error : function(XMLHttpRequest,
@@ -458,10 +445,12 @@
 									url : '/ls/startManually.action',
 									success : function(data) {
 										Messenger().post("已成功抓取！");
-										if(data) {
+										if(data && data.response &&data.response.mode == 'debug') {
 											$('#xmlContent').text(data);
 											$('#console').show();
 										}
+										handleResponse(data);
+										
 									},
 									error : function(XMLHttpRequest,
 											textStatus, errorThrown) {
@@ -507,7 +496,26 @@
 									$("#manuallyStart").datepicker("show");
 								}
 							});
+					
+					
 				});
+		
+		function handleResponse(response) {
+			
+			if (response.type == 'SUCCESS') {
+				Messenger().post({
+					message : response.message,
+					showCloseButton : true
+				});
+			} else if (response.type == 'FAIL') {
+				Messenger().post({
+					message : response.message,
+					showCloseButton : true,
+					type : 'error'
+				});
+			}
+			
+		}
 	</script>
 </body>
 </html>
