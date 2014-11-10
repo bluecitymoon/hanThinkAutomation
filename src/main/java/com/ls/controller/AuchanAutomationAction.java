@@ -16,6 +16,7 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -197,9 +198,14 @@ public class AuchanAutomationAction extends BaseAction {
 					CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
 					singleTrigger.setName(jobIdentityKey);
 					singleTrigger.setGroup(jobInDb.getDbName());
-					
-					AutomaticJobManager.getScheduler().scheduleJob(jobDetail, singleTrigger);
-					AuthanConstants.startedJobIdentityList.add(jobIdentityKey);
+					Scheduler scheduler = AutomaticJobManager.getScheduler();
+					if (null == scheduler) {
+						setMessage("获取任务调度失败！");
+						return SUCCESS;
+					} else {
+						scheduler.scheduleJob(jobDetail, singleTrigger);
+						AuthanConstants.startedJobIdentityList.add(jobIdentityKey);
+					}
 				}
 
 				jobStartHour += restartInHours;
@@ -224,10 +230,10 @@ public class AuchanAutomationAction extends BaseAction {
 	public String shutDownJob() {
 		
 		AutomaticJob requestJob = getJobdetailsFromRequest();
-		
+		List<TriggerKey> keyList = new ArrayList<TriggerKey>();
 		try {
 			Set<TriggerKey> keySet = AutomaticJobManager.getScheduler().getTriggerKeys(GroupMatcher.triggerGroupEquals(requestJob.getDbName()));
-			List<TriggerKey> keyList = new ArrayList<TriggerKey>(keySet.size());
+			
 			for (TriggerKey triggerKey : keySet) {
 				keyList.add(triggerKey);
 			}
@@ -239,6 +245,11 @@ public class AuchanAutomationAction extends BaseAction {
 			requestJob.setStatus("未启动");
 			requestJob.setAutoJobRunning(false);
 			automaticJobRepository.saveAndFlush(requestJob);
+			
+			try {
+				AuthanConstants.startedJobIdentityList.removeAll(keyList);
+			} catch (Exception e) {
+			}
 		}
 		
 		return SUCCESS;

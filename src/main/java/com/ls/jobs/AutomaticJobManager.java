@@ -108,8 +108,10 @@ public class AutomaticJobManager {
 			try {
 				scheduler.start();
 			} catch (SchedulerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				logger.error("Starting schedular failed." + e.getMessage());
+				return null;
+				
 			}
 		}
 		return scheduler;

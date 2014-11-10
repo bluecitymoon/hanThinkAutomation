@@ -58,16 +58,58 @@
 	<section class="mainbg">
 		<div class="container">
 			<div class="row">
-				<div class="six columns">
-					<div class="app-wrapper ui-corner-top">
-						<div class="blue module ui-corner-top clearfix">
-							<h2>欧尚自动化任务配置</h2>
+				<div id="moduleTabs" class="app-wrapper ui-corner-top">
+				<nav class="blue module-nav ui-corner-top clearfix">
+					<section class="moduleNavigation">
+						<ul>
+							<li class="corner"><a href="#tabs-1"><span>自动任务中心</span></a></li>
+							<li><a href="#tabs-2"><span>手动同步</span></a></li>
+						</ul>
+					</section>
+				</nav>
+				<div id="tabs-1">
+
+					<div class="content">
+							<div class="app-wrapper ui-corner-top">
+								<div class="green module ui-corner-top clearfix">
+									<h2>
+										自动任务列表
+									</h2>
+								</div>
+								<div class="content">
+									<table class="clean" id="jobListTable">
+									<thead>
+										<tr>
+											<th class="text-center">帐套名</th>
+											<th class="text-center">任务状态</th>
+
+											<th class="text-center">修改/删除</th>
+											<th class="text-center">启动/停止</th>
+										</tr>
+									</thead>
+									<tbody data-bind="foreach: jobList">
+										<tr>
+											<td class="text-center"><span data-bind="text: dbName"></span></td>
+											<td class="text-center"><span data-bind="text: status"></span></td>
+											<td class="text-center"><a class=" tiny green button" href="#" data-bind="click : $root.editJob">编辑</a> <a class=" tiny red button" href="#" data-bind="click : $root.deleteJob">删除</a></td>
+											<td class="text-center"><a class=" tiny green button" href="#" data-bind="click : $root.startJob">启动</a> <a class=" tiny red button" href="#" data-bind="click : $root.stopJob">停止</a></td>
+										</tr>
+
+									</tbody>
+								</table>
+								</div>
+							</div>
+
+							<br>
+					 <div class="app-wrapper ui-corner-top"  data-bind="with : job">
+						<div class="module ui-corner-top clearfix">
+							<h2><span data-bind="text: dbName"></span></h2>
 							<h2 class="right">
-								<a class="white blue button" href="#" data-bind="click : clearForm"><i class="icon-pencil"></i>为新的帐套配置自动任务</a>
+								<a class="blue button" href="#" data-bind="click : $root.clearForm"><i class="icon-pencil"></i>为新的帐套配置自动任务</a>
 							</h2>
 						</div>
 						<form id="jobForm">
-							<div class="content" data-bind="with : job">
+							<div class="content">
 								<div class="row">
 									<div class="six columns">
 										<div class="row">
@@ -123,23 +165,18 @@
 								<div class="row">
 									<div class="twelve columns centered">
 										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> 
-										<!-- 
-										<a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">测试用户名密码</a>
-										<a href="#" class="tertiary line gray" data-bind="click : $root.startupJob">启动自动导入任务</a>
-										 -->
 									</div>
 								</div>
 							</div>
 						</form>
 					</div>
+					 </div>
+
 				</div>
-				<div class="six columns">
-					<div class="app-wrapper ui-corner-top">
-						<div class="blue module ui-corner-top clearfix">
-							<h2>欧尚手动抓取</h2>
-						</div>
-						<div class="content">
-							<form id="grabForm">
+				<div id="tabs-2">
+
+					<div class="content">
+					 <form id="grabForm">
 								<div class="row">
 								<div class="four columns">
 										<label>帐套名</label>
@@ -176,42 +213,11 @@
 									</div>
 								</div>
 							</form>
-						</div>
-						
-					</div>
-					<div class="app-wrapper ui-corner-top">
-							<div class="blue module ui-corner-top clearfix">
-								<h2>欧尚任务中心</h2>
-							</div>
-							<div class="content">
-								<table class="dataTable">						
-									<thead>
-										<tr>
-											<th>帐套名</th>
-											<th>任务状态</th>
-											
-											<th>修改/删除</th>
-											<th>启动/停止</th>
-										</tr>
-									</thead>
-									<tbody data-bind="foreach: jobList">
-										<tr>
-											<td><span data-bind="text: dbName"></span></td>	
-											<td><span data-bind="text: status"></span></td>						
-											<td><a class=" tiny green button" href="#" data-bind="click : $root.editJob">编辑</a>
-												<a class=" tiny red button" href="#" data-bind="click : $root.deleteJob">删除</a>
-											</td>
-											<td><a class=" tiny green button" href="#" data-bind="click : $root.startJob">启动</a>
-												<a class=" tiny red button" href="#" data-bind="click : $root.stopJob">停止</a>
-											</td>
-										</tr>
-										
-									</tbody>
-								</table>
-								<br>
-							</div>
-						</div>
+					 </div>
+
 				</div>
+			</div>
+		
 			</div>
 
 			<div class="row" id="console">
@@ -233,10 +239,19 @@
 </footer>
 
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
-
+	<script src="/ls/js/jquery.dataTables.js"></script>
 	<script>
 		$(document).ready( function() {
-
+			$("#moduleTabs").tabs();
+			
+			$('#jobListTable').dataTable({
+			    "bJQueryUI": false,
+			    "sScrollX": "100%",
+			    "sPaginationType": "full_numbers",
+			    "oLanguage": {
+			        "sSearch": "Filter"
+			    }
+			});
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
 					$('#console').hide();
@@ -365,7 +380,9 @@
 							});
 						};
 						self.clearForm = function() {
-							self.job(new Job());
+							var job = new Job();
+							job.status = '新创建';
+							self.job(job);
 						};
 						
 						self.reloadJobList = function() {
