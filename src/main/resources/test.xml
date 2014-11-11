@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <daorudanju xmlns="http://HanThink.com/">
+      <dengluming>Admin</dengluming>
+      <denglumima>E1CCjc7z+m3nmqvYlGnc+LcM8t4=</denglumima>
+      <zhangtaoming>测试帐套</zhangtaoming>
+      <danjuxml>
+      <![CDATA[
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+</NewDataSet>      		
+		]]>
+       </danjuxml>
+    </daorudanju>
+  </soap:Body>
+</soap:Envelope>

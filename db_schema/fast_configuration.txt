@@ -1,0 +1,39 @@
+
+INSERT INTO `ht`.`hs_job`
+(`clientIp`,
+`name`,
+`start`,
+`stop`,
+`type`,
+`password`,
+`status`,
+`username`,
+`locked`,
+`restartInHours`,
+`mode`,
+`autoJobRunning`,
+`dbName`,
+`dbPassword`,
+`dbUsernname`,
+`clientEnd`)
+
+SELECT 
+    `hs_job`.`clientIp`,
+    `hs_job`.`name`,
+    `hs_job`.`start`,
+    `hs_job`.`stop`,
+    `hs_job`.`type`,
+    `hs_job`.`password`,
+    `hs_job`.`status`,
+    `hs_job`.`username`,
+    `hs_job`.`locked`,
+    `hs_job`.`restartInHours`,
+    `hs_job`.`mode`,
+    `hs_job`.`autoJobRunning`,
+    `hs_job`.`dbName`,
+    `hs_job`.`dbPassword`,
+    `hs_job`.`dbUsernname`,
+    `hs_job`.`clientEnd`
+FROM `ht`.`hs_job` where id =1
+
+

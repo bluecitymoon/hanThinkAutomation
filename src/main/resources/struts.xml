@@ -44,5 +44,10 @@
 				 <param name="root">response</param>
 			</result>
 		</action>
+		<action name="loadJobNames" class="auchanAction" method="loadJobNames">
+			<result name="success" type="json">
+				 <param name="root">jobNames</param>
+			</result>
+		</action>
 	</package>
 </struts>

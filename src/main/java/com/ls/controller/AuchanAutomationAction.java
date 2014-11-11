@@ -2,6 +2,7 @@ package com.ls.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Maps;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
 import com.ls.jobs.AuthanAutomationQuartzJob;
@@ -43,6 +45,8 @@ public class AuchanAutomationAction extends BaseAction {
 	private AutomaticJob automaticJob;
 
 	private List<AutomaticJob> jobList;
+	
+	private List<Map<String, String>> jobNames = new ArrayList<Map<String,String>>();
 
 	private Logger logger = LoggerFactory.getLogger(AuchanAutomationAction.class);
 	
@@ -58,19 +62,15 @@ public class AuchanAutomationAction extends BaseAction {
 		String manuallyStop = getParameter("manuallyStop");
 		String dbName = getParameter("manuallyDbName");
 
-		logger.debug("test log");
+		if (StringUtils.isEmpty(dbName)) {
+			
+			response = ResponseVo.newFailMessage("不存在帐套[" + dbName + "]");
+			
+			return SUCCESS;
+		}
 		try {
 			
-			AutomaticJob job = null;
-			try {
-				job = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
-			} catch (javax.persistence.NonUniqueResultException e) {
-				
-				response = ResponseVo.newFailMessage("抓取失败，你可能配置了多个同名帐套的自动任务。");
-				logger.error(response.toString());
-				
-				return SUCCESS;
-			}	
+			AutomaticJob job = automaticJobRepository.findOne(Integer.valueOf(dbName));
 			
 			if (job == null) {
 				response = ResponseVo.newFailMessage("不存在帐套[" + dbName + "]");
@@ -80,7 +80,7 @@ public class AuchanAutomationAction extends BaseAction {
  
 			String mode = job.getMode();
 
-			response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, dbName);
+			response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
 			
 			if (StringUtils.isEmpty(mode) || !mode.equals("debug") && response.getType().equals(ResponseVo.MessageType.SUCCESS.name())) {
 				
@@ -103,6 +103,29 @@ public class AuchanAutomationAction extends BaseAction {
 		return SUCCESS;
 	}
 
+	public String loadJobNames() {
+		String blurryName = getParameter("blurryName");
+		
+		blurryName += "%";
+		
+		blurryName = "%" + blurryName;
+		
+		List<AutomaticJob> jobs = automaticJobRepository.findByNameOrDbName(blurryName, blurryName);
+		
+		for (AutomaticJob automaticJob : jobs) {
+
+			Map<String, String> jobMap = Maps.newHashMap();
+			jobMap.put("id", automaticJob.getId().toString());
+			
+			jobMap.put("value", automaticJob.getDbName() + " - " + automaticJob.getName());
+			jobMap.put("label", automaticJob.getDbName() + " - " + automaticJob.getName());
+			
+			jobNames.add(jobMap);
+			
+		}
+		return SUCCESS;
+	}
+	
 	public String readConfiguration() {
 		String id = getParameter("jobId");
 
@@ -180,6 +203,7 @@ public class AuchanAutomationAction extends BaseAction {
 		jobDataMap.put("jobWillRun", jobInDb);
 
 		try {
+			
 			String startHourAndMin = jobInDb.getStart();
 			String[] start = startHourAndMin.split(":");
 			int startHour = Integer.valueOf(start[0]);
@@ -205,14 +229,15 @@ public class AuchanAutomationAction extends BaseAction {
 					}
 				}
 
-				String jobIdentityKey = AuthanConstants.AUTHAN + jobInDb.getDbName() + "-" + jobStartHour + ":" + startMin;
+				String jobIdentityKey = jobInDb.getName() + jobInDb.getDbName() + "-" + jobStartHour + ":" + startMin;
 				if (AuthanConstants.startedJobIdentityList.contains(jobIdentityKey)) {
 
 				} else {
-					JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).usingJobData(jobDataMap).withIdentity(jobIdentityKey, jobInDb.getDbName()).build();
+					String uniqueGroupName = jobInDb.getDbName() + jobInDb.getName() + jobInDb.getId();
+					JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).usingJobData(jobDataMap).withIdentity(jobIdentityKey, uniqueGroupName).build();
 					CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
 					singleTrigger.setName(jobIdentityKey);
-					singleTrigger.setGroup(jobInDb.getDbName());
+					singleTrigger.setGroup(uniqueGroupName);
 					Scheduler scheduler = AutomaticJobManager.getScheduler();
 					if (null == scheduler) {
 						makeGeneralFailResponse("获取任务调度失败！");
@@ -252,7 +277,7 @@ public class AuchanAutomationAction extends BaseAction {
 		AutomaticJob requestJob = getJobdetailsFromRequest();
 		List<TriggerKey> keyList = new ArrayList<TriggerKey>();
 		try {
-			Set<TriggerKey> keySet = AutomaticJobManager.getScheduler().getTriggerKeys(GroupMatcher.triggerGroupEquals(requestJob.getDbName()));
+			Set<TriggerKey> keySet = AutomaticJobManager.getScheduler().getTriggerKeys(GroupMatcher.triggerGroupEquals(requestJob.getDbName() + requestJob.getName()));
 			
 			for (TriggerKey triggerKey : keySet) {
 				keyList.add(triggerKey);
@@ -294,13 +319,6 @@ public class AuchanAutomationAction extends BaseAction {
 		response = ResponseVo.newSuccessMessage(null);
 	}
 	
-	private void makeGeneralSuccessResponse(String message) {
-		response = ResponseVo.newSuccessMessage(message);
-	}
-	private void makeGeneralFailResponse() {
-		response = ResponseVo.newFailMessage(null);
-	}
-	
 	private void makeGeneralFailResponse(String message) {
 		response = ResponseVo.newFailMessage(message);
 	}
@@ -334,4 +352,14 @@ public class AuchanAutomationAction extends BaseAction {
 		this.response = response;
 	}
 
+	
+	public List<Map<String, String>> getJobNames() {
+	
+		return jobNames;
+	}
+	
+	public void setJobNames(List<Map<String, String>> jobNames) {
+	
+		this.jobNames = jobNames;
+	}
 }
