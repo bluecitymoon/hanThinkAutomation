@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=gb2312"%>
+<%@ page contentType="text/html;charset=utf-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="zh"> <![endif]-->
@@ -32,9 +32,9 @@
 				<div class="six columns">
 					<div class="app-wrapper ui-corner-top">
 						<div class="blue module ui-corner-top clearfix">
-							<h2>Å·ÉĞ×Ô¶¯»¯ÈÎÎñÅäÖÃ</h2>
+							<h2>æ¬§å°šè‡ªåŠ¨åŒ–ä»»åŠ¡é…ç½®</h2>
 							<h2 class="right">
-								<a class="white blue button" href="#" data-bind="click : clearForm"><i class="icon-pencil"></i>ÎªĞÂµÄÕÊÌ×ÅäÖÃ×Ô¶¯ÈÎÎñ</a>
+								<a class="white blue button" href="#" data-bind="click : clearForm"><i class="icon-pencil"></i>ä¸ºæ–°çš„å¸å¥—é…ç½®è‡ªåŠ¨ä»»åŠ¡</a>
 							</h2>
 						</div>
 						<form id="jobForm">
@@ -42,7 +42,7 @@
 								<div class="row">
 									<div class="six columns">
 										<div class="row">
-											<label>ÕÊÌ×</label> 
+											<label>å¸å¥—</label> 
 											<input type="text" class="addon-postfix" data-bind="value : dbName" />
 										</div>
 										
@@ -53,50 +53,50 @@
 								<hr>
 								<div class="row">
 									<div class="nine columns">
-										<label>ÈÎÎñÃû³Æ£¨¿ÉÑ¡£©</label> <input type="text" class="addon-postfix" data-bind="value : name" />
+										<label>ä»»åŠ¡åç§°ï¼ˆå¯é€‰ï¼‰</label> <input type="text" class="addon-postfix" data-bind="value : name" />
 									</div>
 									<div class="three columns">
-										<label>ÈÎÎñ×´Ì¬</label> <input type="text" class="addon-postfix" data-bind="value : status" />
+										<label>ä»»åŠ¡çŠ¶æ€</label> <input type="text" class="addon-postfix" data-bind="value : status" />
 									</div>
 
 								</div>
 								<div class="row">
-									<label>´æ´¢Êı¾İ¿Í»§¶ËIP</label> <input type="text" class="addon-postfix" data-bind="value : clientIp" />
+									<label>å­˜å‚¨æ•°æ®å®¢æˆ·ç«¯IP</label> <input type="text" class="addon-postfix" data-bind="value : clientIp" />
 								</div>
 								<div class="row">
 									<div class="five columns">
-										<label>Ã¿ÌìµÄ¿ªÊ¼×¥È¡Ê±¼ä</label> <input type="text" class="required" data-bind="value : start" />
+										<label>æ¯å¤©çš„å¼€å§‹æŠ“å–æ—¶é—´</label> <input type="text" class="required" data-bind="value : start" />
 									</div>
 									<div class="five columns">
-										<label>Ã¿ÌìµÄ×¥È¡½ØÖ¹Ê±¼ä</label> <input type="text" data-bind="value : stop" />
+										<label>æ¯å¤©çš„æŠ“å–æˆªæ­¢æ—¶é—´</label> <input type="text" data-bind="value : stop" />
 									</div>
 									<div class="two columns">
-										<label>¼ä¸ô(Hour)</label> <input type="text" class="required" data-bind="value : restartInHours" />
+										<label>é—´éš”(Hour)</label> <input type="text" class="required" data-bind="value : restartInHours" />
 									</div>
 								</div>
 								<div class="row">
 									<div class="six columns">
-										<label>ÉÏÒ»´Î×¥È¡µÄ¿ªÊ¼Ê±¼ä</label> <input type="text" disabled="disabled" data-bind="value : lastGrabStart" />
+										<label>ä¸Šä¸€æ¬¡æŠ“å–çš„å¼€å§‹æ—¶é—´</label> <input type="text" disabled="disabled" data-bind="value : lastGrabStart" />
 									</div>
 									<div class="six columns">
-										<label>ÉÏÒ»´Î×¥È¡µÄ½áÊøÊ±¼ä</label> <input type="text" disabled="disabled" data-bind="value : lastGrabEnd" />
+										<label>ä¸Šä¸€æ¬¡æŠ“å–çš„ç»“æŸæ—¶é—´</label> <input type="text" disabled="disabled" data-bind="value : lastGrabEnd" />
 									</div>
 								</div>
 								<div class="row">
 									<div class="six columns">
-										<label>µÇÂ½ÓÃ»§Ãû</label> <input type="text" class="required" data-bind="value : username" />
+										<label>ç™»é™†ç”¨æˆ·å</label> <input type="text" class="required" data-bind="value : username" />
 									</div>
 									<div class="six columns">
-										<label>µÇÂ½ÃÜÂë</label> <input type="text" class="required" data-bind="value : password" />
+										<label>ç™»é™†å¯†ç </label> <input type="text" class="required" data-bind="value : password" />
 									</div>
 								</div>
 								<hr>
 								<div class="row">
 									<div class="twelve columns centered">
-										<a class="small blue button" href="#" data-bind="click : $root.save">±£´æÅäÖÃĞÅÏ¢</a> 
+										<a class="small blue button" href="#" data-bind="click : $root.save">ä¿å­˜é…ç½®ä¿¡æ¯</a> 
 										<!-- 
-										<a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">²âÊÔÓÃ»§ÃûÃÜÂë</a>
-										<a href="#" class="tertiary line gray" data-bind="click : $root.startupJob">Æô¶¯×Ô¶¯µ¼ÈëÈÎÎñ</a>
+										<a href="#" class="tertiary line" data-bind="click : $root.testUsernamePassword">æµ‹è¯•ç”¨æˆ·åå¯†ç </a>
+										<a href="#" class="tertiary line gray" data-bind="click : $root.startupJob">å¯åŠ¨è‡ªåŠ¨å¯¼å…¥ä»»åŠ¡</a>
 										 -->
 									</div>
 								</div>
@@ -107,17 +107,17 @@
 				<div class="six columns">
 					<div class="app-wrapper ui-corner-top">
 						<div class="blue module ui-corner-top clearfix">
-							<h2>Å·ÉĞÊÖ¶¯×¥È¡</h2>
+							<h2>æ¬§å°šæ‰‹åŠ¨æŠ“å–</h2>
 						</div>
 						<div class="content">
 							<form id="grabForm">
 								<div class="row">
 								<div class="four columns">
-										<label>ÕÊÌ×Ãû</label>
+										<label>å¸å¥—å</label>
 										<input type="text" data-bind="value : manuallyDbName" />
 									</div>
 									<div class="four columns">
-										<label>¿ªÊ¼Ê±¼ä</label>
+										<label>å¼€å§‹æ—¶é—´</label>
 										<div class="row collapse">
 											<div class="ten columns">
 												<input type="text" id="manuallyStart" class="required addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
@@ -129,7 +129,7 @@
 
 									</div>
 									<div class="four columns">
-										<label>½áÊøÊ±¼ä</label>
+										<label>ç»“æŸæ—¶é—´</label>
 										<div class="row collapse">
 											<div class="ten columns">
 												<input type="text" id="manuallyStop" class="required addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
@@ -143,7 +143,7 @@
 								<br>
 								<div class="row">
 									<div class="six columns">
-										<a class=" blue button" href="#" data-bind="click : startManually">¿ªÊ¼×¥È¡</a>
+										<a class=" blue button" href="#" data-bind="click : startManually">å¼€å§‹æŠ“å–</a>
 									</div>
 								</div>
 							</form>
@@ -152,28 +152,28 @@
 					</div>
 					<div class="app-wrapper ui-corner-top">
 							<div class="blue module ui-corner-top clearfix">
-								<h2>Å·ÉĞÈÎÎñÖĞĞÄ</h2>
+								<h2>æ¬§å°šä»»åŠ¡ä¸­å¿ƒ</h2>
 							</div>
 							<div class="content">
 								<table id="jobListTable" class="clean">						
 									<thead>
 										<tr>
-											<th>ÕÊÌ×Ãû</th>
-											<th>ÈÎÎñ×´Ì¬</th>
+											<th>å¸å¥—å</th>
+											<th>ä»»åŠ¡çŠ¶æ€</th>
 											
-											<th>ĞŞ¸Ä/É¾³ı</th>
-											<th>Æô¶¯/Í£Ö¹</th>
+											<th>ä¿®æ”¹/åˆ é™¤</th>
+											<th>å¯åŠ¨/åœæ­¢</th>
 										</tr>
 									</thead>
 									<tbody data-bind="foreach: jobList">
 										<tr>
 											<td><span data-bind="text: dbName"></span></td>	
 											<td><span data-bind="text: status"></span></td>						
-											<td><a class=" tiny green button" href="#" data-bind="click : $root.editJob">±à¼­</a>
-												<a class=" tiny red button" href="#" data-bind="click : $root.deleteJob">É¾³ı</a>
+											<td><a class=" tiny green button" href="#" data-bind="click : $root.editJob">ç¼–è¾‘</a>
+												<a class=" tiny red button" href="#" data-bind="click : $root.deleteJob">åˆ é™¤</a>
 											</td>
-											<td><a class=" tiny green button" href="#" data-bind="click : $root.startJob">Æô¶¯</a>
-												<a class=" tiny red button" href="#" data-bind="click : $root.stopJob">Í£Ö¹</a>
+											<td><a class=" tiny green button" href="#" data-bind="click : $root.startJob">å¯åŠ¨</a>
+												<a class=" tiny red button" href="#" data-bind="click : $root.stopJob">åœæ­¢</a>
 											</td>
 										</tr>
 										
@@ -217,7 +217,7 @@
 					    "sScrollX": "100%",
 					    "sPaginationType": "full_numbers",
 					    "oLanguage": {
-					        "sSearch": "ËÑË÷"
+					        "sSearch": "æœç´¢"
 					    }
 					});
 					var Job = function() {
@@ -253,12 +253,12 @@
 							self.job(item);
 							
 							Messenger().post({
-								message : ('<b class="label green">' + item.dbName + '</b> ¼ÓÔØ³É¹¦!'),
+								message : ('<b class="label green">' + item.dbName + '</b> åŠ è½½æˆåŠŸ!'),
 								showCloseButton : true
 							});
 						};
 						self.deleteJob = function(item, event) {
-							var result = window.confirm("È·¶¨£ºÒªÉ¾³ı[" + item.dbName + "]?");
+							var result = window.confirm("ç¡®å®šï¼šè¦åˆ é™¤[" + item.dbName + "]?");
 							
 							if (result) {
 								$.ajax({
@@ -267,7 +267,7 @@
 										job : JSON.stringify(item)
 									},
 									success : function(data) {
-										Messenger().post("É¾³ı³É¹¦£¡");
+										Messenger().post("åˆ é™¤æˆåŠŸï¼");
 										self.reloadJobList();
 									},
 									error : function(XMLHttpRequest, textStatus,
@@ -292,7 +292,7 @@
 										});
 									} else {
 										Messenger().post({
-											message : 'ÈÎÎñ<b class="label green">'+ item.dbName +'</b>ÒÑ¾­³É¹¦Æô¶¯£¡',
+											message : 'ä»»åŠ¡<b class="label green">'+ item.dbName +'</b>å·²ç»æˆåŠŸå¯åŠ¨ï¼',
 											showCloseButton : true
 										});
 									}
@@ -300,7 +300,7 @@
 								error : function(XMLHttpRequest,
 										textStatus, errorThrown) {
 									Messenger().post({
-										message : 'Æô¶¯ÈÎÎñÊ§°Ü,' + errorThrown,
+										message : 'å¯åŠ¨ä»»åŠ¡å¤±è´¥,' + errorThrown,
 										type : 'error',
 										showCloseButton : true
 									});
@@ -325,7 +325,7 @@
 										});
 									} else {
 										Messenger().post({
-											message : 'ÈÎÎñ<b class="label green">'+ item.dbName +'</b>ÒÑ¾­³É¹¦¹Ø±Õ£¡',
+											message : 'ä»»åŠ¡<b class="label green">'+ item.dbName +'</b>å·²ç»æˆåŠŸå…³é—­ï¼',
 											showCloseButton : true
 										});
 									}
@@ -333,7 +333,7 @@
 								error : function(XMLHttpRequest,
 										textStatus, errorThrown) {
 									Messenger().post({
-										message : '´íÎó£º	' + errorThrown,
+										message : 'é”™è¯¯ï¼š	' + errorThrown,
 										type : 'error',
 										showCloseButton : true
 									});
@@ -350,10 +350,10 @@
 								success : function(data) {
 										try {
 										self.jobList(data);
-										Messenger().post("ÒÑ³É¹¦¼ÓÔØÈÎÎñÁĞ±í");
+										Messenger().post("å·²æˆåŠŸåŠ è½½ä»»åŠ¡åˆ—è¡¨");
 									} catch(e) {
 										Messenger().post({
-											message : ('¼ÓÔØÈÎÎñÁĞ±íÊ§°Ü£¬' + e),
+											message : ('åŠ è½½ä»»åŠ¡åˆ—è¡¨å¤±è´¥ï¼Œ' + e),
 											showCloseButton : true
 										});
 									}
@@ -386,20 +386,20 @@
 											});
 										} else {
 											self.reloadJobList();
-											Messenger().post("ÅäÖÃĞÅÏ¢ÒÑ¾­³É¹¦±£´æ£¡");
+											Messenger().post("é…ç½®ä¿¡æ¯å·²ç»æˆåŠŸä¿å­˜ï¼");
 										}
 										
 										
 									},
 									error : function(XMLHttpRequest,
 											textStatus, errorThrown) {
-										Messenger().post("°¡£¿£¡³ö´íÁË£¬¸Ï½ôÈ¥ÁªÏµ¹ÜÀíÔ±°É¡£");
+										Messenger().post("å•Šï¼Ÿï¼å‡ºé”™äº†ï¼Œèµ¶ç´§å»è”ç³»ç®¡ç†å‘˜å§ã€‚");
 									}
 								});
 							} else {
 
 								Messenger().post({
-									message : 'ÄãÓĞĞ©±ØÌîÑ¡ÏîÃ»Ìî£¡',
+									message : 'ä½ æœ‰äº›å¿…å¡«é€‰é¡¹æ²¡å¡«ï¼',
 									type : 'error',
 									showCloseButton : true
 								});
@@ -414,9 +414,10 @@
 										manuallyStop : self.manuallyStop(),
 										manuallyDbName : self.manuallyDbName()
 									},
+									type : 'POST',
 									url : '/ls/startManually.action',
 									success : function(data) {
-										Messenger().post("ÒÑ³É¹¦×¥È¡£¡");
+										Messenger().post("å·²æˆåŠŸæŠ“å–ï¼");
 										if(data) {
 											$('#xmlContent').text(data);
 											$('#console').show();
@@ -424,7 +425,7 @@
 									},
 									error : function(XMLHttpRequest,
 											textStatus, errorThrown) {
-										Messenger().post("×¥È¡Ê§°Ü£¡");
+										Messenger().post("æŠ“å–å¤±è´¥ï¼");
 									}
 								});
 							}
@@ -440,7 +441,7 @@
 
 						self.testUsernamePassword = function() {
 							Messenger().post({
-								message : 'ÉĞÎ´¿ª·¢µÄ¹¦ÄÜ£¡',
+								message : 'å°šæœªå¼€å‘çš„åŠŸèƒ½ï¼',
 								type : 'error',
 								showCloseButton : true
 							});
@@ -456,14 +457,14 @@
 								url : '/ls/startupJob.action',
 								success : function(data) {
 									Messenger().post({
-										message : 'ÉĞÎ´¿ª·¢µÄ¹¦ÄÜ£¡',
+										message : 'å°šæœªå¼€å‘çš„åŠŸèƒ½ï¼',
 										showCloseButton : true
 									});
 								},
 								error : function(XMLHttpRequest,
 										textStatus, errorThrown) {
 									Messenger().post({
-										message : 'ÉĞÎ´¿ª·¢µÄ¹¦ÄÜ£¡',
+										message : 'å°šæœªå¼€å‘çš„åŠŸèƒ½ï¼',
 										type : 'error',
 										showCloseButton : true
 									});
@@ -476,7 +477,7 @@
 					ko.applyBindings(model);
 
 					$(document).ajaxStart(function() {
-						Common.prototype.loadAjaxLoader("²Ù×÷ÕıÔÚÖ´ĞĞ£¬ÇëÄÍĞÄµÈºò£¡");
+						Common.prototype.loadAjaxLoader("æ“ä½œæ­£åœ¨æ‰§è¡Œï¼Œè¯·è€å¿ƒç­‰å€™ï¼");
 					}).ajaxStop(function() {
 						Common.prototype.closeAjaxLoader();
 					});

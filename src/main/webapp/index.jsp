@@ -9,7 +9,8 @@
 <head>
 <!-- Set the viewport width to device width for mobile -->
 <meta name="viewport" content="width=device-width" />
-<title>Configuration</title>
+<title>汉询软件数据交换中心</title>
+<link rel="shortcut icon" href="/ls/images/hanxun2.ico" type="image/x-icon" /> 
 <link rel="stylesheet" href="/ls/css/syntaxHighlighter/shCore.css">
 <link rel="stylesheet" href="/ls/css/syntaxHighlighter/shCoreDefault.css">
 <!-- Required CSS Files -->
@@ -39,7 +40,7 @@
 	<header id="brand">
 	<div class="container">
 		<div class="row">
-			<div class="appname hide-on-phones">HanThink Technology</div>
+			<div class="appname hide-on-phones">汉询软件数据交换中心</div>
 			<address>
 				<span> <strong></strong>Welcome<a href="#" class="login-secure line">Automation</a>
 				</span>
@@ -184,7 +185,7 @@
 										<input type="text" data-bind="value : manuallyDbName" />
 									</div>
 									<div class="four columns">
-										<label>开始时间</label>
+										<label>开始日期</label>
 										<div class="row collapse">
 											<div class="ten columns">
 												<input type="text" id="manuallyStart" class="required addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : startDateOnClose}, value : manuallyStart" />
@@ -196,7 +197,7 @@
 
 									</div>
 									<div class="four columns">
-										<label>结束时间</label>
+										<label>结束日期</label>
 										<div class="row collapse">
 											<div class="ten columns">
 												<input type="text" id="manuallyStop" class="required addon-postfix" data-bind="datepicker : {showSecond : true, dateFormat : 'yy-mm-dd',stepHour : 1,stepMinute : 1,stepSecond : 1, onClose : endDateOnClose}, value : manuallyStop" />
