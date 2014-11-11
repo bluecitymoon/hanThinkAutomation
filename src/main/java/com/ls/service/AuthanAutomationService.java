@@ -11,9 +11,8 @@ public interface AuthanAutomationService {
 	
 	public Orders grabSingleOrders(String start, String end);
 	
-	public List<Orders> grabOrders(String start, String end, String dbName) throws ConfigurationException;
+	public List<Orders> grabOrders(String start, String end, AutomaticJob dbName) throws ConfigurationException;
 	
-	public ResponseVo postDataToWebService(String start, String end, String dbName);
+	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job);
 	
-	public AutomaticJob getJobByDbName(String dbName);
 }

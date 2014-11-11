@@ -37,7 +37,7 @@ public class AuthanAutomationQuartzJob implements Job {
 			
 			try {
 				
-				responseVo = authanAutzmationService.postDataToWebService(lastRunDate, now, authanJob.getDbName());
+				responseVo = authanAutzmationService.postDataToWebService(lastRunDate, now, authanJob);
 				
 			} catch (Exception e) {
 				logger.error(AuthanConstants.HANTHINK_TIME_FORMATTER.format(new Date()));

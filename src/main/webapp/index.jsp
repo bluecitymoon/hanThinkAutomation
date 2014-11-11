@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=gb2312"%>
+<%@ page contentType="text/html;charset=GBK"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="zh"> <![endif]-->
 <!--[if IE 7]>	<html class="no-js lt-ie9 lt-ie8" lang="zh"> <![endif]-->
@@ -81,7 +81,8 @@
 									<table class="display compact" id="jobListTable">
 									<thead>
 										<tr>
-											<th class="text-center">帐套名</th>
+											<th class="text-center">任务</th>
+											<th class="text-center">帐套</th>
 											<th class="text-center">任务状态</th>
 
 											<th class="text-center">修改/删除</th>
@@ -90,6 +91,7 @@
 									</thead>
 									<tbody data-bind="foreach: jobList">
 										<tr>
+											<td class="text-center"><span data-bind="text: name"></span></td>
 											<td class="text-center"><span data-bind="text: dbName"></span></td>
 											<td class="text-center"><span data-bind="text: status"></span></td>
 											<td class="text-center"><a class=" tiny green button" href="#" data-bind="click : $root.editJob">编辑</a> <a class=" tiny red button" href="#" data-bind="click : $root.deleteJob">删除</a></td>
@@ -114,8 +116,8 @@
 								<div class="row">
 									<div class="six columns">
 										<div class="row">
-											<label>帐套</label> 
-											<input type="text" class="addon-postfix" data-bind="value : dbName" />
+											<label class="required">帐套</label> 
+											<input type="text" class="addon-postfix required" data-bind="value : dbName" />
 										</div>
 										
 									</div>
@@ -125,7 +127,7 @@
 								<hr>
 								<div class="row">
 									<div class="nine columns">
-										<label>任务名称（可选）</label> <input type="text" class="addon-postfix" data-bind="value : name" />
+										<label class="required">任务名称</label> <input type="text" class="addon-postfix  required" data-bind="value : name" />
 									</div>
 									<div class="three columns">
 										<label>任务状态</label> <input type="text" class="addon-postfix" disabled="disabled" data-bind="value : status" />
@@ -133,17 +135,17 @@
 
 								</div>
 								<div class="row">
-									<label>存储数据客户端IP</label> <input type="text" class="addon-postfix" data-bind="value : clientIp" />
+									<label class="required">存储数据客户端IP</label> <input type="text" class="addon-postfix  required" data-bind="value : clientIp" />
 								</div>
 								<div class="row">
 									<div class="five columns">
-										<label>每天的开始抓取时间</label> <input type="text" class="required" data-bind="value : start" />
+										<label class="required">每天的开始抓取时间 (最小 00:00)</label> <input type="text" class="required" data-bind="value : start" />
 									</div>
 									<div class="five columns">
-										<label>每天的抓取截止时间</label> <input type="text" data-bind="value : stop" />
+										<label class="required">每天的抓取截止时间(最大23:59)</label> <input type="text" class="required" data-bind="value : stop" />
 									</div>
 									<div class="two columns">
-										<label>间隔(Hour)</label> <input type="text" class="required" data-bind="value : restartInHours" />
+										<label class="required">间隔(时)</label> <input type="text" class="required" data-bind="value : restartInHours" />
 									</div>
 								</div>
 								<div class="row">
@@ -156,10 +158,10 @@
 								</div>
 								<div class="row">
 									<div class="six columns">
-										<label>登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
+										<label class="required">登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
 									</div>
 									<div class="six columns">
-										<label>登陆密码</label> <input type="text" class="required" data-bind="value : password" />
+										<label class="required">登陆密码</label> <input type="text" class="required" data-bind="value : password" />
 									</div>
 								</div>
 								<hr>
@@ -181,7 +183,7 @@
 								<div class="row">
 								<div class="four columns">
 										<label>帐套名</label>
-										<input type="text" data-bind="value : manuallyDbName" />
+										<input type="text" id="jobNameInput" />
 									</div>
 									<div class="four columns">
 										<label>开始时间</label>
@@ -498,6 +500,24 @@
 								}
 							});
 					
+					$('#jobNameInput').autocomplete({
+						
+						 source: function( request, response ) {
+							 $.ajax({
+							 	url:  "ls/loadJobNames.action",
+								dataType: "json",
+							 	data: { blurryName: request.term },
+							 	success: function( data ) {
+							 		response(data);
+							 	}
+							  });
+							},
+						minLength: 0,
+						select: function( event, ui ) {
+							
+							model.manuallyDbName(ui.item.id);	
+						}
+					});
 					
 				});
 		

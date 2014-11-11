@@ -1,6 +1,7 @@
 package com.ls.constants;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 
 public class AuthanConstants {
@@ -21,6 +23,10 @@ public class AuthanConstants {
 	public static final SimpleDateFormat HANTHINK_TIME_FORMATTER = new SimpleDateFormat(HANTHINK_DATE_FORMAT);
 	
 	public static final SimpleDateFormat HANTHINK_TIME_FORMATTER_QUERY = new SimpleDateFormat(HANTHINK_DATE_FORMAT_QUERY);
+	
+	public static final String TEMPLATE_PATH = "htTemplatePath";
+	public static final String HANTHINK_USERNAME = "htUsername";
+	public static final String HANTHINK_PASSWORD = "htPassword";
 
 	public static String MAIN_TABLE_TEMPLATE = null;
 	public static String CHILD_TABLE_TEMPLATE = null;
@@ -75,6 +81,15 @@ public class AuthanConstants {
 		if (anchanConfiguration == null) {
 			anchanConfiguration = new Configuration();
 			anchanConfiguration.setDefaultEncoding("UTF-8");
+			try {
+				String path = HanthinkProperties.getString(TEMPLATE_PATH);
+				File file = new File(path);
+				if (file.exists()) {
+					anchanConfiguration.setTemplateLoader(new FileTemplateLoader(file));
+				} 
+				
+			} catch (IOException e) {
+			}
 		}
 		return anchanConfiguration;
 	}

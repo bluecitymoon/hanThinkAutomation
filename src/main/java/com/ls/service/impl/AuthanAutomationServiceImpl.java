@@ -55,20 +55,14 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
 
-	public List<Orders> grabOrders(String start, String end, String dbName) throws ConfigurationException {
+	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException {
 
 		List<Orders> ordersList = Lists.newArrayList();
-		AutomaticJob authanJob = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
 
 		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
 			throw new ConfigurationException();
 		}
-
-		authanJob.setStatus("正在导入数据");
-		authanJob.setLocked(true);
-
-		automaticJobRepository.saveAndFlush(authanJob);
 
 		Date now = new Date();
 		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
@@ -165,23 +159,21 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 		Date endTime = new Date();
 		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
-		authanJob.setStatus("任务空闲中");
-		authanJob.setLocked(false);
 
 		automaticJobRepository.saveAndFlush(authanJob);
 
 		return ordersList;
 	}
 
-	private String compositeOrderToXml(List<Orders> orders, String dbName) throws IOException, TemplateException {
+	private String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 		
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("src/main/resources/auchan-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap.ftl");
 		
 		Map<String, Object> data = new HashMap<String, Object>();
 		
-		data.put("htUsername", "Admin");
-		data.put("htPassword", "E1CCjc7z+m3nmqvYlGnc+LcM8t4=");
-		data.put("htDbName", dbName);
+		data.put("htUsername", automaticJob.getDbUsernname());
+		data.put("htPassword", automaticJob.getDbPassword());
+		data.put("htDbName", automaticJob.getDbName());
 		data.put("orders", orders);
 		
 		return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
@@ -245,13 +237,13 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		return null;
 	}
 
-	public ResponseVo postDataToWebService(String start, String end, String dbName) {
+	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 
 		ResponseVo responseVo = ResponseVo.newResponse();
 		
 		List<Orders> orders;
 		try {
-			orders = grabOrders(start, end, dbName);
+			orders = grabOrders(start, end, job);
 			
 		} catch (ConfigurationException e) {
 			
@@ -273,7 +265,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 		String data;
 		try {
-			data = compositeOrderToXml(orders, dbName);
+			data = compositeOrderToXml(orders, job);
 		} catch (IOException e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("封装模板时候出现IO异常：" + e.getMessage());
@@ -291,9 +283,8 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			return responseVo;
 		}
 		
-		AutomaticJob job = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
+		String url = job.getClientIp();
 		
-		String url = job.getClientIp() + job.getClientEnd();
 		HttpResponse response = null;
 		try {
 			response = postWebService(url, data);
@@ -338,9 +329,5 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		
 		return response;
 	}
-	public AutomaticJob getJobByDbName(String dbName) {
-
-		return automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, dbName);
-	}
-
+	
 }
