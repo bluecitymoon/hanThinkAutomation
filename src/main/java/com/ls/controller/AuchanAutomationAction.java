@@ -157,6 +157,13 @@ public class AuchanAutomationAction extends BaseAction {
 		} else {
 			
 			AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
+			
+			if (automaticJob.getId() == null) {
+				automaticJob.setClientEnd("/hanthinkserver/service1.asmx");
+				automaticJob.setStatus("新创建");
+				automaticJob.setDbUsernname("Admin");
+				automaticJob.setDbPassword("E1CCjc7z+m3nmqvYlGnc+LcM8t4=");
+			}
 //			
 //			AutomaticJob jobInDb = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, automaticJob.getDbName());
 //			

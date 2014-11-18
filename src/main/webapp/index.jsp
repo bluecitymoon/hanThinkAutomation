@@ -379,8 +379,6 @@
 						};
 						self.clearForm = function() {
 							var job = new Job();
-							job.status = 'ÐÂ´´½¨';
-							job.clientEnd = '/hanthinkserver/service1.asmx';
 							self.job(job);
 						};
 						

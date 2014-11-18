@@ -283,7 +283,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			return responseVo;
 		}
 		
-		String url = job.getClientIp();
+		String url = job.getClientIp() + job.getClientEnd();
 		
 		HttpResponse response = null;
 		try {
@@ -305,8 +305,14 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			logger.error("postDataToWebService error" + responseVo.toString());
 			return responseVo;
 		}
-		responseVo.setType(ResponseVo.MessageType.SUCCESS.name());
-		responseVo.setMessage(data);
+		
+		if (response.getStatusLine().getStatusCode() == 200) {
+			responseVo.setType(ResponseVo.MessageType.SUCCESS.name());
+			responseVo.setMessage(data);
+		} else {
+			responseVo = ResponseVo.newFailMessage("Sending data to web service fail : " + response.getStatusLine().getReasonPhrase() + "\n" + data);
+		}
+		
 		
 		return responseVo;
 	}
