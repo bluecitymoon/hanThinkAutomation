@@ -22,21 +22,30 @@ public class AuthanAutomationQuartzJob implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
 			authanAutzmationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("authanAutomationService");
-			
+			Date today = new Date();
 			AutomaticJob authanJob = (AutomaticJob)context.getJobDetail().getJobDataMap().get("jobWillRun");
 
 			String lastRunDate = authanJob.getLastGrabEnd();
-			
 			if (StringUtils.isEmpty(lastRunDate)) {
-				lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(new Date());
+				lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER.format(today);
 			} 
 			
-			String now = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(new Date());
+			Integer delayDays = authanJob.getDelayDays();
+			if (delayDays == null) {
+				delayDays = 0;
+			}
 			
 			ResponseVo responseVo = null;
-			
 			try {
+				Date lastRunDateInDb = AuthanConstants.HANTHINK_TIME_FORMATTER.parse(lastRunDate);
+				long startDateWithDelay = lastRunDateInDb.getTime() - delayDays * 24 * 60 * 60 * 1000;
 				
+				Date lastRunDateForQuery = new Date(startDateWithDelay);
+				
+				lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(lastRunDateForQuery);
+				
+				String now = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(today);
+			
 				responseVo = authanAutzmationService.postDataToWebService(lastRunDate, now, authanJob);
 				
 			} catch (Exception e) {

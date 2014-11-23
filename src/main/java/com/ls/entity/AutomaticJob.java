@@ -37,6 +37,8 @@ public class AutomaticJob implements Serializable {
 	protected String dbUsernname;
 	protected String dbPassword;
 	protected Boolean autoJobRunning;
+	protected Integer delayDays;
+	
 	
 	public Integer getId() {
 	
@@ -222,11 +224,18 @@ public class AutomaticJob implements Serializable {
 	
 		return clientEnd;
 	}
-
 	
 	public void setClientEnd(String clientEnd) {
 	
 		this.clientEnd = clientEnd;
+	}
+
+	public Integer getDelayDays() {
+		return delayDays;
+	}
+
+	public void setDelayDays(Integer delayDays) {
+		this.delayDays = delayDays;
 	}
 
 	@Override

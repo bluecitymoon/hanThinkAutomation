@@ -13,7 +13,7 @@
 	<#assign titleMap = order.orderTitleMap/>
 	<xsdingdanzhubiao>
 		<id>${titleMap['id']}</id>
-		<changbian></changbian>
+		<changbian>${titleMap['供应商编号：']}</changbian>
 		<#if titleMap['订单号：']??>
 		<kehudanhao>${titleMap['订单号：']}</kehudanhao>
 		<#else>

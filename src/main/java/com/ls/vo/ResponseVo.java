@@ -13,6 +13,7 @@ public class ResponseVo {
 	private String type;
 	private String message;
 	private String mode;
+	private Object object;
 	
 	public String getType() {
 	
@@ -80,6 +81,14 @@ public class ResponseVo {
 	public String toString() {
 
 		return "ResponseVo [type=" + type + ", message=" + message + ", mode=" + mode + "]";
+	}
+
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
 	}
 	
 	

@@ -167,7 +167,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 	private String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 		
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap.ftl");
+	Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap.ftl");
 		
 		Map<String, Object> data = new HashMap<String, Object>();
 		
@@ -283,7 +283,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			return responseVo;
 		}
 		
-		String url = job.getClientIp();
+		String url = job.getClientIp() + job.getClientEnd();
 		
 		HttpResponse response = null;
 		try {

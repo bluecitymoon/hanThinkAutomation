@@ -139,14 +139,17 @@
 									<label class="required">存储数据客户端IP</label> <input type="text" class="addon-postfix  required" data-bind="value : clientIp" />
 								</div>
 								<div class="row">
-									<div class="five columns">
+									<div class="four columns">
 										<label class="required">每天的开始抓取时间 (最小 00:00)</label> <input type="text" class="required" data-bind="value : start" />
 									</div>
-									<div class="five columns">
+									<div class="four columns">
 										<label class="required">每天的抓取截止时间(最大23:59)</label> <input type="text" class="required" data-bind="value : stop" />
 									</div>
 									<div class="two columns">
 										<label class="required">间隔(时)</label> <input type="text" class="required" data-bind="value : restartInHours" />
+									</div>
+									<div class="two columns">
+										<label class="required">客户系统数据延迟(天)</label> <input type="text" class="required" data-bind="value : delayDays" />
 									</div>
 								</div>
 								<div class="row">
