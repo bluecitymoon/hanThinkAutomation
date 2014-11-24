@@ -276,6 +276,7 @@
 						self.password = '';
 						self.type = 'authan';
 						self.dbName = '';
+						self.delayDays = '';
 					};
 
 					var ConfigurationModel = function() {
