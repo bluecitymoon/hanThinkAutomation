@@ -155,21 +155,26 @@ public class AuchanAutomationAction extends BaseAction {
 		} else {
 
 			AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
-			//
-			// AutomaticJob jobInDb =
-			// automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN,
-			// automaticJob.getDbName());
-			//
-			// if (jobInDb != null && automaticJob.getId() == null) {
-			//
-			// setMessage("该帐套的自动任务已经存在。");
-			// return SUCCESS;
-			//
-			// } else {
-
-			this.automaticJob = automaticJobRepository.saveAndFlush(automaticJob);
-			makeGeneralSuccessResponse();
-			// }
+			
+			if (automaticJob.getId() == null) {
+				automaticJob.setClientEnd("/hanthinkserver/service1.asmx");
+				automaticJob.setStatus("新创建");
+				automaticJob.setDbUsernname("Admin");
+				automaticJob.setDbPassword("E1CCjc7z+m3nmqvYlGnc+LcM8t4=");
+			}
+//			
+//			AutomaticJob jobInDb = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, automaticJob.getDbName());
+//			
+//			if (jobInDb != null && automaticJob.getId() == null) {
+//				
+//				setMessage("该帐套的自动任务已经存在。");
+//				return SUCCESS;
+//				
+//			} else {
+				
+				this.automaticJob = automaticJobRepository.saveAndFlush(automaticJob);
+				makeGeneralSuccessResponse();
+//			}
 		}
 
 		return SUCCESS;
