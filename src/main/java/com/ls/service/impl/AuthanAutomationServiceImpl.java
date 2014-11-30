@@ -97,7 +97,8 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 			// click login button
 			loginButton.click();
 
-			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null));
+			String vendorNo = authanJob.getUsername().substring(2);
+			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
 		
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
 
@@ -111,7 +112,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 			if (totalPageCount > 1) {
 				for (int i = 2; i < totalPageCount + 1; i++) {
-					String nextPageUrl = makeParametersToSearchOrderList(start, end, i);
+					String nextPageUrl = makeParametersToSearchOrderList(start, end, i, vendorNo);
 
 					final HtmlPage nextOrderResultPage = webClient.getPage(nextPageUrl);
 					String nextOrdersListHtml = nextOrderResultPage.getWebResponse().getContentAsString();
@@ -185,13 +186,13 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		logger.error("grab order failed for start : " + start + " end : " + end + " error message is -> " + e.getMessage());
 	}
 
-	private String makeParametersToSearchOrderList(String start, String end, Integer currentPageNumber) {
+	private String makeParametersToSearchOrderList(String start, String end, Integer currentPageNumber, String vendorNo) {
 
 		if (null == currentPageNumber) {
 			currentPageNumber = 1;
 		}
 
-		String basicTemplate = "https://auchan.chinab2bi.com/auchan/sellOrderMainQry/query.hlt?accountModel.vendorNo=1356&accountModel.dateType=0&accountModel.dateStart=" + start + "&accountModel.dateEnd=" + end + "&page.pageSize=10&page.pageNo=" + currentPageNumber + "&page.totalPages=-1";
+		String basicTemplate = "https://auchan.chinab2bi.com/auchan/sellOrderMainQry/query.hlt?accountModel.vendorNo= " + vendorNo + "&accountModel.dateType=0&accountModel.dateStart=" + start + "&accountModel.dateEnd=" + end + "&page.pageSize=10&page.pageNo=" + currentPageNumber + "&page.totalPages=-1";
 
 		return basicTemplate;
 	}
