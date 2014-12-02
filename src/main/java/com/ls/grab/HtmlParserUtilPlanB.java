@@ -124,7 +124,7 @@ public class HtmlParserUtilPlanB {
 						
 						String hrefValue = grnDetailLinkTag.getAttribute("href");
 						
-						if (StringUtils.isNotBlank(hrefValue) && hrefValue.startsWith("/logi/down.do?method=downLoad")) {
+						if (StringUtils.isNotBlank(hrefValue) && hrefValue.startsWith("/logi/down.do?method=downLoad&orderNo")) {
 							
 							orderList.add(hrefValue);
 						}
@@ -265,17 +265,7 @@ public class HtmlParserUtilPlanB {
 							Node[] tds = row.getChildrenAsNodeArray();
 							
 							for (int i = 0; i < tds.length; i++) {
-								
-								String tdText = tds[i].getText();
-								if (StringUtils.isNotEmpty(tdText)) {
-									
-									if (tdText.trim().startsWith("送货地址 ")) {
-										//TODO
-										
-										//game over
-										break;
-									}
-								}
+																
 								if (tds[i] instanceof TableColumn) {
 									TableColumn tableColumn = (TableColumn)tds[i];
 									
@@ -288,6 +278,12 @@ public class HtmlParserUtilPlanB {
 										
 										if (j == 0) {
 											keyAttribute = cellNode[j].getText().trim(); continue;
+										}
+										
+										String tdText = cellNodeElement.getText();
+										if(StringUtils.isNotBlank(tdText) && tdText.trim().equals("送货地址")) {
+											headersMap.put("送货地址", cellNode[j + 2].getText().trim());
+											break;
 										}
 										
 										if (cellNodeElement instanceof TagNode) {
