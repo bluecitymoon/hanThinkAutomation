@@ -3,8 +3,6 @@ package com.ls.grab;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.htmlparser.Node;
@@ -20,7 +18,6 @@ import org.htmlparser.util.ParserException;
 import org.htmlparser.visitors.NodeVisitor;
 
 import com.google.common.io.Files;
-import com.ls.entity.Company;
 
 public class HtmlParserUtil {
 
@@ -41,42 +38,7 @@ public class HtmlParserUtil {
 		}
 	}
 
-	public static List<Company> findPagedCompanyList(String wholeCityPageHTML) {
-
-		final List<Company> companyList = new ArrayList<Company>();
-
-		try {
-
-			Parser htmlParser = new Parser();
-			htmlParser.setInputHTML(wholeCityPageHTML);
-
-			NodeVisitor nodeVisitor = new NodeVisitor() {
-
-				@Override
-				public void visitTag(Tag tag) {
-
-					super.visitTag(tag);
-
-					if (TagFinderUtil.findCompanyLink(tag)) {
-						Company company = new Company();
-						company.setName(tag.getText());
-						company.setfEurl(tag.getAttribute("href"));
-
-						companyList.add(company);
-
-					}
-				}
-			};
-
-			htmlParser.visitAllNodesWith(nodeVisitor);
-
-		} catch (ParserException e) {
-
-			e.printStackTrace();
-		}
-
-		return companyList;
-	}
+	
 
 	public static String findCompanyName(String detailPageHtml) {
 

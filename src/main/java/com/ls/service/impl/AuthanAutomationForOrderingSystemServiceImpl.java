@@ -30,6 +30,8 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
@@ -47,10 +49,10 @@ import com.ls.vo.ResponseVo;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@Service("authanService")
-public class AuthanAutomationServiceImpl implements AuthanAutomationService {
+@Service("authanOrderSystemService")
+public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutomationService {
 
-	private Logger logger = LoggerFactory.getLogger(AuthanAutomationServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(AuthanAutomationForOrderingSystemServiceImpl.class);
 
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
@@ -68,65 +70,50 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 
 		try {
-			String url = "https://auchan.chinab2bi.com/security/login.hlt";
+			String url = "http://logistics.auchan.com.cn:8000/logi/";
 
 			final WebClient webClient = new WebClient(BrowserVersion.CHROME);
-			webClient.getOptions().setJavaScriptEnabled(false);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
-			// Get the first page
+			
 			final HtmlPage loginPage = webClient.getPage(url);
 
-			// Get the form that we are dealing with and within that form,
-			// find the submit button and the field that we want to change.
 			final List<HtmlForm> forms = loginPage.getForms();
 
 			HtmlForm form = null;
 			for (HtmlForm singleForm : forms) {
-				if (singleForm.getAttribute("id").equals("loginForm")) {
+				if (singleForm.getAttribute("id").equals("form1")) {
 					form = singleForm;
 				}
 			}
 
-			final HtmlSubmitInput loginButton = form.getInputByName("Submit");
-			final HtmlTextInput textField = form.getInputByName("j_username");
-			final HtmlPasswordInput passwordField = form.getInputByName("j_password");
+			HtmlImage logInput = (HtmlImage) form.getHtmlElementsByTagName("img").get(0);
+			
+			final HtmlTextInput textField = form.getInputByName("userName");
+			final HtmlPasswordInput passwordField = form.getInputByName("userPwd");
 
 			// Change the value of the text field
 			textField.setValueAttribute(authanJob.getUsername());
 			passwordField.setValueAttribute(authanJob.getPassword());
 
 			// click login button
-			loginButton.click();
+			logInput.click();
 
 			String vendorNo = authanJob.getUsername().substring(2);
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
 		
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
 
-			if (ordersListHtml.contains("j_username") && ordersListHtml.contains("j_password")) {
-				throw new ConfigurationException("配置的用户名密码无法登陆欧尚系统！");
+			//urls
+			List<String> orderIdList = HtmlParserUtilPlanB.findOrderListInOrderSystem(ordersListHtml);
+			
+			System.out.println(orderIdList);
+			
+			if (orderIdList.size() > 100000) {
+				logger.error("data is too big");
 			}
 
-			List<String> orderIdList = HtmlParserUtilPlanB.findOrderList(ordersListHtml);
-
-			Integer totalPageCount = getTotalPageCount(ordersListHtml);
-
-			if (totalPageCount > 1) {
-				for (int i = 2; i < totalPageCount + 1; i++) {
-					String nextPageUrl = makeParametersToSearchOrderList(start, end, i, vendorNo);
-
-					final HtmlPage nextOrderResultPage = webClient.getPage(nextPageUrl);
-					String nextOrdersListHtml = nextOrderResultPage.getWebResponse().getContentAsString();
-					List<String> nextPageOrderIdList = HtmlParserUtilPlanB.findOrderList(nextOrdersListHtml);
-
-					if (null != nextPageOrderIdList && nextPageOrderIdList.size() > 0) {
-						orderIdList.addAll(nextPageOrderIdList);
-					}
-				}
-			}
-
-			String orderDetailUrl = "https://auchan.chinab2bi.com/auchan/buyGrnQry/detail.hlt?grnid=";
+			String orderDetailUrl = "http://logistics.auchan.com.cn:8000";
 			for (String orderId : orderIdList) {
 
 				String singleOrderDetail = orderDetailUrl + orderId;
@@ -136,8 +123,7 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 				Orders singleOrder = null;
 				try {
-					singleOrder = HtmlParserUtilPlanB.parseOrder(singleOrderHtml, orderId);
-					singleOrder.getOrderTitleMap().put("id", orderId);
+					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml, orderId);
 
 					ordersList.add(singleOrder);
 
@@ -193,8 +179,8 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		if (null == currentPageNumber) {
 			currentPageNumber = 1;
 		}
-
-		String basicTemplate = "https://auchan.chinab2bi.com/auchan/sellOrderMainQry/query.hlt?accountModel.vendorNo= " + vendorNo + "&accountModel.dateType=0&accountModel.dateStart=" + start + "&accountModel.dateEnd=" + end + "&page.pageSize=10&page.pageNo=" + currentPageNumber + "&page.totalPages=-1";
+		String basicTemplate = "http://logistics.auchan.com.cn:8000/logi/sup.do?method=supper_search&appStatus=&ec_crd=100000" +
+			"&ec_i=ec&ec_p=1&ec_rd=15&ec_rd=15&endDate="+ end + "objNo=&rcvNo=&rcvType=&sectionNo=&startDate=" + start + "&status=&stype=1&supNo=" + vendorNo ;
 
 		return basicTemplate;
 	}

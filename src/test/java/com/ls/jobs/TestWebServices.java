@@ -23,6 +23,7 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.impl.triggers.CronTriggerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -30,6 +31,9 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.controller.AuchanAutomationAction;
+import com.ls.entity.AutomaticJob;
+import com.ls.exception.ConfigurationException;
+import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
 
@@ -41,6 +45,13 @@ public class TestWebServices {
 	
 	@Resource(name = "authanService")
 	private AuthanAutomationService authanAutomationService;
+	
+	
+	@Resource(name = "authanOrderSystemService")
+	private AuthanAutomationService authanAutomationServiceInOrderSystem;
+	
+	@Autowired
+	private AutomaticJobRepository automaticJobRepository;
 	
 	@Test
 	public void testSendXML() throws Exception {
@@ -156,4 +167,18 @@ public class TestWebServices {
 		
 	}
 	
+	@Test
+	public void testGrabNew() {
+		
+		AutomaticJob automaticJob = automaticJobRepository.findOne(4);
+		
+		try {
+			List<Orders> orders = authanAutomationServiceInOrderSystem.grabOrders("2014-12-02", "2014-12-09", automaticJob);
+			
+			System.out.println(orders);
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

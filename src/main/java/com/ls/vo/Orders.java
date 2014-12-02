@@ -30,5 +30,11 @@ public class Orders {
 	
 		this.ordersItemList = ordersItemList;
 	}
+
+	@Override
+	public String toString() {
+
+		return "Orders [orderTitleMap=" + orderTitleMap + ", ordersItemList=" + ordersItemList + "]";
+	}
 	
 }
