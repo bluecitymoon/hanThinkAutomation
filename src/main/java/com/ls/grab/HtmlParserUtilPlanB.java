@@ -223,7 +223,7 @@ public class HtmlParserUtilPlanB {
 		return order;
 	}
 
-	public static Orders parseOrderInOrderSystem(final String orderPage, final String orderId) throws ParserException {
+	public static Orders parseOrderInOrderSystem(final String orderPage) throws ParserException {
 
 		final Orders order = new Orders();
 		final Map<String, String> headersMap = new HashMap<String, String>();
@@ -280,9 +280,8 @@ public class HtmlParserUtilPlanB {
 											keyAttribute = cellNode[j].getText().trim(); continue;
 										}
 										
-										String tdText = cellNodeElement.getText();
-										if(StringUtils.isNotBlank(tdText) && tdText.trim().equals("送货地址")) {
-											headersMap.put("送货地址", cellNode[j + 2].getText().trim());
+										if(StringUtils.isNotBlank(keyAttribute) && keyAttribute.equals("送货地址")) {
+											headersMap.put("送货地址", cellNode[2].getText().trim());
 											break;
 										}
 										
@@ -295,7 +294,7 @@ public class HtmlParserUtilPlanB {
 												valueAttribute = cellNode[j + 1].getText();
 												headersMap.put(keyAttribute, valueAttribute);
 												
-												break;
+											//	break;
 											}
 										}
 									}
@@ -355,7 +354,6 @@ public class HtmlParserUtilPlanB {
 										badCount ++;
 									}
 								}
-								
 								detailsList.add(elementMap);
 							}
 							titleRowCount ++;

@@ -18,7 +18,7 @@ public class HanthinkProperties {
 			} catch (IOException e) {
 				return null;
 			}
-		}
+		} 
 		
 		return hanthinkProperties.getProperty(key);
 	}

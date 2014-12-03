@@ -2,6 +2,7 @@ package com.ls.jobs;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
 
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
@@ -175,8 +177,17 @@ public class TestWebServices {
 		try {
 			List<Orders> orders = authanAutomationServiceInOrderSystem.grabOrders("2014-12-02", "2014-12-09", automaticJob);
 			
-			System.out.println(orders);
+			String soapMessage = authanAutomationServiceInOrderSystem.compositeOrderToXml(orders, automaticJob);
+			
+			System.out.println(soapMessage);
+			
 		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TemplateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

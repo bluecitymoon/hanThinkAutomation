@@ -107,7 +107,9 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 			//urls
 			List<String> orderIdList = HtmlParserUtilPlanB.findOrderListInOrderSystem(ordersListHtml);
 			
-			System.out.println(orderIdList);
+			if (orderIdList.size() == 0) {
+				return null;
+			}
 			
 			if (orderIdList.size() > 100000) {
 				logger.error("data is too big");
@@ -123,8 +125,13 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 
 				Orders singleOrder = null;
 				try {
-					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml, orderId);
-
+					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml);
+					
+					String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
+					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
+					for (Map<String, String> map : detailsMaps) {
+						map.put("订单号：", childTableId);
+					}
 					ordersList.add(singleOrder);
 
 				} catch (ParserException e) {
@@ -154,9 +161,9 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 		return ordersList;
 	}
 
-	private String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
+	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 		
-	Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap.ftl");
+	Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap-for-order-system.ftl");
 		
 		Map<String, Object> data = new HashMap<String, Object>();
 		

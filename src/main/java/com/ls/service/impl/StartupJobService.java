@@ -1,0 +1,117 @@
+package com.ls.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.impl.triggers.CronTriggerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.ls.constants.AuthanConstants;
+import com.ls.entity.AutomaticJob;
+import com.ls.jobs.AuthanAutomationQuartzJob;
+import com.ls.jobs.AutomaticJobManager;
+import com.ls.repository.AutomaticJobRepository;
+import com.ls.service.AuthanAutomationService;
+
+@Component("StartupJobService")
+public class StartupJobService implements InitializingBean{
+	
+private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
+	
+	@Autowired
+	private AutomaticJobRepository automaticJobRepository;
+	
+	@Resource(name = "authanService")
+	private AuthanAutomationService authanAutomationService;
+       
+	public void afterPropertiesSet() throws Exception {
+		List<AutomaticJob> allJobs = automaticJobRepository.findAll();
+		
+		for (AutomaticJob automaticJob : allJobs) {
+			if (StringUtils.isNotBlank(automaticJob.getStatus()) && automaticJob.getStatus().equals("已启动")) {
+
+				
+				JobDataMap jobDataMap = new JobDataMap();
+				jobDataMap.put("authanAutomationService", authanAutomationService);
+				jobDataMap.put("jobWillRun", automaticJob);
+
+				try {
+
+					String startHourAndMin = automaticJob.getStart();
+					String[] start = startHourAndMin.split(":");
+					int startHour = Integer.valueOf(start[0]);
+					int startMin = Integer.valueOf(start[1]);
+
+					String endHourAndMin = automaticJob.getStop();
+					String[] end = endHourAndMin.split(":");
+					int endHour = Integer.valueOf(end[0]);
+					int endMin = Integer.valueOf(end[1]);
+
+					if (startHour > endHour) {
+						logger.error("bad job configuration, start hour bigger than end hour. ");
+						return;
+					}
+					int restartInHours = automaticJob.getRestartInHours();
+					int jobStartHour = startHour;
+					while (jobStartHour <= endHour) {
+
+						if (jobStartHour == endHour) {
+
+							if (endMin < startMin) {
+								break;
+							}
+						}
+						String jobIdentityKey = automaticJob.getName() + automaticJob.getDbName() + "-" + jobStartHour + ":" + startMin;
+
+						String uniqueGroupName = getUniqueGroupName(automaticJob);
+						
+						JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).usingJobData(jobDataMap).withIdentity(jobIdentityKey, uniqueGroupName).build();
+						CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
+						singleTrigger.setName(jobIdentityKey);
+						singleTrigger.setGroup(uniqueGroupName);
+						Scheduler scheduler = AutomaticJobManager.getScheduler();
+						if (null == scheduler) {
+							logger.error("schedular null. ");
+							return;
+						} else {
+							scheduler.scheduleJob(jobDetail, singleTrigger);
+							AuthanConstants.startedJobIdentityList.add(jobIdentityKey);
+						}
+
+						jobStartHour += restartInHours;
+					}
+
+					automaticJob.setAutoJobRunning(true);
+					automaticJob.setStatus("已启动");
+					automaticJobRepository.saveAndFlush(automaticJob);
+
+				} catch (Exception e) {
+
+					logger.error("配置信息有误 : " + e.getMessage());
+					automaticJob.setAutoJobRunning(false);
+					automaticJob.setStatus("启动失败");
+					automaticJobRepository.saveAndFlush(automaticJob);
+
+					logger.error("start up job failed.");
+					logger.error(automaticJob.toString());
+
+				}
+			}
+		}
+	}
+
+	private String getUniqueGroupName(AutomaticJob jobInDb) {
+		return jobInDb.getDbName() + jobInDb.getName() + jobInDb.getId();
+	}
+}

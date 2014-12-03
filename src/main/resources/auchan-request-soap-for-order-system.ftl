@@ -24,12 +24,16 @@
 		<#else>
 		<riqi></riqi>
 		</#if>
-		<#if titleMap['预计收货日期：']??>
-		<daohuoriqi>${titleMap['预计收货日期：']}</daohuoriqi>
+		<#if titleMap['预定收货日期：']??>
+		<daohuoriqi>${titleMap['预定收货日期：']}</daohuoriqi>
 		<#else>
 		<daohuoriqi></daohuoriqi>
 		</#if>
+		<#if titleMap['送货地址']??>
 		<dizhi>${titleMap['送货地址']}</dizhi>
+		<#else>
+		<dizhi></dizhi>
+		</#if>
 	</xsdingdanzhubiao>
 	<#if order.ordersItemList??>
 	<#assign productList = order.ordersItemList/>
@@ -45,7 +49,7 @@
 		<hanshuidanjia></hanshuidanjia>
 		<hanshuijine></hanshuijine>
 		<buhanshuidanjia>${product['未税进价']}</buhanshuidanjia>
-		<buhanshuijine>${product['金额']}</buhanshuijine>
+		<buhanshuijine></buhanshuijine>
 		<shuilv></shuilv>
 	</xsdingdanzibiao>
 	</#list>
