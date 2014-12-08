@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="/ls/css/style.css">
 <link rel="stylesheet" href="/ls/css/style-theme.css" media="print" />
 <link rel="stylesheet" href="/ls/css/messenger.css">
-<link rel="stylesheet" href="/ls/css/messenger-theme-flat.css">
+<link rel="stylesheet" href="/ls/css/messenger-theme-future.css">
 <link rel="stylesheet" href="/ls/css/jquery.dataTables.css">
 <script src="/ls/js/jquery-1.10.2.js"></script>
 <script src="/ls/js/jquery-ui-1.10.4.custom.js"></script>
@@ -52,7 +52,7 @@
 <nav class="site-nav" id="nav">
 	<div class="row">
 		<ul id="dropdown">
-			<li class="active" ><a title="" href="/ls/conf.action"><span id="configuration">Configuration</span></a></li>
+			<li class="active"></li>
 		</ul>
 	</div>
 </nav>
@@ -148,6 +148,7 @@
 									<div class="two columns">
 										<label class="required">间隔(时)</label> <input type="text" class="required" data-bind="value : restartInHours" />
 									</div>
+									 
 									<div class="two columns">
 										<label class="required">客户系统数据延迟(天)</label> <input type="text" class="required" data-bind="value : delayDays" />
 									</div>
@@ -186,8 +187,15 @@
 					 <form id="grabForm">
 								<div class="row">
 								<div class="four columns">
-										<label>帐套名</label>
-										<input type="text" id="jobNameInput" />
+										<label>任务名称</label>
+										<!-- <input type="text" id="jobNameInput" /> -->
+										<select data-bind="options: $root.jobList,
+                      										optionsText: 'name',
+                       									    value: $root.selectedTaskId,
+                       									    optionsValue : 'id',
+                       									    selectedOption : $root.selectedTaskId,
+                       									    optionsCaption: '请选择...'">
+                       					</select>
 									</div>
 									<div class="four columns">
 										<label>开始日期</label>
@@ -219,17 +227,16 @@
 										<a class=" blue button" href="#" data-bind="click : startManually">开始抓取</a>
 									</div>
 								</div>
+								<div class="row" id="console">
+									<label for="xmlContent">Console XML Message</label>
+									<textarea id="xmlContent" class="tall" disabled></textarea>
+								</div>
 							</form>
 					 </div>
 
 				</div>
 			</div>
 		
-			</div>
-
-			<div class="row" id="console">
-				<label for="xmlContent">Console XML Message</label>
-				<textarea id="xmlContent" class="tall" placeholder="This is a tall text area" name="ex-textarea-4"></textarea>
 			</div>
 		</div>
 	</section>
@@ -288,7 +295,8 @@
 						self.manuallyStop = ko.observable('');
 						self.manuallyDbName = ko.observable('');
 						self.jobList = ko.observableArray([]);
-
+						self.selectedTaskId = ko.observable('');
+						
 						self.editJob = function(item, event) {
 							self.job(item);
 							
@@ -297,6 +305,7 @@
 								showCloseButton : true
 							});
 						};
+						
 						self.deleteJob = function(item, event) {
 							var result = window.confirm("确定：要删除[" + item.dbName + "]?");
 							
@@ -445,7 +454,7 @@
 									data : {
 										manuallyStart : self.manuallyStart(),
 										manuallyStop : self.manuallyStop(),
-										manuallyDbName : self.manuallyDbName()
+										manuallyDbName : self.selectedTaskId()
 									},
 									url : '/ls/startManually.action',
 									success : function(data) {
@@ -503,24 +512,24 @@
 								}
 							});
 					
-					$('#jobNameInput').autocomplete({
-						
-						 source: function( request, response ) {
-							 $.ajax({
-							 	url:  "ls/loadJobNames.action",
-								dataType: "json",
-							 	data: { blurryName: request.term },
-							 	success: function( data ) {
-							 		response(data);
-							 	}
-							  });
-							},
-						minLength: 0,
-						select: function( event, ui ) {
-							
-							model.manuallyDbName(ui.item.id);	
-						}
-					});
+				//	$('#jobNameInput').autocomplete({
+				//		
+				//		 source: function( request, response ) {
+				//			 $.ajax({
+				//			 	url:  "ls/loadJobNames.action",
+				//				dataType: "json",
+				//			 	data: { blurryName: request.term },
+				//			 	success: function( data ) {
+				//			 		response(data);
+				//			 	}
+				//			  });
+				//			},
+				//		minLength: 0,
+				//		select: function( event, ui ) {
+				//			
+				//			model.manuallyDbName(ui.item.id);	
+				//		}
+				//	});
 					
 				});
 		

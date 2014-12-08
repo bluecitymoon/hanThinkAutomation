@@ -18,6 +18,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.xmlbeans.impl.jam.mutable.MPackage;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,6 +132,11 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
 					for (Map<String, String> map : detailsMaps) {
 						map.put("订单号：", childTableId);
+						
+						String priceInWithoutTax = map.get("未税进价");
+						if (StringUtils.isNotBlank(priceInWithoutTax) && priceInWithoutTax.startsWith(".")) {
+							map.put("未税进价", "0" + priceInWithoutTax);
+						}
 					}
 					ordersList.add(singleOrder);
 

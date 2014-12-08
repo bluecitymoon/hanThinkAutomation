@@ -29,8 +29,8 @@
 		<#else>
 		<daohuoriqi></daohuoriqi>
 		</#if>
-		<#if titleMap['送货地址']??>
-		<dizhi>${titleMap['送货地址']}</dizhi>
+		<#if titleMap['店号：']??>
+		<dizhi>${titleMap['店号：']}</dizhi>
 		<#else>
 		<dizhi></dizhi>
 		</#if>
@@ -44,8 +44,8 @@
 		<tiaoxingma>${product['条目号']}</tiaoxingma>
 		<shangpinmiaoshu>${product['货品描述']}</shangpinmiaoshu>
 		<shuliang>${product['订货数']}</shuliang>
-		<huansuanlv1></huansuanlv1>
-		<xiangshu>${product['箱含量']}</xiangshu>
+		<huansuanlv1>${product['箱含量']}</huansuanlv1>
+		<xiangshu></xiangshu>
 		<hanshuidanjia></hanshuidanjia>
 		<hanshuijine></hanshuijine>
 		<buhanshuidanjia>${product['未税进价']}</buhanshuidanjia>

@@ -49,5 +49,11 @@
 				 <param name="root">jobNames</param>
 			</result>
 		</action>
+		<action name="loadTasks" class="auchanAction" method="loadTasks">
+			<result name="success" type="json">
+				 <param name="root">tasks</param>
+			</result>
+		</action>
+		
 	</package>
 </struts>

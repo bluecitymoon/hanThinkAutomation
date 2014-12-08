@@ -53,7 +53,7 @@ public class AuchanAutomationAction extends BaseAction {
 	@Autowired
 	private AutomaticJobRepository automaticJobRepository;
 
-	@Resource(name = "authanService")
+	@Resource(name = "authanOrderSystemService")
 	private AuthanAutomationService authanAutomationService;
 
 	public String startManually() {
