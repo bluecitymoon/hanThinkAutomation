@@ -7,98 +7,57 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
+import com.ls.entity.Role;
 import com.ls.entity.User;
+import com.ls.repository.RoleRepository;
 import com.ls.repository.UserRepository;
 import com.ls.service.UserService;
+import com.ls.util.HanthinkUtil;
+import com.ls.vo.ResponseVo;
 
 @Component("userAction")
+@Scope("prototype")
 public class UserAction extends BaseAction {
 
 	private static final long serialVersionUID = -3519886427026056067L;
 	private String username;
 	private String name;
 
+	@Autowired
+	private RoleRepository roleRepository;
+
 	private List<User> users;
 
 	private Set<String> usersList;
-	
+
 	private User user;
-	
+
 	@Resource(name = "userService")
 	private UserService userService;
-	
+
 	@Autowired
 	private UserRepository userRepository;
+
+	private List<Role> roles;
 
 	public void setUsername(String username) {
 
 		this.username = username;
 	}
 
-	public String doLogin() {
-		setupSession();
-		
-		String username = getParameter("username");
-		String password = getParameter("password");
-		
-		User user = userService.findUser(username, password);
-		
-		if (null == user) {
-			addActionMessage("��û��ͨ����֤��");
-			System.out.println("user not found : " + username + " " + password);
-			return INPUT;
-			
-		} else {
-			user.getFunctions();
-			user.getLocations();
-			addActionMessage("��½�ɹ�");System.out.println(user.toString());
-			
-			setName(user.getName());
-			setUsername(user.getUsername());
-			
-			User storedUserInSession = (User) getSession().get(user.getUsername().toString());
-			if (storedUserInSession == null) {
-				getSession().put(user.getUsername().toString(), user);
-			}
-			
-			return SUCCESS;
-		}
-		
-	}
-	
-	public String doLogoff() {
-		setupSession();
-		
-		String username = getParameter("username");
-		
-		Object user = getSession().get(username);
-		if (null == user) {
-			getSession().remove(username);
-		}
-		
-		return SUCCESS;
-		
-	}
-
 	public String getName() {
+
 		return name;
 	}
 
 	public void setName(String name) {
+
 		this.name = name;
-	}
-
-	public String loadGrabPage() {
-
-		return SUCCESS;
-	}
-
-	public String loadAssignLocationToUser() {
-
-		return SUCCESS;
 	}
 
 	public String ajaxFindUser() {
@@ -106,12 +65,15 @@ public class UserAction extends BaseAction {
 		String name = getParameter("userName");
 
 		if (StringUtils.isEmpty(name)) {
-			users = userRepository.findAll(new Sort(Sort.Direction.ASC,"id"));
+			users = userRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
 		} else {
 			users = userService.findUserByName(name);
 		}
-		
 
+		for (User user : users) {
+			user.setRoles(null);
+			user.setPassword("");
+		}
 		return SUCCESS;
 	}
 
@@ -133,19 +95,146 @@ public class UserAction extends BaseAction {
 
 		return SUCCESS;
 	}
-	
+
 	public String createUser() {
-		String userName = getParameter("username");
-		String name = getParameter("name");
-		String password = getParameter("password");
-		
-		User userEntity = new User(name, userName, password);
-		
-		user = userRepository.save(userEntity);
-		
+
+		try {
+			String userJson = getParameter("userJson");
+
+			if (StringUtils.isEmpty(userJson)) {
+				setResponse(HanthinkUtil.makeGeneralErrorResponse(null));
+				return SUCCESS;
+			}
+
+			User userEntity = HanthinkUtil.getJavaObjectFromJsonString(userJson, User.class);
+
+			// new user
+			if (userEntity.getId() == null) {
+
+				User userInDb = userRepository.findByUsername(userEntity.getUsername());
+
+				if (userInDb == null) {
+
+					String password = userEntity.getPassword();
+					userEntity.setPassword(HanthinkUtil.getEncodedPassword(password, userEntity.getUsername()));
+					userEntity.setActive(true);
+
+				} else {
+
+					setResponse(ResponseVo.newFailMessage(userEntity.getUsername() + "已经存在！"));
+
+					return SUCCESS;
+				}
+
+			}
+
+			userRepository.save(userEntity);
+
+		} catch (Exception e) {
+			setResponse(HanthinkUtil.makeGeneralErrorResponse(e));
+			return SUCCESS;
+		}
+		setResponse(HanthinkUtil.makeGeneralSuccessResponse());
+
 		return SUCCESS;
 	}
-	
+	public String disactiveUser() {
+
+		try {
+			String userJson = getParameter("userJson");
+
+			if (StringUtils.isEmpty(userJson)) {
+				setResponse(HanthinkUtil.makeGeneralErrorResponse(null));
+				return SUCCESS;
+			}
+
+			User userEntity = HanthinkUtil.getJavaObjectFromJsonString(userJson, User.class);
+
+			userEntity.setActive(false);
+			userEntity.setRoles(null);
+
+			userRepository.save(userEntity);
+		} catch (Exception e) {
+			setResponse(HanthinkUtil.makeGeneralErrorResponse(e));
+			return SUCCESS;
+		}
+
+		setResponse(HanthinkUtil.makeGeneralSuccessResponse());
+
+		return SUCCESS;
+	}
+
+	public String updateUserRole() {
+
+		try {
+			String userJson = getParameter("userJson");
+			String roleJson = getParameter("roleJson");
+			String checkedOrNot = getParameter("checkedOrNot");
+
+			User userFromClient = HanthinkUtil.getJavaObjectFromJsonString(userJson, User.class);
+			Role roleFromClient = HanthinkUtil.getJavaObjectFromJsonString(roleJson, Role.class);
+
+			User freshUser = userRepository.findOne(userFromClient.getId());
+			Role freshRole = roleRepository.findOne(roleFromClient.getId());
+
+			if (StringUtils.isNotBlank(checkedOrNot) && checkedOrNot.equals("true")) {
+
+				freshUser.getRoles().add(freshRole);
+				userRepository.save(freshUser);
+
+			} else {
+
+				freshUser.getRoles().remove(freshRole);
+				userRepository.save(freshUser);
+			}
+
+		} catch (Exception e) {
+			setResponse(HanthinkUtil.makeGeneralErrorResponse(e));
+			return SUCCESS;
+		}
+
+		setResponse(HanthinkUtil.makeGeneralSuccessResponse());
+		return SUCCESS;
+	}
+
+	public String resetPassword() {
+
+		try {
+			String userJson = getParameter("userJson");
+			String newPasswordToReset = getParameter("newPasswordToReset");
+
+			if (StringUtils.isEmpty(userJson)) {
+				setResponse(HanthinkUtil.makeGeneralErrorResponse(null));
+				return SUCCESS;
+			}
+
+			User userEntity = HanthinkUtil.getJavaObjectFromJsonString(userJson, User.class);
+
+			User freshUserInDb = userRepository.findOne(userEntity.getId());
+
+			freshUserInDb.setPassword(HanthinkUtil.getEncodedPassword(newPasswordToReset, freshUserInDb.getUsername()));
+
+			userRepository.save(freshUserInDb);
+
+		} catch (Exception e) {
+			setResponse(HanthinkUtil.makeGeneralErrorResponse(e));
+			return SUCCESS;
+		}
+
+		setResponse(HanthinkUtil.makeGeneralSuccessResponse());
+
+		return SUCCESS;
+	}
+
+	public String getAllRoles() {
+
+		roles = roleRepository.findAll();
+		for (Role role : roles) {
+			role.setUsers(null);
+		}
+		return SUCCESS;
+	}
+
 	public String getUsername() {
 
 		return username;
@@ -172,11 +261,23 @@ public class UserAction extends BaseAction {
 	}
 
 	public User getUser() {
+
 		return user;
 	}
 
 	public void setUser(User user) {
+
 		this.user = user;
 	}
-	
+
+	public List<Role> getRoles() {
+
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+
+		this.roles = roles;
+	}
+
 }

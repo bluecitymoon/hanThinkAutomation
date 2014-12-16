@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.custom.i18n.resources" value="i18n.engine,i18n.static,ApplicationMessages" />
+	<constant name="struts.action.extension" value="action" />
+	<constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+	
+	<package name="" namespace="/user" extends="struts-default">
+		<result-types>
+			 <result-type name="json" class="org.apache.struts2.json.JSONResult" />
+			 <result-type name="redirect" class="org.apache.struts2.dispatcher.ServletRedirectResult"/> 
+		</result-types>
+		<action name="load">
+			<result>jobs-management.jsp</result>
+		</action>
+		<action name="startManually" class="auchanAction" method="startManually">
+			<result name="success" type="json">
+				<param name="root">response</param>
+			</result>
+		</action>
+		<action name="saveAutomaticJob" class="auchanAction" method="saveAutomaticJob">
+			<result name="success" type="json">
+				<param name="root">response</param>
+			</result>
+		</action>
+		<action name="startupJob" class="auchanAction" method="startupJob">
+			<result name="success" type="json">
+				 <param name="root">response</param>
+			</result>
+		</action>
+		<action name="shutDownJob" class="auchanAction" method="shutDownJob">
+			<result name="success" type="json">
+				 <param name="root">response</param>
+			</result>
+		</action>
+		<action name="readJobList" class="auchanAction" method="readJobList">
+			<result name="success" type="json">
+				 <param name="root">jobList</param>
+			</result>
+		</action>
+		<action name="deleteJob" class="auchanAction" method="deleteJob">
+			<result name="success" type="json">
+				 <param name="root">response</param>
+			</result>
+		</action>
+		<action name="loadJobNames" class="auchanAction" method="loadJobNames">
+			<result name="success" type="json">
+				 <param name="root">jobNames</param>
+			</result>
+		</action>
+		<action name="loadTasks" class="auchanAction" method="loadTasks">
+			<result name="success" type="json">
+				 <param name="root">tasks</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

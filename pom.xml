@@ -239,47 +239,64 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.5-FINAL</version>
 		</dependency>
-		<!-- Shiro security -->
+		<!-- Security Framework -->
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
-			<version>${shiro.version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-web</artifactId>
-			<version>${shiro.version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-cas</artifactId>
-			<version>${shiro.version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-acl</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-spring</artifactId>
-			<version>${shiro.version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.spring-security-oauth</groupId>
+			<artifactId>spring-security-oauth</artifactId>
+			<version>3.19</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-core-tiger</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.21</version>
 		</dependency>
 	</dependencies>
 	<build>

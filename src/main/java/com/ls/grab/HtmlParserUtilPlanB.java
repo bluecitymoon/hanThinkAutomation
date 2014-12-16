@@ -11,8 +11,6 @@ import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
 import org.htmlparser.Tag;
 import org.htmlparser.nodes.TagNode;
-import org.htmlparser.tags.DefinitionList;
-import org.htmlparser.tags.DefinitionListBullet;
 import org.htmlparser.tags.Div;
 import org.htmlparser.tags.ImageTag;
 import org.htmlparser.tags.LinkTag;
@@ -27,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
-import com.ls.entity.City;
-import com.ls.entity.Province;
 import com.ls.vo.Orders;
 
 public class HtmlParserUtilPlanB {
@@ -549,74 +545,6 @@ public class HtmlParserUtilPlanB {
 
 	}
 
-	public static List<Province> findCities(final String detailPageHtml) {
-		final List<Province> provinces = new ArrayList<Province>();
-
-		try {
-
-			Parser htmlParser = new Parser();
-			htmlParser.setInputHTML(detailPageHtml);
-
-			htmlParser.extractAllNodesThatMatch(new NodeFilter() {
-
-				private static final long serialVersionUID = 7680728721047912165L;
-
-				public boolean accept(Node node) {
-
-					if (node instanceof DefinitionList) {
-
-						DefinitionList cityList = ((DefinitionList) node);
-						if (StringUtils.isNotBlank(cityList.getAttribute("id")) && cityList.getAttribute("id").equals("clist")) {
-							Node[] nodelist = cityList.getChildren().toNodeArray();
-
-							for (int i = 0; i < nodelist.length; i++) {
-								if (nodelist[i] instanceof DefinitionListBullet) {
-
-									DefinitionListBullet definitionListBullet = (DefinitionListBullet) nodelist[i];
-
-									if (definitionListBullet.getStringText().equals("安徽") || definitionListBullet.getStringText().equals("江苏") || definitionListBullet.getStringText().equals("浙江")) {
-										Province province = new Province();
-										province.setName(definitionListBullet.getStringText());
-
-										DefinitionListBullet subCities = (DefinitionListBullet) nodelist[i + 1];
-
-										Node[] cityLinks = subCities.getChildren().toNodeArray();
-										List<City> cities = new ArrayList<City>();
-										for (int j = 0; j < cityLinks.length; j++) {
-											if (cityLinks[j] instanceof LinkTag) {
-
-												LinkTag cityLink = (LinkTag) cityLinks[j];
-
-												City city = new City();
-												city.setName(cityLink.getStringText());
-												city.setUrl(cityLink.getAttribute("href"));
-												city.setProvince(province);
-
-												cities.add(city);
-											}
-
-										}
-
-										province.setCitys(cities);
-
-										provinces.add(province);
-									}
-								}
-							}
-						}
-
-					}
-					return false;
-				}
-			});
-
-		} catch (ParserException e) {
-			e.printStackTrace();
-		}
-
-		return provinces;
-
-	}
 
 	public static String findContactorName(String detailPageHtml) {
 		final StringBuilder contactorsBuilder = new StringBuilder();

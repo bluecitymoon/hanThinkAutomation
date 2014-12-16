@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.struts2.interceptor.ParameterAware;
 
+import com.ls.vo.ResponseVo;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -16,13 +17,23 @@ public class BaseAction extends ActionSupport implements ParameterAware {
 
 	Map<String, Object> application;
 	Map<String, Object> session;
-
+	private ResponseVo response;
 	private Long userId = -1L;
 	private String userName = "";
 
 	private String message;
 
 	private Map<String, String[]> requestParameters = null;
+	
+	public ResponseVo getResponse() {
+	
+		return response;
+	}
+	
+	public void setResponse(ResponseVo response) {
+	
+		this.response = response;
+	}
 
 	public String getMessage() {
 

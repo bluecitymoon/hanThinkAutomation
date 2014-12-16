@@ -11,4 +11,8 @@ import com.ls.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer> , JpaSpecificationExecutor<User>{
 	List<User> findByName(String name);
 	List<User> findByUsernameAndPassword(String name, String password);
+	
+	User findByUsername(String username);
+	
+	User findByUsernameAndActive(String username, Boolean active);
 }

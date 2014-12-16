@@ -8,52 +8,7 @@
 	<constant name="struts.action.extension" value="action" />
 	<constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
 	
-	<package name="" namespace="/" extends="struts-default">
-		<result-types>
-			 <result-type name="json" class="org.apache.struts2.json.JSONResult" />
-			 <result-type name="redirect" class="org.apache.struts2.dispatcher.ServletRedirectResult"/> 
-		</result-types>
-		
-		<action name="startManually" class="auchanAction" method="startManually">
-			<result name="success" type="json">
-				<param name="root">response</param>
-			</result>
-		</action>
-		<action name="saveAutomaticJob" class="auchanAction" method="saveAutomaticJob">
-			<result name="success" type="json">
-				<param name="root">response</param>
-			</result>
-		</action>
-		<action name="startupJob" class="auchanAction" method="startupJob">
-			<result name="success" type="json">
-				 <param name="root">response</param>
-			</result>
-		</action>
-		<action name="shutDownJob" class="auchanAction" method="shutDownJob">
-			<result name="success" type="json">
-				 <param name="root">response</param>
-			</result>
-		</action>
-		<action name="readJobList" class="auchanAction" method="readJobList">
-			<result name="success" type="json">
-				 <param name="root">jobList</param>
-			</result>
-		</action>
-		<action name="deleteJob" class="auchanAction" method="deleteJob">
-			<result name="success" type="json">
-				 <param name="root">response</param>
-			</result>
-		</action>
-		<action name="loadJobNames" class="auchanAction" method="loadJobNames">
-			<result name="success" type="json">
-				 <param name="root">jobNames</param>
-			</result>
-		</action>
-		<action name="loadTasks" class="auchanAction" method="loadTasks">
-			<result name="success" type="json">
-				 <param name="root">tasks</param>
-			</result>
-		</action>
-		
-	</package>
+	<include file="struts/access-struts.xml"></include>
+	<include file="struts/user-struts.xml"></include>
+	<include file="struts/admin-struts.xml"></include>
 </struts>

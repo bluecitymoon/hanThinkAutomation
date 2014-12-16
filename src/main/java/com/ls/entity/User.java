@@ -14,7 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ls_user")
+@Table(name = "ls_user")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -9150498313341113868L;
@@ -24,66 +24,73 @@ public class User implements Serializable {
 	protected String name;
 	protected String username;
 	protected String password;
+	protected Boolean active;
+
+	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinTable(name = "ls_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	protected List<Role> roles;
+	
+
 	public User() {
 		super();
 	}
-	public User(String name, String username, String password) {
+
+	public User(String name, String username, String password, Boolean active) {
 		super();
 		this.name = name;
 		this.username = username;
 		this.password = password;
+		this.active = active;
 	}
-	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinTable(name = "ls_user_location", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "city_id") )
-	protected List<Location> locations;
-	
-	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinTable(name = "ls_user_function", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "function_id") )
-	protected List<Function> functions;
 
-	public List<Location> getLocations() {
-		return locations;
+
+	public Boolean getActive() {
+		return active;
 	}
-	public void setLocations(List<Location> locations) {
-		this.locations = locations;
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getUsername() {
 		return username;
 	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
 	
+	public List<Role> getRoles() {
 	
-	public List<Function> getFunctions() {
-		return functions;
-	}
-	public void setFunctions(List<Function> functions) {
-		this.functions = functions;
-	}
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password + ", locations=" + locations + "]";
+		return roles;
 	}
 	
+	public void setRoles(List<Role> roles) {
 	
-	
+		this.roles = roles;
+	}
 }
