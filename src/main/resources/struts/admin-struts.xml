@@ -18,7 +18,9 @@
 		<action name="loadUser">
 			<result>user-management.jsp</result>
 		</action>
-		
+		<action name="userResourceAssign">
+			<result>user-resource-assign.jsp</result>
+		</action>
 		<action name="ajaxFindUser" class="userAction" method="ajaxFindUser">
 			<result name="success" type="json">
 				<param name="root">users</param>
@@ -64,6 +66,11 @@
 		<action name="updateUserRole" class="userAction" method="updateUserRole">
 			<result name="success" type="json">
 				<param name="root">response</param>
+			</result>
+		</action>
+		<action name="findAllStores" class="resourceAction" method="findAllStores">
+			<result name="success" type="json">
+				<param name="root">stores</param>
 			</result>
 		</action>
 		

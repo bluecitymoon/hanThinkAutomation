@@ -10,9 +10,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableList;
+import com.ls.entity.Menu;
 import com.ls.entity.Role;
+import com.ls.entity.Store;
 import com.ls.entity.User;
+import com.ls.repository.MenuRepository;
 import com.ls.repository.RoleRepository;
+import com.ls.repository.StoreRepository;
 import com.ls.repository.UserRepository;
 
 /**
@@ -32,6 +36,22 @@ public class TestInitializationScripts {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private MenuRepository menuRepository;
+	
+	@Autowired
+	private StoreRepository storeRepository;
+	
+	@Test
+	public void testCreateStores() {
+		Store store = new Store("欧尚");
+		Store store1 = new Store("麦德龙");
+		Store store2 = new Store("宝钢");
+		
+		storeRepository.save(ImmutableList.of(store, store1, store2));
+		
+	}
 	
 	@Test
 	public void testCreateUserAndRoles() {
@@ -76,5 +96,18 @@ public class TestInitializationScripts {
 		}
 		
 		userRepository.save(users);
+	}
+	
+	@Test
+	public void testInitialMenus() {
+		
+		Menu menu1 = new Menu("任务管理", "/ls/user/load.action", "jobCenter");
+		Menu menu2 = new Menu("用户管理", "/ls/admin/loadUser.action", "userManager");
+		Menu menu3 = new Menu("系统配置", "/ls/admin/configuration.action", "systemConfiguration");
+		Menu menu4 = new Menu("数据中心", "/ls/admin/load.action", "dataCenter");
+		Menu menu6 = new Menu("资源分配", "/ls/admin/userResourceAssign.action", "resourceAssign");
+		
+		menuRepository.save(ImmutableList.of(menu1, menu2, menu6, menu3, menu4));
+		
 	}
 }

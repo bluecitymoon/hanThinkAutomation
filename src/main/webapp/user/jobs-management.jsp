@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=GBK"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="zh"> <![endif]-->
 <!--[if IE 7]>	<html class="no-js lt-ie9 lt-ie8" lang="zh"> <![endif]-->
@@ -50,17 +51,9 @@
 		</div>
 	</div>
 </header>
-	<div id="nav-wrap">
-<nav class="site-nav" id="nav">
-	<div class="row">
-		<ul id="dropdown">
-			<li class="active"></li>
-		</ul>
-	</div>
-</nav>
-</div>
+	<s:include value="/jsps/common/menu.jsp" />
 	<section class="mainbg">
-		<div class="container">
+		<div class="container" id="jobsContainer">
 			<div class="row">
 				<div id="moduleTabs" class="app-wrapper ui-corner-top">
 				<nav class="blue module-nav ui-corner-top clearfix">
@@ -74,21 +67,30 @@
 				<div id="tabs-1">
 
 					<div class="content">
-							<div class="app-wrapper ui-corner-top">
-								<div class="green module ui-corner-top clearfix">
-									<h2>
-										自动任务列表
-									</h2>
+
+							<div class="row">
+								<div class="three columns">
+									<select data-bind="options: $root.jobList,
+                      											optionsText: 'name',
+                       									    	value: $root.selectedTaskId,
+                       									    	optionsValue : 'id',
+                       									    	selectedOption : $root.selectedTaskId,
+                       									    	optionsCaption: '请选择数据源类型...'">
+									</select>
 								</div>
-								<div class="content">
-									<table class="display compact" id="jobListTable">
+								<div class="six columns"></div>
+								<div class="three columns">
+									<a class="tiny blue button right" href="#" data-bind="click : $root.clearForm"><i class="icon-pencil"></i>为新的帐套配置自动任务</a>
+								</div>
+							</div>
+							<table class="infoTable" id="jobListTable">
 									<thead>
 										<tr>
 											<th class="text-center">任务</th>
 											<th class="text-center">帐套</th>
 											<th class="text-center">任务状态</th>
 
-											<th class="text-center">修改/删除</th>
+											<th class="text-center">管理</th>
 											<th class="text-center">启动/停止</th>
 										</tr>
 									</thead>
@@ -97,89 +99,19 @@
 											<td class="text-center"><span data-bind="text: name"></span></td>
 											<td class="text-center"><span data-bind="text: dbName"></span></td>
 											<td class="text-center"><span data-bind="text: status"></span></td>
-											<td class="text-center"><a class=" tiny green button" href="#" data-bind="click : $root.editJob">编辑</a> <a class=" tiny red button" href="#" data-bind="click : $root.deleteJob">删除</a></td>
-											<td class="text-center"><a class=" tiny green button" href="#" data-bind="click : $root.startJob">启动</a> <a class=" tiny red button" href="#" data-bind="click : $root.stopJob">停止</a></td>
+											<td class="text-center">
+												<a   href="#" data-bind="click : $root.editJob" title="编辑"><i class="icon-pencil small icon-blue"></i></a> 
+												<a style="margin-left : 15px;" title="删除" href="#" data-bind="click : $root.deleteJob"><i class="icon-trash small icon-red"></i></a>
+												<a style="margin-left : 15px;" title="拷贝任务" href="#" data-bind="click : $root.copyJob"><i class="icon-copy small icon-green"></i></a>
+											</td>
+											<td class="text-center">
+												<a  href="#" data-bind="click : $root.startJob" title="启动"><i class="icon-play-sign small icon-blue"></i></a> 
+												<a  href="#" style="margin-left : 15px;" data-bind="click : $root.stopJob" title="停止"><i class="icon-stop small icon-red"></i></a>
+											</td>
 										</tr>
-
 									</tbody>
 								</table>
-								</div>
-							</div>
-
-							<br>
-					 <div class="app-wrapper ui-corner-top"  data-bind="with : job">
-						<div class="module ui-corner-top clearfix">
-							<h2><span data-bind="text: dbName"></span></h2>
-							<h2 class="right">
-								<a class="blue button" href="#" data-bind="click : $root.clearForm"><i class="icon-pencil"></i>为新的帐套配置自动任务</a>
-							</h2>
-						</div>
-						<form id="jobForm">
-							<div class="content">
-								<div class="row">
-									<div class="six columns">
-										<div class="row">
-											<label class="required">帐套</label> 
-											<input type="text" class="addon-postfix required" data-bind="value : dbName" />
-										</div>
-										
-									</div>
-									<div class="six columns">
-									</div>
-								</div>
-								<hr>
-								<div class="row">
-									<div class="nine columns">
-										<label class="required">任务名称</label> <input type="text" class="addon-postfix  required" data-bind="value : name" />
-									</div>
-									<div class="three columns">
-										<label>任务状态</label> <input type="text" class="addon-postfix" disabled="disabled" data-bind="value : status" />
-									</div>
-
-								</div>
-								<div class="row">
-									<label class="required">存储数据客户端IP</label> <input type="text" class="addon-postfix  required" data-bind="value : clientIp" />
-								</div>
-								<div class="row">
-									<div class="four columns">
-										<label class="required">每天的开始抓取时间 (最小 00:00)</label> <input type="text" class="required" data-bind="value : start" />
-									</div>
-									<div class="four columns">
-										<label class="required">每天的抓取截止时间(最大23:59)</label> <input type="text" class="required" data-bind="value : stop" />
-									</div>
-									<div class="two columns">
-										<label class="required">间隔(时)</label> <input type="text" class="required" data-bind="value : restartInHours" />
-									</div>
-									 
-									<div class="two columns">
-										<label class="required">客户系统数据延迟(天)</label> <input type="text" class="required" data-bind="value : delayDays" />
-									</div>
-								</div>
-								<div class="row">
-									<div class="six columns">
-										<label>上一次抓取的开始时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabStart" />
-									</div>
-									<div class="six columns">
-										<label>上一次抓取的结束时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabEnd" />
-									</div>
-								</div>
-								<div class="row">
-									<div class="six columns">
-										<label class="required">登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
-									</div>
-									<div class="six columns">
-										<label class="required">登陆密码</label> <input type="text" class="required" data-bind="value : password" />
-									</div>
-								</div>
-								<hr>
-								<div class="row">
-									<div class="twelve columns centered">
-										<a class="small blue button" href="#" data-bind="click : $root.save">保存配置信息</a> 
-									</div>
-								</div>
-							</div>
-						</form>
-					</div>
+								<br>
 					 </div>
 
 				</div>
@@ -235,8 +167,68 @@
 								</div>
 							</form>
 					 </div>
-
 				</div>
+				<div id="manageJobDialog"  data-bind="with : job" style="display:none" title="任务管理">
+						<form id="jobForm">
+							<div class="content">
+								<div class="row">
+									<div class="six columns">
+										<div class="row">
+											<label class="required">帐套</label> 
+											<input type="text" class="addon-postfix required" data-bind="value : dbName" />
+										</div>
+										
+									</div>
+									<div class="six columns">
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="nine columns">
+										<label class="required">任务名称</label> <input type="text" class="addon-postfix  required" data-bind="value : name" />
+									</div>
+									<div class="three columns">
+										<label>任务状态</label> <input type="text" class="addon-postfix" disabled="disabled" data-bind="value : status" />
+									</div>
+
+								</div>
+								<div class="row">
+									<label class="required">存储数据客户端IP</label> <input type="text" class="addon-postfix  required" data-bind="value : clientIp" />
+								</div>
+								<div class="row">
+									<div class="four columns">
+										<label class="required">每天的开始抓取时间 (最小 00:00)</label> <input type="text" class="required" data-bind="value : start" />
+									</div>
+									<div class="four columns">
+										<label class="required">每天的抓取截止时间(最大23:59)</label> <input type="text" class="required" data-bind="value : stop" />
+									</div>
+									<div class="two columns">
+										<label class="required">间隔(时)</label> <input type="text" class="required" data-bind="value : restartInHours" />
+									</div>
+									 
+									<div class="two columns">
+										<label class="required">数据延迟(天)</label> <input type="text" class="required" data-bind="value : delayDays" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="six columns">
+										<label>上一次抓取的开始时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabStart" />
+									</div>
+									<div class="six columns">
+										<label>上一次抓取的结束时间</label> <input type="text" disabled="disabled" data-bind="value : lastGrabEnd" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="six columns">
+										<label class="required">登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
+									</div>
+									<div class="six columns">
+										<label class="required">登陆密码</label> <input type="text" class="required" data-bind="value : password" />
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
 			</div>
 		
 			</div>
@@ -257,16 +249,16 @@
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
 	<script src="/ls/js/jquery.dataTables.js"></script>
 	<script>
+		function activeCurrentMenuItem() {
+			$('#jobCenter').addClass('active');	
+		}
+		
 		$(document).ready( function() {
+			
 			$("#moduleTabs").tabs();
 			$('#console').hide();
 			
-			$('#jobListTable').dataTable({
-			    "paging":   false,
-		        "ordering": false,
-		        "info":     false,
-		        "searching" : false
-			});
+			
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
 					$('#console').hide();
@@ -298,16 +290,46 @@
 						self.manuallyDbName = ko.observable('');
 						self.jobList = ko.observableArray([]);
 						self.selectedTaskId = ko.observable('');
+						self.copyJob = function(item, event) {
+							
+							item.id = null;
+							item.lastGrabStart = '';
+							item.lastGrabEnd = '';
+							item.status = '';
+							
+							self.copiedJob(item);
+							
+							success("对应的任务已经复制.");
+						};
 						
 						self.editJob = function(item, event) {
 							self.job(item);
 							
-							Messenger().post({
-								message : ('<b class="label green">' + item.dbName + '</b> 加载成功!'),
-								showCloseButton : true
-							});
+							self.openEditJobDialog();
 						};
 						
+						self.openEditJobDialog = function(item, event) {
+							
+							$('#manageJobDialog').dialog({
+								modal : true,
+								width : 909,
+								height : 730,
+								open : function(e) {
+									changeButtonStyleForPopup(e);
+								},
+								
+								buttons : {
+									'保存记录' : function() {
+										self.save();
+									},
+									'关闭窗口' : function() {
+										closeDialog('manageJobDialog');
+									}
+								}
+								
+							});
+							
+						};
 						self.deleteJob = function(item, event) {
 							var result = window.confirm("确定：要删除[" + item.dbName + "]?");
 							
@@ -392,9 +414,13 @@
 								}
 							});
 						};
+						
+						self.copiedJob = ko.observable(new Job());
 						self.clearForm = function() {
-							var job = new Job();
-							self.job(job);
+								
+							self.job(self.copiedJob());
+							
+							self.openEditJobDialog();
 						};
 						
 						self.reloadJobList = function() {
@@ -403,7 +429,6 @@
 								success : function(data) {
 										try {
 										self.jobList(data);
-										Messenger().post("已成功加载任务列表");
 									} catch(e) {
 										Messenger().post({
 											message : ('加载任务列表失败，' + e),
@@ -433,6 +458,8 @@
 										handleResponse(data);
 										
 										self.reloadJobList();
+										
+										closeDialog('manageJobDialog');
 										
 									},
 									error : function(XMLHttpRequest,
@@ -486,8 +513,9 @@
 						};
 					};
 
+					var $jobContainer = $("#jobsContainer")[0];
 					var model = new ConfigurationModel();
-					ko.applyBindings(model);
+					ko.applyBindings(model, $jobContainer);
 
 					$(document).ajaxStart(function() {
 						Common.prototype.loadAjaxLoader("操作正在执行，请耐心等候！");

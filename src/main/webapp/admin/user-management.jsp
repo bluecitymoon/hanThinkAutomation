@@ -68,6 +68,11 @@
 							</div>
 							<div class="content">
 								<div class="row">
+									<div class="three columns"></div>
+									<div class="six columns"></div>
+									<div class="three columns"></div>
+								</div>
+								<div class="row">
 									<table class="infoTable">
 										<thead>
 											<tr>
@@ -138,7 +143,7 @@
 						self.allRoles = ko.observable([]);
 						
 						$.ajax({
-							url : 'getAllRoles.ls',
+							url : 'getAllRoles.action',
 							success : function(data) {
 								self.allRoles(data);
 							}
@@ -146,7 +151,7 @@
 						
 						self.updateUserRole = function(item, event) {
 							$.ajax({
-								url : 'updateUserRole.ls',
+								url : 'updateUserRole.action',
 								method : 'POST',
 								data : {
 										roleJson : JSON.stringify(item),
@@ -200,7 +205,7 @@
 							if (window.confirm('你真的确定要关闭这个用户吗？')) {
 								
 								$.ajax({
-									url : 'disactiveUser.ls',
+									url : 'disactiveUser.action',
 									method : 'POST',
 									data : {
 											userJson : JSON.stringify(item)
@@ -222,7 +227,7 @@
 						
 						self.resetPassword = function() {
 							$.ajax({                        
-								  url: 'resetPassword.ls',
+								  url: 'resetPassword.action',
 								  data: { newPasswordToReset : self.newPasswordToReset() , userJson : JSON.stringify(self.selectedUser()) },
 								  type : 'POST',
 								  success: function(data) {  
@@ -277,7 +282,7 @@
 						};
 						
 						self.searchUser = function() {
-							$.ajax({	url : 'ajaxFindUser.ls',
+							$.ajax({	url : 'ajaxFindUser.action',
 										data : {
 											userName : self.userName()
 										},
@@ -290,7 +295,7 @@
 						self.loadUserAccouts = function() {
 							//apply country auto-complete 
 							$.ajax({                        
-								  url: 'getAllUserAccounts.ls',
+								  url: 'getAllUserAccounts.action',
 								  async: false,      
 								  success: function(data) {   
 									  $("#userNameInput").autocomplete({ source: data, minLength: 2 });
@@ -301,7 +306,7 @@
 						self.loadAllUsers = function() {
 							//load all
 							$.ajax({                        
-								  url: 'loadAllUsers.ls',
+								  url: 'loadAllUsers.action',
 								  success: function(data) {   
 									  	self.users(data);
 
@@ -324,7 +329,7 @@
 								return;
 							}
 							$.ajax({                        
-								  url: 'createUser.ls',
+								  url: 'createUser.action',
 								  data: { userJson : JSON.stringify(currentUser) },
 								  type : 'POST',
 								  success: function(data) {  
