@@ -19,7 +19,7 @@
 			</div>
 		</div>
 	</header>
-	<section class="mainbg">
+	<section class="mainbg" style="background-image:url('images/login_bg.jpg')">
 		<div class="container">
 			<div class="content">
 				<div class="row">
@@ -49,8 +49,11 @@
 					</div>
 					<div class="eight columns">
 
-						<div class="app-wrapper ui-corner-top">
-							<div class="blue module ui-corner-top clearfix">
+						<div class="app-wrapper ui-corner-top" style="height:430px; background-image:url('images/login_bg.jpg')">
+							<div class="blue module ui-corner-top clearfix" >
+								<h2>系统信息</h2>
+							</div>
+							<div class="content" >
 							</div>
 						</div>
 

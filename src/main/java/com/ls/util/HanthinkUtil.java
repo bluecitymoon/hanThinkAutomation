@@ -2,11 +2,15 @@ package com.ls.util;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import net.sf.json.JSONObject;
 
+import org.apache.struts2.ServletActionContext;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
+import com.ls.entity.Role;
 import com.ls.entity.User;
 import com.ls.vo.ResponseVo;
 
@@ -88,5 +92,24 @@ public class HanthinkUtil {
 		
 		Date now = new Date();
 		return XinXinConstants.SIMPLE_DATE_FORMATTER.format(now);
+	}
+	
+	public static String getCurrentUserName() {
+		
+		SecurityContextHolderAwareRequestWrapper securityContextHolderAwareRequestWrapper = new SecurityContextHolderAwareRequestWrapper(ServletActionContext.getRequest(), "ROLE_");
+		return securityContextHolderAwareRequestWrapper.getUserPrincipal().getName();
+	}
+	
+	public static boolean checkIfUserIsAdmin(User user) {
+		
+		List<Role> userRoles = user.getRoles();
+		
+		for (Role role : userRoles) {
+			if (role.getName().equals("ROLE_ADMIN")) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

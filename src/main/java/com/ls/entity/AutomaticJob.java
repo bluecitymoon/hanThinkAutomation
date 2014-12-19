@@ -38,8 +38,29 @@ public class AutomaticJob implements Serializable {
 	protected String dbPassword;
 	protected Boolean autoJobRunning;
 	protected Integer delayDays;
+	protected Integer ownerId;
+	protected Integer storeId;
 	
+	public Integer getStoreId() {
 	
+		return storeId;
+	}
+	
+	public void setStoreId(Integer storeId) {
+	
+		this.storeId = storeId;
+	}
+
+	public Integer getOwnerId() {
+	
+		return ownerId;
+	}
+	
+	public void setOwnerId(Integer ownerId) {
+	
+		this.ownerId = ownerId;
+	}
+
 	public Integer getId() {
 	
 		return id;

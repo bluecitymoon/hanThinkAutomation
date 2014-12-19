@@ -28,10 +28,13 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Maps;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
+import com.ls.entity.User;
 import com.ls.jobs.AuthanAutomationQuartzJob;
 import com.ls.jobs.AutomaticJobManager;
 import com.ls.repository.AutomaticJobRepository;
+import com.ls.repository.UserRepository;
 import com.ls.service.AuthanAutomationService;
+import com.ls.util.HanthinkUtil;
 import com.ls.vo.ResponseVo;
 
 @Component("auchanAction")
@@ -52,6 +55,9 @@ public class AuchanAutomationAction extends BaseAction {
 
 	@Autowired
 	private AutomaticJobRepository automaticJobRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Resource(name = "authanOrderSystemService")
 	private AuthanAutomationService authanAutomationService;
@@ -136,8 +142,28 @@ public class AuchanAutomationAction extends BaseAction {
 	}
 
 	public String readJobList() {
-
-		jobList = automaticJobRepository.findByType(AuthanConstants.AUTHAN);
+		
+		String storeId = getParameter("selectedStoreId");
+		
+		User currentUser = userRepository.findByUsername(HanthinkUtil.getCurrentUserName());
+		boolean isAdmin = HanthinkUtil.checkIfUserIsAdmin(currentUser);
+		
+		if( isAdmin ) {
+			
+			if (StringUtils.isBlank(storeId)) {
+				jobList = automaticJobRepository.findAll();
+			} else {
+				jobList = automaticJobRepository.findByStoreId(Integer.valueOf(storeId));
+			}
+			
+		} else {
+			
+			if (StringUtils.isBlank(storeId)) {
+				jobList = automaticJobRepository.findByOwnerId(currentUser.getId());
+			} else {
+				jobList = automaticJobRepository.findByOwnerIdAndStoreId(currentUser.getId(), Integer.valueOf(storeId));
+			}
+		}
 
 		makeGeneralSuccessResponse();
 		return SUCCESS;
@@ -162,19 +188,15 @@ public class AuchanAutomationAction extends BaseAction {
 				automaticJob.setDbUsernname("Admin");
 				automaticJob.setDbPassword("E1CCjc7z+m3nmqvYlGnc+LcM8t4=");
 			}
-//			
-//			AutomaticJob jobInDb = automaticJobRepository.findByTypeAndDbName(AuthanConstants.AUTHAN, automaticJob.getDbName());
-//			
-//			if (jobInDb != null && automaticJob.getId() == null) {
-//				
-//				setMessage("该帐套的自动任务已经存在。");
-//				return SUCCESS;
-//				
-//			} else {
 				
-				this.automaticJob = automaticJobRepository.saveAndFlush(automaticJob);
-				makeGeneralSuccessResponse();
-//			}
+			try {
+				authanAutomationService.saveOrUpdateJob(automaticJob);
+			} catch (Exception e) {
+				
+				makeGeneralFailResponse(e.getMessage());
+				return SUCCESS;
+			}
+			makeGeneralSuccessResponse();
 		}
 
 		return SUCCESS;
@@ -320,6 +342,11 @@ public class AuchanAutomationAction extends BaseAction {
 	}
 
 	private void makeGeneralFailResponse(String message) {
+		
+		if (StringUtils.isNotBlank(message) && message.equals("Access is denied")) {
+			message = "没有权限";
+		}
+		
 		response = ResponseVo.newFailMessage(message);
 	}
 

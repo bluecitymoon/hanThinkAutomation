@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -30,7 +32,11 @@ public class User implements Serializable {
 	@JoinTable(name = "ls_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	protected List<Role> roles;
 	
-
+	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinTable(name = "ls_user_store", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "store_id"))
+	protected List<Store> stores;
+	
+	
 	public User() {
 		super();
 	}
@@ -42,7 +48,17 @@ public class User implements Serializable {
 		this.password = password;
 		this.active = active;
 	}
+	
 
+	public List<Store> getStores() {
+	
+		return stores;
+	}
+	
+	public void setStores(List<Store> stores) {
+	
+		this.stores = stores;
+	}
 
 	public Boolean getActive() {
 		return active;

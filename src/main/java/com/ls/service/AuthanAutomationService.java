@@ -20,4 +20,9 @@ public interface AuthanAutomationService {
 	
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException;
 	
+	ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob);
+	
+	void deleteJob(AutomaticJob automaticJob);
+	void saveOrUpdateJob(AutomaticJob automaticJob);
+	
 }

@@ -19,4 +19,8 @@ public interface AutomaticJobRepository extends JpaRepository<AutomaticJob, Inte
 	
 	@Query(FIND_BY_NAME_OR_DB_NAMEQUERY)
 	List<AutomaticJob> findByNameOrDbName(@Param("name") String name, @Param("dbName") String dbName);
+	
+	List<AutomaticJob> findByOwnerId(Integer ownerId);
+	List<AutomaticJob> findByOwnerIdAndStoreId(Integer ownerId, Integer storeId);
+	List<AutomaticJob> findByStoreId(Integer storeId);
 }

@@ -50,5 +50,21 @@
 				<param name="root">user</param>
 			</result>
 		</action>
+		<action name="findAllStores" class="resourceAction" method="findAllStores">
+			<result name="success" type="json">
+				<param name="root">stores</param>
+			</result>
+		</action>
+		<action name="findAssignedStores" class="resourceAction" method="findAssignedStores">
+			<result name="success" type="json">
+				<param name="root">orderedStores</param>
+			</result>
+		</action>
+		<action name="findAssignedDetailedStores" class="resourceAction" method="findAssignedDetailedStores">
+			<result name="success" type="json">
+				<param name="root">orderedDetailedStores</param>
+			</result>
+		</action>
+		
 	</package>	
 </struts>

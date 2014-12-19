@@ -338,5 +338,23 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 		
 		return response;
 	}
+
+	public ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob) {
+
+		return null;
+	}
+
+	public void deleteJob(AutomaticJob automaticJob) {
+
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveOrUpdateJob(AutomaticJob automaticJob) {
+
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

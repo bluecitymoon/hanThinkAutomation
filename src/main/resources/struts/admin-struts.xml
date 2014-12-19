@@ -68,9 +68,10 @@
 				<param name="root">response</param>
 			</result>
 		</action>
-		<action name="findAllStores" class="resourceAction" method="findAllStores">
+		
+		<action name="updateUserStore" class="resourceAction" method="updateUserStore">
 			<result name="success" type="json">
-				<param name="root">stores</param>
+				<param name="root">response</param>
 			</result>
 		</action>
 		

@@ -70,17 +70,17 @@
 
 							<div class="row">
 								<div class="three columns">
-									<select data-bind="options: $root.jobList,
+									<select data-bind="options: $root.allStores,
                       											optionsText: 'name',
-                       									    	value: $root.selectedTaskId,
+                       									    	value: $root.selectedStoreId,
                        									    	optionsValue : 'id',
-                       									    	selectedOption : $root.selectedTaskId,
-                       									    	optionsCaption: '请选择数据源类型...'">
+                       									    	selectedOption : $root.selectedStoreId,
+                       									    	optionsCaption: '请选择卖场...'">
 									</select>
 								</div>
 								<div class="six columns"></div>
 								<div class="three columns">
-									<a class="tiny blue button right" href="#" data-bind="click : $root.clearForm"><i class="icon-pencil"></i>为新的帐套配置自动任务</a>
+									<a class="tiny blue button right" href="#" data-bind="click : $root.clearForm">新建任务</a>
 								</div>
 							</div>
 							<table class="infoTable" id="jobListTable">
@@ -89,7 +89,6 @@
 											<th class="text-center">任务</th>
 											<th class="text-center">帐套</th>
 											<th class="text-center">任务状态</th>
-
 											<th class="text-center">管理</th>
 											<th class="text-center">启动/停止</th>
 										</tr>
@@ -100,7 +99,7 @@
 											<td class="text-center"><span data-bind="text: dbName"></span></td>
 											<td class="text-center"><span data-bind="text: status"></span></td>
 											<td class="text-center">
-												<a   href="#" data-bind="click : $root.editJob" title="编辑"><i class="icon-pencil small icon-blue"></i></a> 
+												<a href="#" data-bind="click : $root.editJob" title="编辑"><i class="icon-pencil small icon-blue"></i></a> 
 												<a style="margin-left : 15px;" title="删除" href="#" data-bind="click : $root.deleteJob"><i class="icon-trash small icon-red"></i></a>
 												<a style="margin-left : 15px;" title="拷贝任务" href="#" data-bind="click : $root.copyJob"><i class="icon-copy small icon-green"></i></a>
 											</td>
@@ -120,7 +119,7 @@
 					<div class="content">
 					 <form id="grabForm">
 								<div class="row">
-								<div class="four columns">
+									<div class="four columns">
 										<label>任务名称</label>
 										<!-- <input type="text" id="jobNameInput" /> -->
 										<select data-bind="options: $root.jobList,
@@ -172,20 +171,29 @@
 						<form id="jobForm">
 							<div class="content">
 								<div class="row">
-									<div class="six columns">
-										<div class="row">
-											<label class="required">帐套</label> 
-											<input type="text" class="addon-postfix required" data-bind="value : dbName" />
-										</div>
-										
+									<div class="five columns">
+										<label class="required">帐套</label> 
+										<input type="text" class="addon-postfix required" data-bind="value : dbName" />
 									</div>
-									<div class="six columns">
+									
+									<div class="four columns">
+										<label class="required">卖场</label> 
+										<select data-bind="options: $root.allStores,
+                      											optionsText: 'name',
+                       									    	value: storeId,
+                       									    	optionsValue : 'id',
+                       									    	selectedOption : storeId,
+                       									    	optionsCaption: '请选择卖场...'">
+									</select>
 									</div>
 								</div>
-								<hr>
 								<div class="row">
-									<div class="nine columns">
+									<div class="five columns">
 										<label class="required">任务名称</label> <input type="text" class="addon-postfix  required" data-bind="value : name" />
+									</div>
+									<div class="four columns">
+										<label class="required">拥有者编号</label>
+										<input type="text" class="addon-postfix  required" data-bind="value : ownerId" />
 									</div>
 									<div class="three columns">
 										<label>任务状态</label> <input type="text" class="addon-postfix" disabled="disabled" data-bind="value : status" />
@@ -255,13 +263,12 @@
 		
 		$(document).ready( function() {
 			
-			$("#moduleTabs").tabs();
-			$('#console').hide();
-			
-			
+					$("#moduleTabs").tabs();
+					$('#console').hide();
 					$('#grabForm').validate({});
 					$('#jobForm').validate({});
 					$('#console').hide();
+					
 					var Job = function() {
 						var self = this;
 						self.id = '';
@@ -278,6 +285,8 @@
 						self.type = 'authan';
 						self.dbName = '';
 						self.delayDays = '';
+						self.ownerId = '';
+						self.storeId = '';
 					};
 
 					var ConfigurationModel = function() {
@@ -290,6 +299,24 @@
 						self.manuallyDbName = ko.observable('');
 						self.jobList = ko.observableArray([]);
 						self.selectedTaskId = ko.observable('');
+						self.allStores = ko.observableArray([]);
+						self.selectedStoreId = ko.observable('');
+						self.selectedUserId = ko.observable('');
+						
+						self.selectedStoreId.subscribe(function() {
+							self.reloadJobList();
+						});
+						
+						self.loadAllResources = function() {
+							$.ajax({	
+								url : '/ls/findAssignedDetailedStores.action',
+								success : function(data) {
+									self.allStores(data);
+								}
+							});
+						};
+						
+						self.loadAllResources();
 						self.copyJob = function(item, event) {
 							
 							item.id = null;
@@ -423,9 +450,13 @@
 							self.openEditJobDialog();
 						};
 						
+						self.storeId = ko.observable('');
 						self.reloadJobList = function() {
 							$.ajax({
 								url : 'readJobList.action',
+								data : {
+									selectedStoreId : self.selectedStoreId()
+								},
 								success : function(data) {
 										try {
 										self.jobList(data);
@@ -438,12 +469,9 @@
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
-									console.debug(XMLHttpRequest);
 								}
 							});
 						};
-
-						self.reloadJobList();
 						
 						self.save = function(item, event) {
 

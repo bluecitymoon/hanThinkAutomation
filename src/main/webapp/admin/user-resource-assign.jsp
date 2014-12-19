@@ -89,7 +89,7 @@
 								<div class="row">
 									<div data-bind="foreach : $root.allStores">
 											<label class="input-checkbox">
-												<input type="checkbox" name="storeCheckbox" data-bind="value : name, click : $root.assignOrRemoveStore, checked : $root.assignedStores"/> 
+												<input type="checkbox" name="storeCheckbox" data-bind="value : id, checked : $root.selectedStores, click: $root.assignOrCancelOrder"/> 
 												<span data-bind="text : name"></span>
 											</label>
 									</div>
@@ -110,7 +110,7 @@
 						var self = this;
 						self.id = '';
 						self.name = '';
-					}
+					};
 			
 					var UserModel = function() {
 						var self = this;
@@ -119,8 +119,18 @@
 						self.selectedUser = ko.observable(new User());
 						self.userResources  = ko.observableArray([]);						
 						self.allStores = ko.observableArray([]);	
-						self.selectedCities = ko.observableArray([]);
-						self.assignedStores = ko.observableArray([]);
+						self.selectedStores = ko.observableArray([]);
+						self.loadAllResources = function() {
+							$.ajax({	
+								url : '/ls/findAllStores.action',
+								success : function(data) {
+									self.allStores(data);
+								}
+							});
+						};
+						
+						self.loadAllResources();
+						
 						self.assignOrRemoveStore = function() {
 							$.ajax({	
 								url : 'findAllStores.action',
@@ -129,36 +139,25 @@
 								}
 							});
 						};
-						
-						self.loadAllResources = function() {
-							$.ajax({	
-								url : 'findAllStores.action',
-								success : function(data) {
-									self.allStores(data);
-								}
-							});
-						}
-						self.loadAllResources();
-						
-						self.showOrderedResource = function(item) {
-							
+						self.showOrderedResource = function(item, event) {
+							console.debug(item);
 							self.selectedUser(item);
-							
+							self.selectedStores([]);
 							$.ajax({	
-								url : 'showOrderedResource.action',
+								url : '/ls/findAssignedStores.action',
 								data : {
 									userId : item.id
 								},
 								success : function(data) {
 									
 									if (data) {
-										
+										self.selectedStores(data);
 									}
 								}
 							});
 						};
 						
-						self.assignOrCancelCity = function() {
+						self.assignOrCancelOrder = function() {
 							
 							if (!self.selectedUser() || !self.selectedUser().id ) {
 								fail("Œ¥—°‘Ò”√ªß!");
@@ -169,13 +168,15 @@
 								url : 'updateUserStore.action',
 								method : 'POST',
 								data : {
-										selectedCities : JSON.stringify(self.selectedCities()),
+										selectedStores : JSON.stringify(self.selectedStores()),
 										userId : self.selectedUser().id
 								},
 								success : function(data) {
 									handleStanderdResponse(data);
 								}
 							});
+							
+							return true;
 						};
 						
 						self.searchUser = function() {

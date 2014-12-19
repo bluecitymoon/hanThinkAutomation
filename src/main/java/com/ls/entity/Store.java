@@ -1,10 +1,14 @@
 package com.ls.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -16,6 +20,9 @@ public class Store implements Serializable{
 	protected Integer id;
 	protected String name;
 	
+	@ManyToMany(cascade = CascadeType.REFRESH, mappedBy = "stores", fetch = FetchType.LAZY)
+	protected List<User> users;
+	
 	public Store() {
 
 		super();
@@ -25,6 +32,18 @@ public class Store implements Serializable{
 
 		super();
 		this.name = name;
+	}
+
+	
+	public List<User> getUsers() {
+	
+		return users;
+	}
+
+	
+	public void setUsers(List<User> users) {
+	
+		this.users = users;
 	}
 
 	public Integer getId() {

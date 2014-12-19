@@ -23,6 +23,7 @@ import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -336,6 +337,27 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 		response = httpClient.execute(request);
 		
 		return response;
+	}
+
+	@Secured({"ROLE_ADMIN"})
+	public ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob) {
+
+		return postDataToWebService(start, end, automaticJob);
+		
+	}
+
+	@Secured({"ROLE_ADMIN"})
+	public void deleteJob(AutomaticJob automaticJob) {
+
+		automaticJobRepository.delete(automaticJob);
+		
+	}
+
+	@Secured({"ROLE_ADMIN"})
+	public void saveOrUpdateJob(AutomaticJob automaticJob) {
+
+		automaticJobRepository.saveAndFlush(automaticJob);
+		
 	}
 	
 }
