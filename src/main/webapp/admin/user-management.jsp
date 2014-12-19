@@ -7,14 +7,7 @@
 <!--[if gt IE 8]> <html class="no-js ie9" lang="en"> <!-->
 <html lang="en">
 <!--<![endif]-->
-<head>
-<!-- Set the viewport width to device width for mobile -->
-<meta name="viewport" content="width=device-width" />
-<title>User Management</title>
-<link rel="stylesheet" href="/ls/css/common.css">
 <s:include value="/jsps/common/head.jsp" />
-
-</head>
 <body>
 	<s:include value="/jsps/common/brand.jsp" />
 	<s:include value="/jsps/common/menu.jsp" />

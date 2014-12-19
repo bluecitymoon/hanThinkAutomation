@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=gb2312"%>
+<%@ page contentType="text/html;charset=GBK"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>	<html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
@@ -15,7 +15,7 @@
 	<header id="brand">
 		<div class="container">
 			<div class="row">
-				<div class="appname hide-on-phones"></div>
+				<div class="appname hide-on-phones">汉询软件数据交换中心</div>
 			</div>
 		</div>
 	</header>

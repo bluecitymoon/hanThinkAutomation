@@ -65,6 +65,10 @@
 				<param name="root">orderedDetailedStores</param>
 			</result>
 		</action>
-		
+		<action name="loadMe" class="commonAction" method="loadMe">
+			<result name="success" type="json">
+				<param name="root">user</param>
+			</result>
+		</action>
 	</package>	
 </struts>

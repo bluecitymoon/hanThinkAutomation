@@ -7,9 +7,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.ls.entity.Menu;
+import com.ls.entity.Role;
 import com.ls.entity.User;
 import com.ls.repository.MenuRepository;
 import com.ls.repository.UserRepository;
+import com.ls.util.HanthinkUtil;
 
 @Component("commonAction")
 @Scope("prototype")
@@ -26,6 +28,20 @@ public class CommonAction extends BaseAction {
 	private List<Menu> menus;
 	private User user;
 
+	public String loadMe() {
+		
+		String username = HanthinkUtil.getCurrentUserName();
+		
+		user = userRepository.findByUsername(username);
+		
+		List<Role> roles = user.getRoles();
+		for (Role role : roles) {
+			role.setUsers(null);
+		}
+		return SUCCESS;
+
+	}
+	
 	public String findAllMenus() {
 
 		menus = menuRepository.findAll();

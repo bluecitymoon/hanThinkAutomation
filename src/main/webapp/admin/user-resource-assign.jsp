@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=gb2312"%>
+<%@ page contentType="text/html;charset=GBK"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
@@ -7,15 +7,9 @@
 <!--[if gt IE 8]> <html class="no-js ie9" lang="en"> <!-->
 <html lang="en">
 <!--<![endif]-->
-<head>
-<!-- Set the viewport width to device width for mobile -->
-<meta name="viewport" content="width=device-width" />
-<title>用户区域分配</title>
-<s:include value="/jsps/common/head.jsp" />
-
-</head>
+<%@ include file="/jsps/common/head.jsp" %>
 <body>
-	<s:include value="/jsps/common/brand.jsp" />
+	<%@ include file="/jsps/common/brand.jsp" %>
 	<s:include value="/jsps/common/menu.jsp" />
 	<section class="mainbg">
 		<div class="container" id ="usercityModelContainer">
