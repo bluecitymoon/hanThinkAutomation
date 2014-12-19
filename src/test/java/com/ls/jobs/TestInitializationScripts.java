@@ -45,9 +45,9 @@ public class TestInitializationScripts {
 	
 	@Test
 	public void testCreateStores() {
-		Store store = new Store("Å·ÉĞ");
-		Store store1 = new Store("ÂóµÂÁú");
-		Store store2 = new Store("±¦¸Ö");
+		Store store = new Store("æ¬§å°š");
+		Store store1 = new Store("éº¦å¾·é¾™");
+		Store store2 = new Store("å®é’¢");
 		
 		storeRepository.save(ImmutableList.of(store, store1, store2));
 		
@@ -60,10 +60,9 @@ public class TestInitializationScripts {
 		
 		User auchanUser = new User("auchan001", "auchan001", getEncodedPassword("auchan001", "auchan001"), true);
 		
-		Role superAdmin = new Role("ROLE_ADMIN", "ÏµÍ³¹ÜÀíÕß");
+		Role superAdmin = new Role("ROLE_ADMIN", "ç³»ç»Ÿç®¡ç†è€…");
 		
-		Role normalUser = new Role("ROLE_CUSTOMER", "ÓÃ»§");
-		
+		Role normalUser = new Role("ROLE_CUSTOMER", "ç”¨æˆ·");
 		
 		adminUser.setRoles(ImmutableList.of(superAdmin));
 		
@@ -101,11 +100,11 @@ public class TestInitializationScripts {
 	@Test
 	public void testInitialMenus() {
 		
-		Menu menu1 = new Menu("ÈÎÎñ¹ÜÀí", "/ls/user/load.action", "jobCenter");
-		Menu menu2 = new Menu("ÓÃ»§¹ÜÀí", "/ls/admin/loadUser.action", "userManager");
-		Menu menu3 = new Menu("ÏµÍ³ÅäÖÃ", "/ls/admin/configuration.action", "systemConfiguration");
-		Menu menu4 = new Menu("Êı¾İÖĞĞÄ", "/ls/admin/load.action", "dataCenter");
-		Menu menu6 = new Menu("×ÊÔ´·ÖÅä", "/ls/admin/userResourceAssign.action", "resourceAssign");
+		Menu menu1 = new Menu("ä»»åŠ¡ç®¡ç†", "/ls/user/load.action", "jobCenter");
+		Menu menu2 = new Menu("ç”¨æˆ·ç®¡ç†", "/ls/admin/loadUser.action", "userManager");
+		Menu menu3 = new Menu("ç³»ç»Ÿé…ç½®", "/ls/admin/configuration.action", "systemConfiguration");
+		Menu menu4 = new Menu("æ•°æ®ä¸­å¿ƒ", "/ls/admin/load.action", "dataCenter");
+		Menu menu6 = new Menu("èµ„æºåˆ†é…", "/ls/admin/userResourceAssign.action", "resourceAssign");
 		
 		menuRepository.save(ImmutableList.of(menu1, menu2, menu6, menu3, menu4));
 		

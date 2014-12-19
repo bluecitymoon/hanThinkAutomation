@@ -4,7 +4,6 @@
 .classpath
 *.log
 *.log.*
-*.jpg
 *.class
 src/main/resources/db_server.properties
 src/main/webapp/img/

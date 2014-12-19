@@ -129,6 +129,9 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 				try {
 					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml);
 					
+					Map<String, String> titlesMap = singleOrder.getOrderTitleMap();
+					titlesMap.put("供应商：", vendorNo);
+					
 					String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
 					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
 					for (Map<String, String> map : detailsMaps) {
