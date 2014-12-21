@@ -149,9 +149,11 @@ public class UserAction extends BaseAction {
 			}
 
 			User userEntity = HanthinkUtil.getJavaObjectFromJsonString(userJson, User.class);
+			
+			User refreshUser = userRepository.findOne(userEntity.getId());
 
-			userEntity.setActive(false);
-			userEntity.setRoles(null);
+			refreshUser.setActive(false);
+			refreshUser.setRoles(null);
 
 			userRepository.save(userEntity);
 		} catch (Exception e) {

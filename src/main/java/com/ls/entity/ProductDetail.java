@@ -1,6 +1,7 @@
 package com.ls.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ public class ProductDetail implements Serializable {
 	@GeneratedValue
 	protected Integer id;
 	protected Integer orderId;
+	protected String orderNumber;
 	protected String productNumber;
 	protected String barCode;
 	protected String description;
@@ -26,7 +28,24 @@ public class ProductDetail implements Serializable {
 	protected Integer countInSingleBox;
 	protected String priceWithTax;
 	protected String priceWithoutTax;
+	protected Date createDate;
 	
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 	public Integer getId() {
 	
 		return id;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.ls.entity.AutomaticJob;
+import com.ls.entity.Order;
 import com.ls.exception.ConfigurationException;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -21,6 +22,8 @@ public interface AuthanAutomationService {
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException;
 	
 	ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob);
+	
+	List<Order> saveOrders(List<Orders> orders);
 	
 	void deleteJob(AutomaticJob automaticJob);
 	void saveOrUpdateJob(AutomaticJob automaticJob);

@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.xml.XMLSerializer;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -191,5 +193,10 @@ public class TestWebServices {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testReadXml() {
+		
 	}
 }

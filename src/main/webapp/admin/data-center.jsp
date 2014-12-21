@@ -12,14 +12,8 @@
 	<s:include value="/jsps/common/brand.jsp" />
 	<s:include value="/jsps/common/menu.jsp" />
 	<section class="mainbg">
-		<div class="container" id ="userModeContainer">
-			<div id="resetPasswordDialog" style="display : none;" title="重置密码">
-				<form class="form-wrapper">
-					<input type="text" id="search" placeholder="请输入新的密码" required data-bind="value : newPasswordToReset"> 
-					<input type="button" class="small button" value="确定" id="submit" data-bind="click : resetPassword">
-				</form>
-			</div>
-			<div class="content" id="userRolesManagementDialog" style="display : none;" title="角色分配">
+		<div class="container" id ="dataCenterContainer">
+			<div class="content" id="userRolesManagementDialog" style="display : none;">
 				<div data-bind="foreach : allRoles">
 					<label class="input-checkbox" for="employeeProblem">
 						<input class="icheckbox" type="checkbox" name="userRoleInput" data-bind="value : name, click : $root.updateUserRole, checked : $root.selectedUserRoles"/> <span
@@ -27,6 +21,8 @@
 					</label>
 				</div>
 			</div>
+			
+			<!-- 
 			<div class="row">
 				<div class="app-wrapper ui-corner-top">
 					<div class="blue module ui-corner-top clearfix">
@@ -38,7 +34,7 @@
 							<div class="six columns">
 								<div class="row collapse">
 									<div class="eight columns">
-										<input id="userNameInput" type="text" class="addon-postfix" placeholder="请输入用户姓名" data-bind="value : userName" />
+										<input id="userNameInput" type="text" class="addon-postfix" placeholder="" data-bind="value : userName" />
 									</div>
 									<div class="four columns">
 										<button class="small nice blue button postfix" data-bind="click : searchUser">搜索</button>
@@ -50,46 +46,38 @@
 						</div>
 					</div>
 				</div>
-
+				 -->
 				<div class="row">
 					<div class="app-wrapper ui-corner-top">
 							<div class="blue module ui-corner-top clearfix">
-								<h2>用户列表</h2>
+								<h2>数据列表</h2>
 								<h2 class="right">
-									<a class="small white button" data-bind="click : $root.openUserManagementDialog">创建新用户</a>
 								</h2>
 							</div>
 							<div class="content">
 								<div class="row">
-									<div class="three columns"></div>
-									<div class="six columns"></div>
-									<div class="three columns"></div>
-								</div>
-								<div class="row">
 									<table class="infoTable">
 										<thead>
 											<tr>
-												<th>编号</th>
-												<th>姓名</th>
-												<th>账号</th>
-												<th>状态</th>
-												<th>操作</th>
+												<th>创建时间</th>
+												<th>订单编号</th>
+												<th>供应商</th>
+												<th>店号</th>
+												<th>订单日期</th>
+												<th>预定收货日期</th>
+												<th>明细</th>
 											</tr>
 										</thead>
-										<tbody data-bind="foreach : users">
+										<tbody data-bind="foreach : orderList">
 											<tr>
-												<td style="text-align: center" data-bind="text : id"></td>
-												<td style="text-align: center" data-bind="text : name"></td>
-												<td style="text-align: center" data-bind="text : username"></td>
+												<td style="text-align: center" data-bind="text : createDate"></td>
+												<td style="text-align: center" data-bind="text : orderNumber"></td>
+												<td style="text-align: center" data-bind="text : supplierNumber"></td>
+												<td style="text-align: center" data-bind="text : storeNumber"></td>
+												<td style="text-align: center" data-bind="text : orderDate"></td>
+												<td style="text-align: center" data-bind="text : estimateTakeOverDate"></td>
 												<td style="text-align: center">
-												
-													<span data-bind="visible : active">激活</span>	
-													<span data-bind="visible : !active">关闭</span>											
-												</td>
-												<td style="text-align: center">
-													<a title="分配角色" data-bind="click : $root.openAssignRolesDialog" style="margin-left : 10px;" href="#"><i class="icon-user small icon-blue"></i></a>
-													<a title="重置密码" data-bind="click : $root.openResetPasswordDialog" style="margin-left : 10px;" href="#"><i class="icon-pencil small icon-blue"></i></a>
-													<!-- <a title="关闭用户" data-bind="click : $root.disactiveUser" style="margin-left : 10px;" href="#"><i class="icon-trash small icon-red"></i></a> -->
+													<a title="查看" data-bind="click : $root.showDetails" style="margin-left : 10px;" href="#"><i class="icon-user small icon-blue"></i></a>
 												</td>
 											</tr>
 										</tbody>
@@ -99,20 +87,33 @@
 							</div>
 						</div>
 					</div>
-				<div id="userManagementDialog" class="content" title="用户管理" style="display: none;" data-bind="with : selectedUser">
-					<div class="row">
-							<label>姓名</label>
-							<input id="userNameInput" type="text" class="addon-postfix" placeholder="请输入姓名" data-bind="value : name" />
-					</div>
-					<div class="row">
-							<label>用户名</label>
-							<input type="text" class="addon-postfix" placeholder="请输入用户名" data-bind="value : username" />
-					</div>
-					<div class="row">
-							<label>密码</label>
-							<input type="text" class="addon-postfix" placeholder="请输入密码" data-bind="value : password" />
-					</div>
-				</div>
+					
+				<div id="productDetailDialog" class="content" title="明细" style="display: none;">
+				<table class="infoTable">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>货号</th>
+							<th>条目号</th>
+							<th>货品描述</th>
+							<th>订货数</th>
+							<th>箱含量</th>
+							<th>未税进价</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach : loadedProductDetailList">
+						<tr>
+							<td style="text-align: center" data-bind="text : id"></td>
+							<td style="text-align: center" data-bind="text : productNumber"></td>
+							<td style="text-align: center" data-bind="text : barCode"></td>
+							<td style="text-align: center" data-bind="text : description"></td>
+							<td style="text-align: center" data-bind="text : count"></td>
+							<td style="text-align: center"
+								data-bind="text : countInSingleBox"></td>
+							<td style="text-align: center" data-bind="text : priceWithoutTax"></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 			</div>
 	</section>
@@ -121,6 +122,30 @@
 	<script src="/ls/js/User.js"></script>
 	<script>
 		$(document).ready( function() {
+			var Order = function() {
+				var self = this;
+				self.id= '';
+				self.orderNumber= '';
+				self.supplierNumber= '';
+				self.orderDate= '';
+				self.estimateTakeOverDate= '';
+				self.storeNumber= '';
+				self.createDate= '';
+			};
+			
+			var ProductDetail = function() {
+				var self = this;
+				self.id= '';
+				self.productNumber= '';
+				self.barCode= '';
+				self.description= '';
+				self.count= '';
+				self.countInSingleBox= '';
+				self.priceWithTax= '';
+				self.priceWithoutTax= '';
+				self.createDate= '';
+			};
+			
 			var Role = function() {
 				var self = this;
 				self.id = '';
@@ -129,16 +154,44 @@
 			}
 					var UserModel = function() {
 						var self = this;
+						self.orderList = ko.observableArray([]);
 						self.userName = ko.observable('');
 						self.users = ko.observableArray([]);
 						self.selectedUser = ko.observable(new User());
 						self.newPasswordToReset = ko.observable('');
 						self.allRoles = ko.observable([]);
+						self.loadedProductDetailList = ko.observableArray([]);
+						self.showDetails = function(item, event) {
+							var orderIdSelected = item.id;
+							$.ajax({
+								url : 'showProductDetailsByOrderId.action',
+								data : { orderIdSelected : orderIdSelected },
+								success : function(data) {
+									if(data) {
+										self.loadedProductDetailList(data);
+										$('#productDetailDialog').dialog({
+											modal : true,
+											width : 909,
+											height : 'auto',
+											open : function(e) {
+												changeButtonStyleForPopup(e);
+											},
+											
+											buttons : {
+												'关闭窗口' : function() {
+													closeDialog('productDetailDialog');
+												}
+											}
+										});
+									}
+								}
+							});
+						};
 						
 						$.ajax({
-							url : 'getAllRoles.action',
+							url : 'getAllGrabData.action',
 							success : function(data) {
-								self.allRoles(data);
+								self.orderList(data);
 							}
 						});
 						
@@ -339,13 +392,13 @@
 					model.loadUserAccouts();
 					model.loadAllUsers();
 					
-					var $userModeContainer = $("#userModeContainer")[0];
-					ko.applyBindings(model, userModeContainer);
+					var $dataCenterContainer = $("#dataCenterContainer")[0];
+					ko.applyBindings(model, dataCenterContainer);
 					
 				});
 		
 		function activeCurrentMenuItem() {
-			$('#userManager').addClass('active');
+			$('#dataCenter').addClass('active');
 		}
 	</script>
 </body>

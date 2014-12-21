@@ -37,6 +37,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.collect.Lists;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
+import com.ls.entity.Order;
 import com.ls.exception.ConfigurationException;
 import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
@@ -354,6 +355,11 @@ public class AuthanAutomationServiceImpl implements AuthanAutomationService {
 
 		// TODO Auto-generated method stub
 		
+	}
+
+	public List<Order> saveOrders(List<Orders> orders) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

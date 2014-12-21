@@ -25,13 +25,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
+import com.ls.entity.Order;
+import com.ls.entity.ProductDetail;
 import com.ls.entity.User;
 import com.ls.jobs.AuthanAutomationQuartzJob;
 import com.ls.jobs.AutomaticJobManager;
 import com.ls.repository.AutomaticJobRepository;
+import com.ls.repository.OrderRepository;
+import com.ls.repository.ProductDetailRepository;
 import com.ls.repository.UserRepository;
 import com.ls.service.AuthanAutomationService;
 import com.ls.util.HanthinkUtil;
@@ -48,6 +53,10 @@ public class AuchanAutomationAction extends BaseAction {
 	private AutomaticJob automaticJob;
 
 	private List<AutomaticJob> jobList;
+	
+	private List<Order> orders;
+	
+	private List<ProductDetail> productDetails;
 
 	private List<Map<String, String>> jobNames = new ArrayList<Map<String, String>>();
 
@@ -58,10 +67,17 @@ public class AuchanAutomationAction extends BaseAction {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private ProductDetailRepository productDetailRepository;
 
 	@Resource(name = "authanOrderSystemService")
 	private AuthanAutomationService authanAutomationService;
+	
 
+	@Autowired
+	private OrderRepository orderRepository;
+	
 	public String startManually() {
 
 		String manuallyStart = getParameter("manuallyStart");
@@ -144,16 +160,21 @@ public class AuchanAutomationAction extends BaseAction {
 	public String readJobList() {
 		
 		String storeId = getParameter("selectedStoreId");
+		String userId = getParameter("selectedUserId");
 		
 		User currentUser = userRepository.findByUsername(HanthinkUtil.getCurrentUserName());
 		boolean isAdmin = HanthinkUtil.checkIfUserIsAdmin(currentUser);
 		
 		if( isAdmin ) {
 			
-			if (StringUtils.isBlank(storeId)) {
+			if (StringUtils.isBlank(storeId) && StringUtils.isBlank(userId)) {
 				jobList = automaticJobRepository.findAll();
-			} else {
+			} else if(StringUtils.isNotBlank(storeId) && StringUtils.isBlank(userId)) {
 				jobList = automaticJobRepository.findByStoreId(Integer.valueOf(storeId));
+			} else if(StringUtils.isBlank(storeId) && StringUtils.isNotBlank(userId)) {
+				jobList = automaticJobRepository.findByOwnerId(Integer.valueOf(userId));
+			} else {
+				jobList = automaticJobRepository.findByOwnerIdAndStoreId(Integer.valueOf(userId), Integer.valueOf(storeId));
 			}
 			
 		} else {
@@ -205,8 +226,14 @@ public class AuchanAutomationAction extends BaseAction {
 	public String deleteJob() {
 		String jobJason = getParameter("job");
 		AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
+		
+		try {
+			authanAutomationService.deleteJob(automaticJob);
+		} catch (Exception e) {
 
-		automaticJobRepository.delete(automaticJob);
+			makeGeneralFailResponse(e.getMessage());
+			return SUCCESS;
+		}
 
 		makeGeneralSuccessResponse();
 
@@ -325,6 +352,23 @@ public class AuchanAutomationAction extends BaseAction {
 		return SUCCESS;
 	}
 
+	public String getAllGrabData() {
+		
+		orders = orderRepository.findAll();
+		
+		return SUCCESS;
+	}
+	public String showProductDetailsByOrderId() {
+		String orderId = getParameter("orderIdSelected");
+		
+		if (StringUtils.isNotBlank(orderId)) {
+			productDetails = productDetailRepository.findByOrderId(Integer.valueOf(orderId));
+		} else {
+			productDetails = Lists.newArrayList();
+		}
+		
+		return SUCCESS;
+	}
 	private String getUniqueGroupName(AutomaticJob jobInDb) {
 		return jobInDb.getDbName() + jobInDb.getName() + jobInDb.getId();
 	}
@@ -387,4 +431,21 @@ public class AuchanAutomationAction extends BaseAction {
 
 		this.jobNames = jobNames;
 	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	public List<ProductDetail> getProductDetails() {
+		return productDetails;
+	}
+
+	public void setProductDetails(List<ProductDetail> productDetails) {
+		this.productDetails = productDetails;
+	}
+	
 }

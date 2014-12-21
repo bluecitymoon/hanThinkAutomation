@@ -1,6 +1,7 @@
 package com.ls.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,34 @@ public class Order implements Serializable {
 	protected String supplierNumber;
 	protected String orderDate;
 	protected String estimateTakeOverDate;
-	protected String storeNumber;
+	protected String storeNumber; //also equals address
+	protected boolean savedToERP;
+	protected Date createDate;
+	protected String grabTips;
+	
+	public String getGrabTips() {
+		return grabTips;
+	}
+
+	public void setGrabTips(String grabTips) {
+		this.grabTips = grabTips;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public boolean isSavedToERP() {
+		return savedToERP;
+	}
+
+	public void setSavedToERP(boolean savedToERP) {
+		this.savedToERP = savedToERP;
+	}
 
 	public Integer getId() {
 

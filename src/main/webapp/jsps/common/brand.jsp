@@ -5,7 +5,7 @@
 			<div class="appname hide-on-phones">汉询软件数据交换中心</div>
 			<address>
 				<span>
-						欢迎你，<b data-bind="text : name"></b> &nbsp;<a href="/ls/logout" title="退出系统"><i class="icon-power-off small"></i></a>
+						<b data-bind="text : name"></b> &nbsp;<a href="/ls/logout" title="退出系统"><i class="icon-power-off small"></i></a>
 				</span>
 				<span> 
 					

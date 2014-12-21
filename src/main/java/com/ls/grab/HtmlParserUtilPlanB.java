@@ -21,6 +21,7 @@ import org.htmlparser.tags.TableRow;
 import org.htmlparser.tags.TableTag;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.visitors.NodeVisitor;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +31,9 @@ import com.ls.vo.Orders;
 public class HtmlParserUtilPlanB {
 
 	private static Logger logger = LoggerFactory.getLogger(HtmlParserUtilPlanB.class);
-	
-	public static void main(String[] args) {}
+
+	public static void main(String[] args) {
+	}
 
 	public static Div findFirstOneWithClassName(String html, final String className) {
 		Node[] nodes = null;
@@ -59,8 +61,6 @@ public class HtmlParserUtilPlanB {
 
 		return null;
 	}
-
-	
 
 	public static List<String> findOrderList(String wholeCityPageHTML) {
 
@@ -114,15 +114,54 @@ public class HtmlParserUtilPlanB {
 				public void visitTag(Tag tag) {
 
 					super.visitTag(tag);
-					if (tag instanceof LinkTag) {
-						
-						LinkTag grnDetailLinkTag = (LinkTag) tag;
-						
-						String hrefValue = grnDetailLinkTag.getAttribute("href");
-						
-						if (StringUtils.isNotBlank(hrefValue) && hrefValue.startsWith("/logi/down.do?method=downLoad&orderNo")) {
+
+					if (StringUtils.isNotBlank(tag.getAttribute("class")) && (tag.getAttribute("class").equals("odd") || tag.getAttribute("class").equals("even"))) {
+
+						TableRow singleRow = (TableRow) tag;
+
+						boolean hasBookableFlagFound = false;
+
+						Node[] tds = singleRow.getChildrenAsNodeArray();
+						for (Node td : tds) {
 							
-							orderList.add(hrefValue);
+							if (td instanceof TableColumn) {
+
+								Node[] nodesInSingleTd = td.getChildren().toNodeArray();
+
+								for (int i = 0; i < nodesInSingleTd.length; i++) {
+
+									Node target = nodesInSingleTd[i];
+									
+									if (target instanceof TagNode) {
+										TagNode bookableTag = (TagNode) target;
+										String colorAttribute = bookableTag.getAttribute("color");
+										if (StringUtils.isNotBlank(colorAttribute) && colorAttribute.equals("red")) {
+											
+											try {
+												String text = nodesInSingleTd[i+1].getText();
+												if (StringUtils.isNotBlank(text) && text.equals("可预约")) {
+													hasBookableFlagFound = true;
+												}
+											} catch (Exception e) {
+											}
+											
+										}
+									}
+									
+									if (hasBookableFlagFound && target instanceof LinkTag) {
+
+										LinkTag grnDetailLinkTag = (LinkTag) target;
+
+										String hrefValue = grnDetailLinkTag.getAttribute("href");
+
+										if (StringUtils.isNotBlank(hrefValue) && hrefValue.startsWith("/logi/down.do?method=downLoad&orderNo")) {
+
+											orderList.add(hrefValue);
+										}
+									}
+								}
+
+							}
 						}
 					}
 				}
@@ -133,10 +172,10 @@ public class HtmlParserUtilPlanB {
 		} catch (ParserException e) {
 			logger.error(e.getMessage());
 		}
-		
+
 		return orderList;
 	}
-	
+
 	public static Orders parseOrder(final String orderPage, final String orderId) throws ParserException {
 
 		final Orders order = new Orders();
@@ -204,7 +243,7 @@ public class HtmlParserUtilPlanB {
 								dataMap.put(headersList.get(i), tableColumn.toPlainTextString().trim());
 							}
 							dataMap.put("id", orderId);
-							
+
 							productMaps.add(dataMap);
 						}
 					}
@@ -224,73 +263,74 @@ public class HtmlParserUtilPlanB {
 		final Orders order = new Orders();
 		final Map<String, String> headersMap = new HashMap<String, String>();
 		order.setOrderTitleMap(headersMap);
-		
-		final List<Map<String, String>> detailsList = new ArrayList<Map<String,String>>();
-		
+
+		final List<Map<String, String>> detailsList = new ArrayList<Map<String, String>>();
+
 		final List<String> detailTableHeaders = new ArrayList<String>();
-		
+
 		order.setOrdersItemList(detailsList);
 
 		Parser htmlParser = new Parser();
 		htmlParser.setInputHTML(orderPage);
-		
+
 		NodeVisitor nodeVisitor = new NodeVisitor() {
 
 			@Override
 			public void visitTag(Tag tag) {
 
 				super.visitTag(tag);
-				
+
 				String tagClass = tag.getAttribute("class");
-				
-				if (StringUtils.isNotBlank(tagClass) && tagClass.equals("tb-Header") ) {
+
+				if (StringUtils.isNotBlank(tagClass) && tagClass.equals("tb-Header")) {
 					TableTag titleTableTag = (TableTag) tag;
-					
+
 					Node[] trs = titleTableTag.getChildrenAsNodeArray();
 					int titleRowCount = 0;
-					
+
 					for (Node node : trs) {
 						if (node instanceof TableRow) {
 							if (titleRowCount == 0) {
-								titleRowCount ++;
-								//ignore first row
+								titleRowCount++;
+								// ignore first row
 								continue;
 							}
-							
+
 							TableRow row = (TableRow) node;
 							Node[] tds = row.getChildrenAsNodeArray();
-							
+
 							for (int i = 0; i < tds.length; i++) {
-																
+
 								if (tds[i] instanceof TableColumn) {
-									TableColumn tableColumn = (TableColumn)tds[i];
-									
+									TableColumn tableColumn = (TableColumn) tds[i];
+
 									Node cellNode[] = tableColumn.getChildrenAsNodeArray();
 									String keyAttribute = "";
 									String valueAttribute = "";
-									
+
 									for (int j = 0; j < cellNode.length; j++) {
 										Node cellNodeElement = cellNode[j];
-										
+
 										if (j == 0) {
-											keyAttribute = cellNode[j].getText().trim(); continue;
+											keyAttribute = cellNode[j].getText().trim();
+											continue;
 										}
-										
-										if(StringUtils.isNotBlank(keyAttribute) && keyAttribute.equals("送货地址")) {
+
+										if (StringUtils.isNotBlank(keyAttribute) && keyAttribute.equals("送货地址")) {
 											headersMap.put("送货地址", cellNode[2].getText().trim());
 											break;
 										}
-										
+
 										if (cellNodeElement instanceof TagNode) {
 											TagNode cellNodeElementTag = (TagNode) cellNodeElement;
 											String color = cellNodeElementTag.getAttribute("color");
-											
+
 											if (StringUtils.isNotBlank(color) && color.equals("red")) {
-												
+
 												valueAttribute = cellNode[j + 1].getText();
 												headersMap.put(keyAttribute, valueAttribute);
-												
-											//	break;
+
+												// break;
 											}
 										}
 									}
@@ -299,60 +339,60 @@ public class HtmlParserUtilPlanB {
 						}
 					}
 				}
-				
+
 				if (StringUtils.isNotBlank(tagClass) && tagClass.equals("table")) {
 					TableTag tableTag = (TableTag) tag;
 					Node[] trs = tableTag.getChildrenAsNodeArray();
-					
+
 					int titleRowCount = 0;
-					
+
 					for (int z = 0; z < trs.length; z++) {
-						
+
 						Node node = trs[z];
-						
-						if ( z == trs.length - 3 ) {
+
+						if (z == trs.length - 3) {
 							break;
 						}
-						
+
 						if (node instanceof TableRow) {
-							
+
 							TableRow row = (TableRow) node;
 							Node[] tds = row.getChildrenAsNodeArray();
-							
+
 							if (titleRowCount == 0) {
 								for (int j = 0; j < tds.length; j++) {
-									
+
 									if (tds[j] instanceof TableColumn) {
-										
-										TableColumn tableColumn = (TableColumn)tds[j];
+
+										TableColumn tableColumn = (TableColumn) tds[j];
 										detailTableHeaders.add(tableColumn.getStringText().trim());
 									}
 								}
 							} else {
-								
+
 								Map<String, String> elementMap = Maps.newHashMap();
 								int badCount = 0;
 								for (int j = 0; j < tds.length; j++) {
-									
+
 									if (tds[j] instanceof TableColumn) {
-										
-										TableColumn tableColumn = (TableColumn)tds[j];
-										
+
+										TableColumn tableColumn = (TableColumn) tds[j];
+
 										String detailValue = tableColumn.getStringText();
-										
+
 										if (StringUtils.isNotBlank(detailValue)) {
 											elementMap.put(detailTableHeaders.get(j - badCount), detailValue.trim());
 										} else {
 											elementMap.put(detailTableHeaders.get(j - badCount), "");
 										}
-										
+
 									} else {
-										badCount ++;
+										badCount++;
 									}
 								}
 								detailsList.add(elementMap);
 							}
-							titleRowCount ++;
+							titleRowCount++;
 						}
 					}
 				}
@@ -363,7 +403,7 @@ public class HtmlParserUtilPlanB {
 
 		return order;
 	}
-	
+
 	public static String findCompanyName(String detailPageHtml) {
 
 		final StringBuilder comanyName = new StringBuilder();
@@ -544,7 +584,6 @@ public class HtmlParserUtilPlanB {
 		return contactorsEmailSrcBuilder.toString();
 
 	}
-
 
 	public static String findContactorName(String detailPageHtml) {
 		final StringBuilder contactorsBuilder = new StringBuilder();

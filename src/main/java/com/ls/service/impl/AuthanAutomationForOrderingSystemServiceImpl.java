@@ -4,25 +4,28 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import net.sf.json.xml.XMLSerializer;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.xmlbeans.impl.jam.mutable.MPackage;
+import org.apache.http.util.EntityUtils;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -33,18 +36,21 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.collect.Lists;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
+import com.ls.entity.Order;
+import com.ls.entity.ProductDetail;
 import com.ls.exception.ConfigurationException;
 import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
+import com.ls.repository.OrderRepository;
+import com.ls.repository.ProductDetailRepository;
 import com.ls.service.AuthanAutomationService;
+import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 
@@ -52,13 +58,20 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Service("authanOrderSystemService")
+@Scope("prototype")
 public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutomationService {
 
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationForOrderingSystemServiceImpl.class);
 
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
-
+	
+	@Autowired
+	OrderRepository orderRepository;
+	
+	@Autowired
+	ProductDetailRepository productDetailRepository;
+	
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException {
 
 		List<Orders> ordersList = Lists.newArrayList();
@@ -142,7 +155,10 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 							map.put("未税进价", "0" + priceInWithoutTax);
 						}
 					}
-					ordersList.add(singleOrder);
+					if(checkIfOrderNotGrabed(singleOrder)) {
+						ordersList.add(singleOrder);
+					}
+					
 
 				} catch (ParserException e) {
 					logger.error("parse error for order id " + orderId + ", " + singleOrderDetail);
@@ -202,41 +218,6 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 		return basicTemplate;
 	}
 
-	private int getTotalCount(String html) {
-
-		String regex = "[^共\r\n]*?共[^\\d\r\n]*?(\\d+)[^\r\n]*";
-
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(html);
-
-		String result = "";
-		while (m.find()) {
-			result = m.group(1);
-		}
-		if (StringUtils.isNotBlank(result)) {
-
-			return Integer.valueOf(result);
-		}
-		return 1;
-	}
-
-	private int getTotalPageCount(String html) {
-
-		String regex = "[^页, 共\r\n]*?页, 共[^\\d\r\n]*?(\\d+)[^\r\n]*";
-
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(html);
-
-		String result = "";
-		while (m.find()) {
-			result = m.group(1);
-		}
-		if (StringUtils.isNotBlank(result)) {
-
-			return Integer.valueOf(result);
-		}
-		return 1;
-	}
 
 	public Orders grabSingleOrders(String start, String end) {
 
@@ -249,7 +230,35 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 		
 		List<Orders> orders;
 		try {
+			
+			//Grab data from UI 
 			orders = grabOrders(start, end, job);
+			
+			if (orders == null || orders.size() == 0) {
+				return ResponseVo.newSuccessMessage("没有发现需要采集的数据");
+			}
+			
+			//composite data
+			String data = compositeOrderToXml(orders, job);
+			
+			String url = job.getClientIp() + job.getClientEnd();
+			
+			//send ws
+			HttpResponse response = postWebService(url, data);
+			
+			HttpEntity httpEntity = response.getEntity();
+			String responseText = null;
+			if (httpEntity != null) {
+				responseText = EntityUtils.toString(httpEntity);
+			}
+			
+			if (response.getStatusLine().getStatusCode() >= 200) {
+				//XMLSerializer xmlSerializer = new XMLSerializer();
+				//xmlSerializer.read(responseText)
+				saveOrders(orders);
+			} else {
+				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
+			}
 			
 		} catch (ConfigurationException e) {
 			
@@ -262,63 +271,12 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 			
 		} catch (Exception e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("获取元数据时候出错了：" + e.getMessage());
+			responseVo.setMessage("出错了:" + e.getMessage());
 			
 			logger.error("postDataToWebService error" + responseVo.toString());
 			
 			return responseVo;
 		}
-
-		String data;
-		try {
-			data = compositeOrderToXml(orders, job);
-		} catch (IOException e) {
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("封装模板时候出现IO异常：" + e.getMessage());
-			logger.error("postDataToWebService error" + responseVo.toString());
-			return responseVo;
-		} catch (TemplateException e) {
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("封装模板时候出现异常：" + e.getMessage());
-			logger.error("postDataToWebService error" + responseVo.toString());
-			return responseVo;
-		} catch (Exception e) {
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("封装模板时候出现异常：" + e.getMessage());
-			logger.error("postDataToWebService error" + responseVo.toString());
-			return responseVo;
-		}
-		
-		String url = job.getClientIp() + job.getClientEnd();
-		
-		HttpResponse response = null;
-		try {
-			response = postWebService(url, data);
-			
-		} catch (ClientProtocolException e) {
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
-			logger.error("postDataToWebService error" + responseVo.toString());
-			return responseVo;
-		} catch (IOException e) {
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
-			logger.error("postDataToWebService error" + responseVo.toString());
-			return responseVo;
-		} catch (Exception e) {
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("发送web service时发生了错误：" + e.getMessage());
-			logger.error("postDataToWebService error" + responseVo.toString());
-			return responseVo;
-		}
-		
-		if (response.getStatusLine().getStatusCode() == 200) {
-			responseVo.setType(ResponseVo.MessageType.SUCCESS.name());
-			responseVo.setMessage(data);
-		} else {
-			responseVo = ResponseVo.newFailMessage("Sending data to web service fail : " + response.getStatusLine().getReasonPhrase() + "\n" + data);
-		}
-		
 		
 		return responseVo;
 	}
@@ -361,6 +319,75 @@ public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutom
 
 		automaticJobRepository.saveAndFlush(automaticJob);
 		
+	}
+	
+	private boolean checkIfOrderNotGrabed(Orders order) {
+		
+		Map<String, String> titleMap = order.getOrderTitleMap();
+		String orderNumber = titleMap.get("订单号：");
+		String storeNumber = titleMap.get("店号：");
+		
+		Order existedOrder = orderRepository.findByOrderNumberAndStoreNumber(orderNumber, storeNumber);
+		
+		return existedOrder == null;
+	}
+	
+	public List<Order> saveOrders(List<Orders> orders) {
+
+		if (null == orders || orders.size() == 0) {
+			return null;
+		}
+
+		List<Order> savedOrderList = new ArrayList<Order>();
+
+		for (Orders singleOrder : orders) {
+
+			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
+			String orderNumber = titleMap.get("订单号：");
+			String storeNumber = titleMap.get("店号：");
+
+			String estimateTakeOverDate = titleMap.get("预定收货日期：");
+			String supplierNumber = titleMap.get("供应商：");
+			String orderDate = titleMap.get("订单日期：");
+
+			Order order = new Order();
+			order.setOrderNumber(orderNumber);
+			order.setStoreNumber(storeNumber);
+			order.setEstimateTakeOverDate(estimateTakeOverDate);
+			order.setSupplierNumber(supplierNumber);
+			order.setOrderDate(orderDate);
+			order.setCreateDate(HanthinkUtil.getNow());
+			
+			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
+			Order savedOrder = orderRepository.saveAndFlush(order);
+			
+			for (Map<String, String> singleDetailMap : detailMap) {
+				
+				String productNumber = singleDetailMap.get("货号");
+				String barCode = singleDetailMap.get("条目号");
+				String description = singleDetailMap.get("货品描述");
+				Integer count = Integer.valueOf(singleDetailMap.get("订货数"));
+				Integer countInSingleBox = Integer.valueOf(singleDetailMap.get("箱含量"));
+				String priceWithoutTax = singleDetailMap.get("未税进价");
+				
+				ProductDetail productDetail = new ProductDetail();
+				productDetail.setOrderId(savedOrder.getId());
+				productDetail.setOrderNumber(orderNumber);
+				productDetail.setProductNumber(productNumber);
+				productDetail.setBarCode(barCode);
+				productDetail.setDescription(description);
+				productDetail.setCount(count);
+				productDetail.setCountInSingleBox(countInSingleBox);
+				productDetail.setPriceWithoutTax(priceWithoutTax);
+				
+				productDetailRepository.save(productDetail);
+				
+			}
+			
+			savedOrderList.add(savedOrder);
+			
+		}
+		return savedOrderList;
 	}
 	
 }

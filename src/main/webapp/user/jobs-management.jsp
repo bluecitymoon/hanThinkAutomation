@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=GBK"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="zh"> <![endif]-->
 <!--[if IE 7]>	<html class="no-js lt-ie9 lt-ie8" lang="zh"> <![endif]-->
@@ -35,10 +36,22 @@
                        									    	value: $root.selectedStoreId,
                        									    	optionsValue : 'id',
                        									    	selectedOption : $root.selectedStoreId,
-                       									    	optionsCaption: '请选择卖场...'">
+                       									    	optionsCaption: '请选择数据源...'">
 									</select>
 								</div>
-								<div class="six columns"></div>
+								<div class="three columns">
+									<sec:authorize ifAllGranted="ROLE_ADMIN">  
+ 										 <select data-bind="options: $root.allUsers,
+                      											optionsText: 'name',
+                       									    	value: $root.selectedUserId,
+                       									    	optionsValue : 'id',
+                       									    	selectedOption : $root.selectedUserId,
+                       									    	optionsCaption: '请选择用户...'">
+										</select>
+									</sec:authorize>
+								</div>
+								<div class="three columns">
+								</div>
 								<div class="three columns">
 									<a class="tiny blue button right" href="#" data-bind="click : $root.clearForm">新建任务</a>
 								</div>
@@ -137,7 +150,7 @@
 									</div>
 									
 									<div class="four columns">
-										<label class="required">卖场</label> 
+										<label class="required">数据源</label> 
 										<select data-bind="options: $root.allStores,
                       											optionsText: 'name',
                        									    	value: storeId,
@@ -260,12 +273,27 @@
 						self.jobList = ko.observableArray([]);
 						self.selectedTaskId = ko.observable('');
 						self.allStores = ko.observableArray([]);
+						self.allUsers = ko.observableArray([]);
 						self.selectedStoreId = ko.observable('');
 						self.selectedUserId = ko.observable('');
 						
 						self.selectedStoreId.subscribe(function() {
 							self.reloadJobList();
 						});
+						self.selectedUserId.subscribe(function() {
+							self.reloadJobList();
+						});
+						self.loadAllUsers = function() {
+							//load all
+							$.ajax({                        
+								  url: '/ls/admin/loadAllUsers.action',
+								  success: function(data) {   
+									  	self.allUsers(data);
+
+								  }
+								});
+						};
+						self.loadAllUsers();
 						
 						self.loadAllResources = function() {
 							$.ajax({	
@@ -415,7 +443,8 @@
 							$.ajax({
 								url : 'readJobList.action',
 								data : {
-									selectedStoreId : self.selectedStoreId()
+									selectedStoreId : self.selectedStoreId(),
+									selectedUserId : self.selectedUserId()
 								},
 								success : function(data) {
 										try {
