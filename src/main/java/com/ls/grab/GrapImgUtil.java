@@ -38,7 +38,8 @@ public class GrapImgUtil {
 
 			FileOutputStream fileOutputStream = new FileOutputStream(storeFile);
 
-			// InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent(), "UTF-8");
+			// InputStreamReader inputStreamReader = new
+			// InputStreamReader(response.getEntity().getContent(), "UTF-8");
 			InputStream inputStream = response.getEntity().getContent();
 
 			IOUtils.copy(response.getEntity().getContent(), fileOutputStream);
@@ -51,29 +52,28 @@ public class GrapImgUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static synchronized String grabImgWithSrc(String imgSrc) {
 		if (StringUtils.isEmpty(imgSrc)) {
 			System.err.println("img src is null");
-			
+
 			return "bad data";
 		}
-		
+
 		HttpClient client = HttpClientBuilder.create().build();
-		
+
 		HttpGet request = new HttpGet(imgSrc);
 
-		// add request header
 		request.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070803 Firefox/1.5.0.12");
 		request.addHeader("Content-Type", " text/html;charset=UTF-8");
 
 		try {
-			
+
 			HttpResponse response = client.execute(request);
 
 			String name = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-			
-			File storeFile = new File("D:\\workspace\\littleshop\\src\\main\\webapp\\img\\" + name + ".jpg");
+
+			File storeFile = new File("D:\\applications\\Tesseract-OCR\\" + name + ".jpg");
 
 			if (!storeFile.exists()) {
 				storeFile.createNewFile();
@@ -81,21 +81,16 @@ public class GrapImgUtil {
 
 			FileOutputStream fileOutputStream = new FileOutputStream(storeFile);
 
-			// InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent(), "UTF-8");
 			InputStream inputStream = response.getEntity().getContent();
 
 			IOUtils.copy(response.getEntity().getContent(), fileOutputStream);
 
 			IOUtils.closeQuietly(inputStream);
 			IOUtils.closeQuietly(fileOutputStream);
-			
-			Thread.sleep(2000);
+
 			return name + ".jpg";
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			return "fail";
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 			return "fail";
 		}

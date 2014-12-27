@@ -1,10 +1,13 @@
 package com.ls.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +23,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.eclipse.jetty.http.HttpURI;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,23 +36,23 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
 import com.ls.exception.ConfigurationException;
+import com.ls.grab.GrapImgUtil;
 import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
@@ -61,11 +65,11 @@ import com.ls.vo.ResponseVo;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@Service("metroAutomationService")
+@Service("sosoAutomationService")
 @Scope("prototype")
-public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService {
+public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
-	private Logger logger = LoggerFactory.getLogger(MetroAutomationServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(SoSoAutomationServiceImpl.class);
 
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
@@ -76,67 +80,25 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 	
-	public List<Orders> grabOrders(String start, String end, AutomaticJob automaticJob) throws ConfigurationException {
+	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException {
 
 		List<Orders> ordersList = Lists.newArrayList();
 
-		if (null == automaticJob) {
+		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
 			throw new ConfigurationException();
 		}
 
 		Date now = new Date();
-		automaticJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
+		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 
 		try {
 			
-			final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
+			final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
-			
-			String logonUrl = "https://portal.metro-link.com/cleartrust/ct_logon.asp";
-			//login
-			List<NameValuePair> parameters = ImmutableList.of(
-				new NameValuePair("auth_mode", "SECURID"), 
-				new NameValuePair("override_uri_retention", "true"),
-				//new NameValuePair("password", automaticJob.getPassword()), 
-				//new NameValuePair("user", automaticJob.getUsername())
-				
-				new NameValuePair("password", "Metro52609"),
-				new NameValuePair("user", "yx_jiangfeng@163.com")
-				);
-			
-//			webRequest.getRequestParameters().add(new NameValuePair("password", "Metro52609"));
-//			webRequest.getRequestParameters().add(new NameValuePair("user", "yx_jiangfeng@163.com"));
-			
-			//do login
-			HtmlPage logonPage = fireMetroEvent(parameters, logonUrl, webClient);
-			
-			String sapStupidLoadingUrl = "https://portal.metro-link.com/webdynpro/resources/sap.com/pb/PageBuilder";
-			
-			String selectStartDate = "ComboBox_SelectIdaaaa.OrdersView.DropDownByIndexKey0ByEnterfalseurEventNameCOMBOBOXSELECTIONCHANGEInputField_ValidateIdaaaa.OrdersView.inputOrderDateFromValue" + start + "ClientActionsubmitAsyncurEventNameValidateForm_RequestId...formAsynctrueFocusInfo@{}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
-			String selectEndDate = "InputField_ValidateIdaaaa.OrdersView.inputOrderDateToValue" + end + "ClientActionsubmitAsyncurEventNameValidateForm_RequestId...formAsynctrueFocusInfo@{\"sFocussedId\": \"ls-datepicker\"}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
-			String clickSearchButton = "Button_PressIdaaaa.OrdersView.ButtonSearchClientActionsubmiturEventNameBUTTONCLICKForm_RequestId...formAsyncfalseFocusInfo@{\"sFocussedId\": \"aaaa.OrdersView.ButtonSearch\"}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
-			
-			NameValuePair startEventQueueName = new NameValuePair("SAPEVENTQUEUE", selectStartDate);
-			List<NameValuePair> startList = ImmutableList.of(startEventQueueName);
-			HtmlPage startPage =  fireMetroEvent(startList, sapStupidLoadingUrl, webClient);
-			
-			System.out.println(startPage.asText());
-			
-			NameValuePair endEventQueueName = new NameValuePair("SAPEVENTQUEUE", selectEndDate);
-			List<NameValuePair> endList = ImmutableList.of(endEventQueueName);
-			HtmlPage endPage =  fireMetroEvent(endList, sapStupidLoadingUrl, webClient);
-			
-			System.err.println(endPage.asText());
-			
-			NameValuePair clickSearchButtonEventQueueName = new NameValuePair("SAPEVENTQUEUE", clickSearchButton);
-			List<NameValuePair> searchList = ImmutableList.of(clickSearchButtonEventQueueName);
-			HtmlPage searchResultPage = fireMetroEvent(searchList, sapStupidLoadingUrl, webClient);
-			
-			System.out.println(searchResultPage.asText());
-			
-			String vendorNo = automaticJob.getUsername().substring(2);
+
+			String vendorNo = authanJob.getUsername().substring(2);
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
 		
 			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
@@ -202,20 +164,86 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 		}
 
 		Date endTime = new Date();
-		automaticJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
+		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
-		automaticJobRepository.saveAndFlush(automaticJob);
+		automaticJobRepository.saveAndFlush(authanJob);
 
 		return ordersList;
 	}
+	
+	public boolean tryToLogin(WebClient webClient, AutomaticJob authanJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+		
+		String url = "http://v30.sosgps.net.cn/platform-1.0/systemindex.do";
+		final HtmlPage loginPage = webClient.getPage(url);
+		
+		HtmlForm form = loginPage.getFormByName("LoginForm");
+		
+		HtmlElement logInput = null;
+		List<HtmlImage> images = form.getHtmlElementsByTagName("img");
+		
+		for (HtmlImage htmlImage : images) {
+			
+			if (StringUtils.isNotBlank(htmlImage.getAttribute("onclick")) && htmlImage.getAttribute("onclick").equals("submitForm()")) {
+				logInput = htmlImage;
+				break;
+			}
+		}
+		
+		final HtmlTextInput companyCodeTextInput = form.getInputByName("empCode");
+		final HtmlTextInput usernameTextInput = form.getInputByName("userAccount");
+		final HtmlPasswordInput passwordField = form.getInputByName("password");
+		final HtmlTextInput validateCodeTextInput = form.getInputByName("validateCode"); 
 
-	private HtmlPage fireMetroEvent(List<NameValuePair> parameterList, String url, WebClient webClient) throws FailingHttpStatusCodeException, IOException {
+		companyCodeTextInput.setValueAttribute("shcmmy");
+		usernameTextInput.setValueAttribute(authanJob.getUsername());
+		passwordField.setValueAttribute(authanJob.getPassword());
+
 		
-		WebRequest webRequest = new WebRequest(new URL(url), HttpMethod.POST);
-		webRequest.setRequestParameters(parameterList);
-		return webClient.getPage(webRequest);
+		Page responsePage = logInput.click();
 		
+		return false;
 	}
+
+	private String currentGoodCode;
+	
+	public String getCurrentGoodCode() {
+		return currentGoodCode;
+	}
+
+	public void setCurrentGoodCode(String currentGoodCode) {
+		this.currentGoodCode = currentGoodCode;
+	}
+
+	public String getCurrentValidateCode(WebClient webClient) throws IOException, InterruptedException {
+		
+		Thread.sleep(1000);
+		
+		String validateCodeActionUrl = "http://v30.sosgps.net.cn/platform-1.0/systemadmin/validateCode.do";
+		
+		String fileName = GrapImgUtil.grabImgWithSrc(validateCodeActionUrl);
+		String command = "D:\\applications\\Tesseract-OCR\\tesseract.exe D:\\applications\\Tesseract-OCR\\" + fileName + " D:\\applications\\Tesseract-OCR\\" + fileName;
+		
+		Process process = Runtime.getRuntime().exec(command);
+		process.waitFor();
+		
+		String code = Files.readFirstLine(new File("D:\\applications\\Tesseract-OCR\\" + fileName + ".txt"), Charset.defaultCharset());
+		
+		System.out.println(code);
+		
+		if (StringUtils.isNotBlank(code) && code.length() == 4 && StringUtils.isNumeric(code)) {
+			
+			setCurrentGoodCode(code);
+			
+			return code;
+			
+		} else {
+			
+			getCurrentValidateCode(webClient);
+		}
+		
+		return code;
+	}
+	
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 		
 	Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap-for-order-system.ftl");

@@ -49,7 +49,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Service("authanService")
-public class AuthanAutomationServiceImpl implements AuthanAutomationService {
+public class AuthanAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationServiceImpl.class);
 

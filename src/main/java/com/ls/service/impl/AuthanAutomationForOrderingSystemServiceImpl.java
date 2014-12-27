@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.xml.XMLSerializer;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -49,7 +47,6 @@ import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
-import com.ls.service.AuthanAutomationService;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -59,7 +56,7 @@ import freemarker.template.TemplateException;
 
 @Service("authanOrderSystemService")
 @Scope("prototype")
-public class AuthanAutomationForOrderingSystemServiceImpl implements AuthanAutomationService {
+public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthanAutomationService {
 
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationForOrderingSystemServiceImpl.class);
 
