@@ -64,12 +64,6 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 	}
 
 	@Override
-	public String getCurrentValidateCode(WebClient webClient) throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getCurrentGoodCode() {
 		// TODO Auto-generated method stub
 		return null;

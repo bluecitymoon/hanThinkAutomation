@@ -3,7 +3,6 @@ package com.ls.service;
 import java.io.IOException;
 import java.util.List;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.exception.ConfigurationException;
@@ -29,8 +28,6 @@ public interface AuthanAutomationService {
 	void deleteJob(AutomaticJob automaticJob);
 	
 	void saveOrUpdateJob(AutomaticJob automaticJob);
-	
-	String getCurrentValidateCode(WebClient webClient) throws IOException, InterruptedException;
 	
 	public String getCurrentGoodCode();
 }

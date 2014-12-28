@@ -13,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 
 public class GrapImgUtil {
 
@@ -53,7 +54,8 @@ public class GrapImgUtil {
 		}
 	}
 
-	public static synchronized String grabImgWithSrc(String imgSrc) {
+	public static synchronized String grabImgWithSrc(String imgSrc, String cookies) {
+		
 		if (StringUtils.isEmpty(imgSrc)) {
 			System.err.println("img src is null");
 
@@ -61,12 +63,13 @@ public class GrapImgUtil {
 		}
 
 		HttpClient client = HttpClientBuilder.create().build();
-
+		
 		HttpGet request = new HttpGet(imgSrc);
-
+		
+		request.addHeader(new BasicHeader("Cookie", cookies));
 		request.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070803 Firefox/1.5.0.12");
 		request.addHeader("Content-Type", " text/html;charset=UTF-8");
-
+		
 		try {
 
 			HttpResponse response = client.execute(request);
