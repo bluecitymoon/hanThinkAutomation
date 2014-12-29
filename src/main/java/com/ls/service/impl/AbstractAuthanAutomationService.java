@@ -3,10 +3,12 @@ package com.ls.service.impl;
 import java.io.IOException;
 import java.util.List;
 
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+
 import com.ls.entity.AutomaticJob;
-import com.ls.entity.Order;
 import com.ls.exception.ConfigurationException;
+import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -15,58 +17,34 @@ import freemarker.template.TemplateException;
 
 public abstract class AbstractAuthanAutomationService implements AuthanAutomationService {
 
-	@Override
-	public Orders grabSingleOrders(String start, String end) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Autowired
+	private AutomaticJobRepository automaticJobRepository;
 
-	@Override
-	public List<Orders> grabOrders(String start, String end, AutomaticJob dbName) throws ConfigurationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract List<Orders> grabOrders(String start, String end, AutomaticJob dbName) throws ConfigurationException;
 
-	@Override
-	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract ResponseVo postDataToWebService(String start, String end, AutomaticJob job);
 
-	@Override
-	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException;
 
-	@Override
+	@Secured({"ROLE_ADMIN"})
 	public ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return postDataToWebService(start, end, automaticJob);
+
 	}
 
-	@Override
-	public List<Order> saveOrders(List<Orders> orders) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+	@Secured({"ROLE_ADMIN"})
 	public void deleteJob(AutomaticJob automaticJob) {
-		// TODO Auto-generated method stub
+
+		automaticJobRepository.delete(automaticJob);
 
 	}
 
-	@Override
+	@Secured({"ROLE_ADMIN"})
 	public void saveOrUpdateJob(AutomaticJob automaticJob) {
-		// TODO Auto-generated method stub
 
-	}
+		automaticJobRepository.saveAndFlush(automaticJob);
 
-	@Override
-	public String getCurrentGoodCode() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

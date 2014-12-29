@@ -1,6 +1,5 @@
 package com.ls.service.impl;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,9 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -41,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -55,7 +51,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.google.common.base.Splitter;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
@@ -64,6 +61,7 @@ import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
 import com.ls.exception.ConfigurationException;
+import com.ls.grab.GrapImgUtil;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
@@ -123,9 +121,12 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			} else {
 				totalCount = JSONArray.fromObject(countResponse).getInt(1);
 
-				for (int index = 1; index <= totalCount; index++) {
+				int pageCount = totalCount / 10;
+
+				for (int index = 1; index <= pageCount + 1; index++) {
+
 					String retrievingDataUrl = getOrdersListRequestUrl + getQueryParameters(start, end) + "&page=" + index;
-					String responseData = webClient.getPage(retrievingDataUrl);
+					String responseData = webClient.getPage(retrievingDataUrl).getWebResponse().getContentAsString();
 
 					JSONArray dataArray = JSONObject.fromObject(responseData).getJSONArray("rows");
 
@@ -154,7 +155,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			Orders order = new Orders();
 			ObjectMapper objectMapper = new ObjectMapper();
 
-			HashMap<String, String> titleMap = objectMapper.readValue(object.toString(), new TypeReference<HashMap<String, String>>() {
+			HashMap<String, String> titleMap = objectMapper.readValue(object.toString(), new TypeReference<HashMap<String, String>>(){
 			});
 			order.setOrderTitleMap(titleMap);
 
@@ -216,7 +217,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		return baseUrl;
 	}
 
-	public boolean tryToLogin(WebClient webClient, AutomaticJob authanJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+	public String tryToLogin(WebClient webClient, AutomaticJob authanJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		URL url = new URL("http://v30.sosgps.net.cn/platform-1.0/systemindex.do");
 
@@ -241,65 +242,64 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		final HtmlTextInput validateCodeTextInput = form.getInputByName("validateCode");
 
 		companyCodeTextInput.setValueAttribute("shcmmy");
-
 		usernameTextInput.setValueAttribute(authanJob.getUsername());
-
 		passwordField.setValueAttribute(authanJob.getPassword());
 
-		HtmlImage validateCodeImage = (HtmlImage) loginPage.getElementById("validateImg");
+		Set<Cookie> cookies = webClient.getCookieManager().getCookies();
+		List<String> keyvaluePairList = Lists.newArrayList();
 
-		ImageReader imageReader = validateCodeImage.getImageReader();
-
-		BufferedImage bufferedImage = imageReader.read(0);
-
-		String name = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-		File storeFile = new File("D:\\applications\\Tesseract-OCR\\" + name + ".jpg");
-
-		if (!storeFile.exists()) {
-			storeFile.createNewFile();
+		for (Cookie cookie : cookies) {
+			String keyvaluePair = cookie.getName() + "=" + cookie.getValue();
+			keyvaluePairList.add(keyvaluePair);
 		}
 
-		ImageIO.write(bufferedImage, "jpg", storeFile);
-		
-		Thread.sleep(1000);
-		
-		String command = "D:\\applications\\Tesseract-OCR\\tesseract.exe D:\\applications\\Tesseract-OCR\\" + name + ".jpg" + " D:\\applications\\Tesseract-OCR\\" + name;
+		String baseCookieValue = Joiner.on(";").join(keyvaluePairList);
+		baseCookieValue += ";login_entCode=shcmmy; login_userName=admin; ENT_CUSTOMIZATION=default_ent";
 
-		Process process = Runtime.getRuntime().exec(command);
-		process.waitFor();
+		String validationCode = generateNewValidationCode(baseCookieValue, webClient);
 
-		String code = Files.readFirstLine(new File("D:\\applications\\Tesseract-OCR\\" + name + ".txt"), Charset.defaultCharset());
-		if (StringUtils.isNotBlank(code)) {
-			code = code.replace(" ", "");
-		}
-		
+		validateCodeTextInput.setValueAttribute(validationCode);
 
-		boolean isValidCode = (StringUtils.isNotBlank(code) && code.length() == 4 && StringUtils.isNumeric(code));
+		Page responsePage = logInput.click();
 
-		if (isValidCode) {
-			System.out.println(code);
-			
-			validateCodeTextInput.setValueAttribute(code);
+		String nextUrl = responsePage.getUrl().toString();
 
-			HtmlPage responsePage = logInput.click();
+		if (nextUrl.contains("loginAlone.do")) {
+			String parameters = nextUrl.split("\\?")[1];
+			String reportCenterBase = "http://report.sosgps.net.cn/report-1.0/loginAlone.do?";
 
-			String nextUrl = responsePage.getUrl().toString();
-			
-			if (nextUrl.contains("loginAlone.do")) {
-				String parameters = nextUrl.split("?")[1];
-				String loginToReportCenterUrl = "http://report.sosgps.net.cn/report-1.0/loginAlone.do?" + parameters;
-				
-				webClient.getPage(loginToReportCenterUrl);
-				
-				return true;
-			} else {
-				return tryToLogin(webClient, authanJob);
-			}
+			Page reportBasePage = webClient.getPage(reportCenterBase + parameters);
+
+			return reportBasePage.getUrl().toString();
 
 		} else {
 
 			return tryToLogin(webClient, authanJob);
+		}
+	}
 
+	public String generateNewValidationCode(String cookies, WebClient webClient) throws FailingHttpStatusCodeException, IOException, InterruptedException {
+
+		String getNewValidationCodeURL = "http://v30.sosgps.net.cn/platform-1.0/systemadmin/validateCode.do?timestamp=" + System.currentTimeMillis();
+
+		String fileName = GrapImgUtil.grabImgWithSrc(getNewValidationCodeURL, cookies);
+		Thread.sleep(1000);
+
+		String command = "D:\\applications\\Tesseract-OCR\\tesseract.exe D:\\applications\\Tesseract-OCR\\" + fileName + ".jpg" + " D:\\applications\\Tesseract-OCR\\" + fileName;
+
+		Process process = Runtime.getRuntime().exec(command);
+		process.waitFor();
+
+		String code = Files.readFirstLine(new File("D:\\applications\\Tesseract-OCR\\" + fileName + ".txt"), Charset.defaultCharset());
+		if (StringUtils.isNotBlank(code)) {
+			code = code.replace(" ", "");
+		}
+		boolean isValidCode = (StringUtils.isNotBlank(code) && code.length() == 4 && StringUtils.isNumeric(code));
+
+		if (isValidCode) {
+			return code;
+		} else {
+			return generateNewValidationCode(cookies, webClient);
 		}
 
 	}
@@ -354,7 +354,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("auchan-request-soap-for-order-system.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("soso-request-soap.ftl");
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -365,16 +365,6 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 		return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
 
-	}
-
-	private void loggerError(Exception e, String start, String end) {
-
-		logger.error("grab order failed for start : " + start + " end : " + end + " error message is -> " + e.getMessage());
-	}
-
-	public Orders grabSingleOrders(String start, String end) {
-
-		return null;
 	}
 
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
@@ -453,38 +443,6 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		return response;
 	}
 
-	@Secured({ "ROLE_ADMIN" })
-	public ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob) {
-
-		return postDataToWebService(start, end, automaticJob);
-
-	}
-
-	@Secured({ "ROLE_ADMIN" })
-	public void deleteJob(AutomaticJob automaticJob) {
-
-		automaticJobRepository.delete(automaticJob);
-
-	}
-
-	@Secured({ "ROLE_ADMIN" })
-	public void saveOrUpdateJob(AutomaticJob automaticJob) {
-
-		automaticJobRepository.saveAndFlush(automaticJob);
-
-	}
-
-	private boolean checkIfOrderNotGrabed(Orders order) {
-
-		Map<String, String> titleMap = order.getOrderTitleMap();
-		String orderNumber = titleMap.get("订单号：");
-		String storeNumber = titleMap.get("店号：");
-
-		Order existedOrder = orderRepository.findByOrderNumberAndStoreNumber(orderNumber, storeNumber);
-
-		return existedOrder == null;
-	}
-
 	public List<Order> saveOrders(List<Orders> orders) {
 
 		if (null == orders || orders.size() == 0) {
@@ -496,18 +454,16 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		for (Orders singleOrder : orders) {
 
 			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
-			String orderNumber = titleMap.get("订单号：");
-			String storeNumber = titleMap.get("店号：");
+			String orderNumber = titleMap.get("orderNumber");
+			String address = titleMap.get("address");
 
-			String estimateTakeOverDate = titleMap.get("预定收货日期：");
-			String supplierNumber = titleMap.get("供应商：");
-			String orderDate = titleMap.get("订单日期：");
+			String estimateTakeOverDate = titleMap.get("estimateTakeOverDate");
+			String orderDate = titleMap.get("orderDate");
 
 			Order order = new Order();
 			order.setOrderNumber(orderNumber);
-			order.setStoreNumber(storeNumber);
+			order.setAddress(address);
 			order.setEstimateTakeOverDate(estimateTakeOverDate);
-			order.setSupplierNumber(supplierNumber);
 			order.setOrderDate(orderDate);
 			order.setCreateDate(HanthinkUtil.getNow());
 
@@ -516,22 +472,16 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			for (Map<String, String> singleDetailMap : detailMap) {
 
-				String productNumber = singleDetailMap.get("货号");
-				String barCode = singleDetailMap.get("条目号");
-				String description = singleDetailMap.get("货品描述");
-				Integer count = Integer.valueOf(singleDetailMap.get("订货数"));
-				Integer countInSingleBox = Integer.valueOf(singleDetailMap.get("箱含量"));
-				String priceWithoutTax = singleDetailMap.get("未税进价");
+				String description = singleDetailMap.get("description");
+				Integer count = Integer.valueOf(singleDetailMap.get("count"));
+				String moneyAmount = singleDetailMap.get("moneyAmount");
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
-				productDetail.setProductNumber(productNumber);
-				productDetail.setBarCode(barCode);
 				productDetail.setDescription(description);
 				productDetail.setCount(count);
-				productDetail.setCountInSingleBox(countInSingleBox);
-				productDetail.setPriceWithoutTax(priceWithoutTax);
+				productDetail.setMoneyAmountWithoutTax(moneyAmount);
 
 				productDetailRepository.save(productDetail);
 

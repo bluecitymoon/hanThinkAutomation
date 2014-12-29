@@ -48,16 +48,17 @@ public class TestSoSo {
 	}
 
 	@Test
+	public void testWholeProcess() throws Exception {
+
+		AutomaticJob automaticJob = automaticJobRepository.findOne(1);
+		
+		metroAutomationService.postDataToWebService("2014-12-27", "2014-12-27", automaticJob);
+	}
+	
+	@Test
 	public void testGrabValidateCode() throws Exception {
 
-//		final WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//		webClient.getOptions().setCssEnabled(false);
-//		webClient.getOptions().setThrowExceptionOnScriptError(false);
-//
-//		String code = metroAutomationService.generateReconizableCode(webClient);
-//		
-//		System.out.println(metroAutomationService.getCurrentGoodCode());
-
+		System.out.println(6 / 10);
 	}
 
 	@Test

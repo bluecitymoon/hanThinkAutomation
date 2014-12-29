@@ -23,7 +23,18 @@ public class Order implements Serializable {
 	protected boolean savedToERP;
 	protected Date createDate;
 	protected String grabTips;
+	protected String address;
 	
+	public String getAddress() {
+	
+		return address;
+	}
+	
+	public void setAddress(String address) {
+	
+		this.address = address;
+	}
+
 	public String getGrabTips() {
 		return grabTips;
 	}

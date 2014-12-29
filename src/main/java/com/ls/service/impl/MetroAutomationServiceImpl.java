@@ -247,12 +247,6 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 		return basicTemplate;
 	}
 
-
-	public Orders grabSingleOrders(String start, String end) {
-
-		return null;
-	}
-
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 
 		ResponseVo responseVo = ResponseVo.newResponse();

@@ -55,20 +55,12 @@ public class GrapImgUtil {
 	}
 
 	public static synchronized String grabImgWithSrc(String imgSrc, String cookies) {
-		
-		if (StringUtils.isEmpty(imgSrc)) {
-			System.err.println("img src is null");
-
-			return "bad data";
-		}
 
 		HttpClient client = HttpClientBuilder.create().build();
 		
 		HttpGet request = new HttpGet(imgSrc);
-		
-		request.addHeader(new BasicHeader("Cookie", cookies));
-		request.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070803 Firefox/1.5.0.12");
-		request.addHeader("Content-Type", " text/html;charset=UTF-8");
+			
+		request.addHeader(new BasicHeader("Cookie", cookies + "; login_entCode=shcmmy; login_userName=admin; ENT_CUSTOMIZATION=default_ent"));
 		
 		try {
 
@@ -91,7 +83,7 @@ public class GrapImgUtil {
 			IOUtils.closeQuietly(inputStream);
 			IOUtils.closeQuietly(fileOutputStream);
 
-			return name + ".jpg";
+			return name ;
 
 		} catch (IOException e) {
 			e.printStackTrace();

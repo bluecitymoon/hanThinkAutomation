@@ -236,10 +236,6 @@ public class AuthanAutomationServiceImpl extends AbstractAuthanAutomationService
 		return 1;
 	}
 
-	public Orders grabSingleOrders(String start, String end) {
-
-		return null;
-	}
 
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 

@@ -29,7 +29,18 @@ public class ProductDetail implements Serializable {
 	protected String priceWithTax;
 	protected String priceWithoutTax;
 	protected Date createDate;
+	protected String moneyAmountWithoutTax;
 	
+	public String getMoneyAmountWithoutTax() {
+	
+		return moneyAmountWithoutTax;
+	}
+	
+	public void setMoneyAmountWithoutTax(String moneyAmountWithoutTax) {
+	
+		this.moneyAmountWithoutTax = moneyAmountWithoutTax;
+	}
+
 	public String getOrderNumber() {
 		return orderNumber;
 	}
