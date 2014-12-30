@@ -40,7 +40,18 @@ public class AutomaticJob implements Serializable {
 	protected Integer delayDays;
 	protected Integer ownerId;
 	protected Integer storeId;
+	protected String companyCode;
 	
+	public String getCompanyCode() {
+	
+		return companyCode;
+	}
+	
+	public void setCompanyCode(String companyCode) {
+	
+		this.companyCode = companyCode;
+	}
+
 	public Integer getStoreId() {
 	
 		return storeId;

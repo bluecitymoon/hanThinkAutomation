@@ -174,25 +174,25 @@ public class TestWebServices {
 	@Test
 	public void testGrabNew() {
 		
-		AutomaticJob automaticJob = automaticJobRepository.findOne(4);
-		
-		try {
-			List<Orders> orders = authanAutomationServiceInOrderSystem.grabOrders("2014-12-02", "2014-12-09", automaticJob);
-			
-			String soapMessage = authanAutomationServiceInOrderSystem.compositeOrderToXml(orders, automaticJob);
-			
-			System.out.println(soapMessage);
-			
-		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		AutomaticJob automaticJob = automaticJobRepository.findOne(4);
+//		
+//		try {
+//			// authanAutomationServiceInOrderSystem.grabOrders("2014-12-02", "2014-12-09", automaticJob);
+//			
+//			//String soapMessage = authanAutomationServiceInOrderSystem.compositeOrderToXml(orders, automaticJob);
+//			
+//			//System.out.println(soapMessage);
+//			
+//		} catch (ConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (TemplateException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	@Test

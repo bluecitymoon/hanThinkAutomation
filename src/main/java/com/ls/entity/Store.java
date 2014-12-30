@@ -19,7 +19,18 @@ public class Store implements Serializable{
 	@GeneratedValue
 	protected Integer id;
 	protected String name;
+	protected String identity;
 	
+	public String getIdentity() {
+	
+		return identity;
+	}
+	
+	public void setIdentity(String identity) {
+	
+		this.identity = identity;
+	}
+
 	@ManyToMany(cascade = CascadeType.REFRESH, mappedBy = "stores", fetch = FetchType.LAZY)
 	protected List<User> users;
 	
@@ -33,8 +44,14 @@ public class Store implements Serializable{
 		super();
 		this.name = name;
 	}
-
 	
+	public Store(String name, String identity) {
+
+		super();
+		this.name = name;
+		this.identity = identity;
+	}
+
 	public List<User> getUsers() {
 	
 		return users;

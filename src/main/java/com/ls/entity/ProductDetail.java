@@ -24,8 +24,8 @@ public class ProductDetail implements Serializable {
 	protected String productNumber;
 	protected String barCode;
 	protected String description;
-	protected Integer count;
-	protected Integer countInSingleBox;
+	protected String count;
+	protected String countInSingleBox;
 	protected String priceWithTax;
 	protected String priceWithoutTax;
 	protected Date createDate;
@@ -107,26 +107,29 @@ public class ProductDetail implements Serializable {
 		this.description = description;
 	}
 	
-	public Integer getCount() {
+	public String getCount() {
 	
 		return count;
 	}
+
 	
-	public void setCount(Integer count) {
+	public void setCount(String count) {
 	
 		this.count = count;
 	}
+
 	
-	public Integer getCountInSingleBox() {
+	public String getCountInSingleBox() {
 	
 		return countInSingleBox;
 	}
+
 	
-	public void setCountInSingleBox(Integer countInSingleBox) {
+	public void setCountInSingleBox(String countInSingleBox) {
 	
 		this.countInSingleBox = countInSingleBox;
 	}
-	
+
 	public String getPriceWithTax() {
 	
 		return priceWithTax;

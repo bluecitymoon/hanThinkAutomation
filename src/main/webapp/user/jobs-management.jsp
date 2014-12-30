@@ -188,7 +188,7 @@
 									</div>
 									 
 									<div class="two columns">
-										<label class="required">数据延迟(天)</label> <input type="text" class="required" data-bind="value : delayDays" />
+										<label>数据延迟(天)</label> <input type="text" class="required" data-bind="value : delayDays" />
 									</div>
 								</div>
 								<div class="row">
@@ -200,11 +200,14 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="six columns">
+									<div class="four columns">
 										<label class="required">登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
 									</div>
-									<div class="six columns">
+									<div class="four columns">
 										<label class="required">登陆密码</label> <input type="text" class="required" data-bind="value : password" />
+									</div>
+									<div class="four columns">
+										<label>企业代码</label> <input type="text" class="required" data-bind="value : companyCode" />
 									</div>
 								</div>
 							</div>
@@ -260,6 +263,7 @@
 						self.delayDays = '';
 						self.ownerId = '';
 						self.storeId = '';
+						self.companyCode = '';
 					};
 
 					var ConfigurationModel = function() {
@@ -504,13 +508,8 @@
 									},
 									url : 'startManually.action',
 									success : function(data) {
-										Messenger().post("已成功抓取！");
-										if(data && data.message &&data.mode == 'debug') {
-											$('#xmlContent').text(data.message);
-											$('#console').show();
-										} else {
+										
 											handleResponse(data);
-										}
 										
 									},
 									error : function(XMLHttpRequest,

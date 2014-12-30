@@ -399,8 +399,8 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 				productDetail.setProductNumber(productNumber);
 				productDetail.setBarCode(barCode);
 				productDetail.setDescription(description);
-				productDetail.setCount(count);
-				productDetail.setCountInSingleBox(countInSingleBox);
+				//productDetail.setCount(count);
+				//productDetail.setCountInSingleBox(countInSingleBox);
 				productDetail.setPriceWithoutTax(priceWithoutTax);
 				
 				productDetailRepository.save(productDetail);

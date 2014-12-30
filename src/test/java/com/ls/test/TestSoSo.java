@@ -25,6 +25,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
+import com.ls.constants.HanthinkProperties;
 import com.ls.entity.AutomaticJob;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
@@ -42,15 +43,15 @@ public class TestSoSo {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(1);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(2);
 
-		metroAutomationService.grabOrders("2014-12-25", "2014-12-25", automaticJob);
+		metroAutomationService.grabOrders("2014-12-27", "2014-12-27", automaticJob);
 	}
 
 	@Test
 	public void testWholeProcess() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(1);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(2);
 		
 		metroAutomationService.postDataToWebService("2014-12-27", "2014-12-27", automaticJob);
 	}
@@ -112,5 +113,11 @@ public class TestSoSo {
 		return ordersItemList;
 		
 	
+	}
+	
+	@Test
+	public void testReadProperties() {
+		String ocrString = HanthinkProperties.getString("tessertOcrInstallPath");
+		System.out.println(ocrString);
 	}
 }

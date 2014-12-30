@@ -2,14 +2,13 @@ package com.ls.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.Set;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -57,6 +55,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
+import com.ls.constants.HanthinkProperties;
 import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
@@ -86,8 +85,19 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	@Autowired
 	ProductDetailRepository productDetailRepository;
+	
+	private boolean checkIfOrderNotGrabed(Orders order) {
+		
+		Map<String, String> titleMap = order.getOrderTitleMap();
+		String orderNumber = titleMap.get("orderNumber");
+		String address = titleMap.get("address");
+		
+		Order existedOrder = orderRepository.findByOrderNumberAndAddress(orderNumber, address);
+		
+		return existedOrder == null;
+	}
 
-	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException {
+	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		List<Orders> ordersList = Lists.newArrayList();
 
@@ -95,7 +105,12 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			logger.error("configuration for job authan is not good.");
 			throw new ConfigurationException();
 		}
-
+		
+		if (StringUtils.isEmpty(authanJob.getCompanyCode())) {
+			
+			throw new ConfigurationException("未配置企业代码");
+		}
+		
 		Date now = new Date();
 		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 
@@ -126,11 +141,44 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 				for (int index = 1; index <= pageCount + 1; index++) {
 
 					String retrievingDataUrl = getOrdersListRequestUrl + getQueryParameters(start, end) + "&page=" + index;
+					
 					String responseData = webClient.getPage(retrievingDataUrl).getWebResponse().getContentAsString();
 
 					JSONArray dataArray = JSONObject.fromObject(responseData).getJSONArray("rows");
+					
+					Object[] orderListArray = dataArray.toArray();
 
-					saveToOrderList(dataArray, ordersList, webClient);
+					for (Object singleOrder : orderListArray) {
+
+						Orders order = new Orders();
+						ObjectMapper objectMapper = new ObjectMapper();
+
+						HashMap<String, String> titleMap = objectMapper.readValue(singleOrder.toString(), new TypeReference<HashMap<String, String>>(){});
+						order.setOrderTitleMap(titleMap);
+
+						String orderNumber = titleMap.get("CELL0");
+						String orderDate = titleMap.get("CREATEON");
+						String address = titleMap.get("CELL3");
+						String estimateTakeOverDate = titleMap.get("CELL2");
+						
+						titleMap.put("orderNumber", toEmpty(orderNumber));
+						titleMap.put("orderDate",  toEmpty(orderDate));
+						titleMap.put("address",  toEmpty(address));
+						titleMap.put("estimateTakeOverDate",  toEmpty(estimateTakeOverDate));
+						
+						if (checkIfOrderNotGrabed(order)) {
+							
+							String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
+							
+							Page detailPage = webClient.getPage(detailBaseUrl);
+
+							List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
+							order.setOrdersItemList(ordersItemList);
+
+							ordersList.add(order);
+						}
+					}
+
 				}
 
 			}
@@ -140,8 +188,23 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			automaticJobRepository.saveAndFlush(authanJob);
 
-		} catch (Exception e) {
-			return null;
+		}  finally {
+			
+			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
+			
+			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
+				public boolean accept(File dir, String name) {
+					
+					if (name.endsWith("txt") || name.endsWith("jpg")) {
+						return true;
+					}
+					return false;
+				}
+			});
+			
+			for (File file : filesNeedToBeDeleted) {
+				file.delete();
+			}
 		}
 		return ordersList;
 	}
@@ -163,19 +226,23 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			String orderDate = titleMap.get("CREATEON");
 			String address = titleMap.get("CELL3");
 			String estimateTakeOverDate = titleMap.get("CELL2");
-
+			
 			titleMap.put("orderNumber", orderNumber);
 			titleMap.put("orderDate", orderDate);
 			titleMap.put("address", address);
 			titleMap.put("estimateTakeOverDate", estimateTakeOverDate);
+			
+			if (checkIfOrderNotGrabed(order)) {
+				
+				String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
+				
+				Page detailPage = webClient.getPage(detailBaseUrl);
 
-			String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
-			Page detailPage = webClient.getPage(detailBaseUrl);
+				List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
+				order.setOrdersItemList(ordersItemList);
 
-			List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
-			order.setOrdersItemList(ordersItemList);
-
-			ordersList.add(order);
+				ordersList.add(order);
+			}
 		}
 
 	}
@@ -198,10 +265,12 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			JSONObject detailObject = JSONObject.fromObject(item);
 			Map<String, String> itemMap = Maps.newHashMap();
 
-			itemMap.put("description", detailObject.getString("CELL3"));
-			itemMap.put("count", detailObject.getString("CELL4"));
-			itemMap.put("moneyAmount", detailObject.getString("CELL7"));
-			itemMap.put("orderNumber", orderNumber);
+			itemMap.put("description",  toEmpty(detailObject.getString("CELL3")));
+			itemMap.put("count",  toEmpty(detailObject.getString("CELL4")));
+			
+			itemMap.put("moneyAmount",  toEmpty(detailObject.getString("CELL7")));
+			
+			itemMap.put("orderNumber",  toEmpty(orderNumber));
 
 			ordersItemList.add(itemMap);
 		}
@@ -210,14 +279,24 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	}
 
+	private String toEmpty(String input) {
+		
+		String inputString = StringUtils.trimToEmpty(input);
+		
+		if (inputString.toLowerCase().equals("null")) {
+			inputString = "";
+		}
+		
+		return inputString;
+	}
 	public String getQueryParameters(String start, String end) {
 
-		String baseUrl = "?_search=false&endTime=" + end + "&page=1&rows=10&sord=asc&startTime=" + start;
+		String baseUrl = "?_search=false&endTime=" + end + "&rows=10&sord=asc&startTime=" + start;
 
 		return baseUrl;
 	}
 
-	public String tryToLogin(WebClient webClient, AutomaticJob authanJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		URL url = new URL("http://v30.sosgps.net.cn/platform-1.0/systemindex.do");
 
@@ -242,8 +321,8 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		final HtmlTextInput validateCodeTextInput = form.getInputByName("validateCode");
 
 		companyCodeTextInput.setValueAttribute("shcmmy");
-		usernameTextInput.setValueAttribute(authanJob.getUsername());
-		passwordField.setValueAttribute(authanJob.getPassword());
+		usernameTextInput.setValueAttribute(automaticJob.getUsername());
+		passwordField.setValueAttribute(automaticJob.getPassword());
 
 		Set<Cookie> cookies = webClient.getCookieManager().getCookies();
 		List<String> keyvaluePairList = Lists.newArrayList();
@@ -254,7 +333,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		}
 
 		String baseCookieValue = Joiner.on(";").join(keyvaluePairList);
-		baseCookieValue += ";login_entCode=shcmmy; login_userName=admin; ENT_CUSTOMIZATION=default_ent";
+		baseCookieValue += ";login_entCode=" + automaticJob.getCompanyCode() + "; login_userName=admin; ENT_CUSTOMIZATION=default_ent";
 
 		String validationCode = generateNewValidationCode(baseCookieValue, webClient);
 
@@ -274,7 +353,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 		} else {
 
-			return tryToLogin(webClient, authanJob);
+			return tryToLogin(webClient, automaticJob);
 		}
 	}
 
@@ -284,13 +363,13 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 		String fileName = GrapImgUtil.grabImgWithSrc(getNewValidationCodeURL, cookies);
 		Thread.sleep(1000);
-
-		String command = "D:\\applications\\Tesseract-OCR\\tesseract.exe D:\\applications\\Tesseract-OCR\\" + fileName + ".jpg" + " D:\\applications\\Tesseract-OCR\\" + fileName;
+		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
+		String command = ocrInstallPath + "tesseract.exe " + ocrInstallPath + fileName + ".jpg " + ocrInstallPath + fileName;
 
 		Process process = Runtime.getRuntime().exec(command);
 		process.waitFor();
 
-		String code = Files.readFirstLine(new File("D:\\applications\\Tesseract-OCR\\" + fileName + ".txt"), Charset.defaultCharset());
+		String code = Files.readFirstLine(new File( ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
 		if (StringUtils.isNotBlank(code)) {
 			code = code.replace(" ", "");
 		}
@@ -300,54 +379,6 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			return code;
 		} else {
 			return generateNewValidationCode(cookies, webClient);
-		}
-
-	}
-
-	public String generateReconizableCode(WebClient webClient) throws IOException, InterruptedException {
-
-		Thread.sleep(1000);
-
-		String validateCodeActionUrl = "http://v30.sosgps.net.cn/platform-1.0/systemadmin/validateCode.do?timestamp=" + System.currentTimeMillis();
-
-		String name = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-		File storeFile = new File("D:\\applications\\Tesseract-OCR\\" + name + ".jpg");
-
-		if (!storeFile.exists()) {
-			storeFile.createNewFile();
-		}
-
-		FileOutputStream fileOutputStream = new FileOutputStream(storeFile);
-
-		InputStream inputStream = webClient.getPage(validateCodeActionUrl).getWebResponse().getContentAsStream();
-
-		IOUtils.copy(inputStream, fileOutputStream);
-
-		IOUtils.closeQuietly(inputStream);
-		IOUtils.closeQuietly(fileOutputStream);
-
-		String fileName = name + ".jpg";
-
-		String command = "D:\\applications\\Tesseract-OCR\\tesseract.exe D:\\applications\\Tesseract-OCR\\" + fileName + " D:\\applications\\Tesseract-OCR\\" + fileName;
-
-		Process process = Runtime.getRuntime().exec(command);
-		process.waitFor();
-
-		String code = Files.readFirstLine(new File("D:\\applications\\Tesseract-OCR\\" + fileName + ".txt"), Charset.defaultCharset());
-		if (StringUtils.isNotBlank(code)) {
-			code = code.replace(" ", "");
-		}
-		System.out.println(code);
-
-		boolean isValidCode = (StringUtils.isNotBlank(code) && code.length() == 4 && StringUtils.isNumeric(code));
-
-		System.out.println(isValidCode);
-
-		if (isValidCode) {
-			return code;
-
-		} else {
-			return generateReconizableCode(webClient);
 		}
 
 	}
@@ -412,7 +443,40 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			return responseVo;
 
+		} catch (FailingHttpStatusCodeException e) {
+			
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
+
+			logger.error("postDataToWebService error" + responseVo.toString());
+
+			return responseVo;
+		} catch (MalformedURLException e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
+
+			logger.error("postDataToWebService error" + responseVo.toString());
+		} catch (IOException e) {
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
+
+			logger.error("postDataToWebService error" + responseVo.toString());
+		} catch (URISyntaxException e) {
+			
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
+
+			logger.error("postDataToWebService error" + responseVo.toString());
+		} catch (InterruptedException e) {
+			//??!
+		} catch (TemplateException e) {
+			
+			responseVo.setType(ResponseVo.MessageType.FAIL.name());
+			responseVo.setMessage("封装模板时发生了错误：" + e.getMessage());
+
+			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (Exception e) {
+			
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("出错了:" + e.getMessage());
 
@@ -472,9 +536,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			for (Map<String, String> singleDetailMap : detailMap) {
 
-				String description = singleDetailMap.get("description");
-				Integer count = Integer.valueOf(singleDetailMap.get("count"));
-				String moneyAmount = singleDetailMap.get("moneyAmount");
+				String description = toEmpty(singleDetailMap.get("description"));
+				String count = toEmpty(singleDetailMap.get("count"));
+				String moneyAmount = toEmpty(singleDetailMap.get("moneyAmount"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());

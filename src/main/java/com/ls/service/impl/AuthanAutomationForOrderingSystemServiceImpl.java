@@ -358,8 +358,8 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 				String productNumber = singleDetailMap.get("货号");
 				String barCode = singleDetailMap.get("条目号");
 				String description = singleDetailMap.get("货品描述");
-				Integer count = Integer.valueOf(singleDetailMap.get("订货数"));
-				Integer countInSingleBox = Integer.valueOf(singleDetailMap.get("箱含量"));
+				String count = singleDetailMap.get("订货数");
+				String countInSingleBox = singleDetailMap.get("箱含量");
 				String priceWithoutTax = singleDetailMap.get("未税进价");
 				
 				ProductDetail productDetail = new ProductDetail();
