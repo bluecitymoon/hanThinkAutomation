@@ -17,44 +17,80 @@ import com.ls.vo.ResponseVo;
 public class AuthanAutomationQuartzJob implements Job {
 
 	private AuthanAutomationService authanAutzmationService;
+
+	private AuthanAutomationService sosoAutomationService;
+
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
-	
+
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
-			authanAutzmationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("authanAutomationService");
-			Date today = new Date();
-			AutomaticJob authanJob = (AutomaticJob)context.getJobDetail().getJobDataMap().get("jobWillRun");
+		System.out.println("AuthanAutomationQuartzJob starts...................................................................");
+		
+		authanAutzmationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("authanAutomationService");
 
-			String lastRunDate = authanJob.getLastGrabEnd();
-			if (StringUtils.isEmpty(lastRunDate)) {
-				lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER.format(today);
-			} 
+		sosoAutomationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("sosoAutomationService");
+		
+		Date today = new Date();
+		AutomaticJob authanJob = (AutomaticJob) context.getJobDetail().getJobDataMap().get("jobWillRun");
+		System.out.println("Job -- >" + authanJob.toString());
+		
+		String storeDatasourceIdentity = (String) context.getJobDetail().getJobDataMap().get("storeDatasourceIdentity");
+		
+		System.out.println("Type -- >" + storeDatasourceIdentity);
+		
+		String lastRunDate = authanJob.getLastGrabEnd();
+		if (StringUtils.isEmpty(lastRunDate)) {
+			lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER.format(today);
+		}
+
+		Integer delayDays = authanJob.getDelayDays();
+		if (delayDays == null) {
+			delayDays = 0;
+		}
+
+		ResponseVo responseVo = null;
+
+		try {
+			Date lastRunDateInDb = AuthanConstants.HANTHINK_TIME_FORMATTER.parse(lastRunDate);
+			long startDateWithDelay = lastRunDateInDb.getTime() - delayDays * 24 * 60 * 60 * 1000;
+
+			Date lastRunDateForQuery = new Date(startDateWithDelay);
+
+			lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(lastRunDateForQuery);
+
+			String now = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(today);
 			
-			Integer delayDays = authanJob.getDelayDays();
-			if (delayDays == null) {
-				delayDays = 0;
-			}
 			
-			ResponseVo responseVo = null;
-			try {
-				Date lastRunDateInDb = AuthanConstants.HANTHINK_TIME_FORMATTER.parse(lastRunDate);
-				long startDateWithDelay = lastRunDateInDb.getTime() - delayDays * 24 * 60 * 60 * 1000;
+			System.out.println("lastRunDate -- >" + lastRunDate);
+			System.out.println("now -- >" + now	);
+			if (storeDatasourceIdentity.equals("SOSO")) {
 				
-				Date lastRunDateForQuery = new Date(startDateWithDelay);
+				System.out.println("sosoAutomationService postDataToWebService");
+				responseVo = sosoAutomationService.postDataToWebService(lastRunDate, now, authanJob);
 				
-				lastRunDate = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(lastRunDateForQuery);
+				System.out.println(responseVo.toString());
 				
-				String now = AuthanConstants.HANTHINK_TIME_FORMATTER_QUERY.format(today);
-			
+			} else if (storeDatasourceIdentity.equals("AUTHAN")) {
+				
 				responseVo = authanAutzmationService.postDataToWebService(lastRunDate, now, authanJob);
-				
-			} catch (Exception e) {
-				logger.error(AuthanConstants.HANTHINK_TIME_FORMATTER.format(new Date()));
-				logger.error(responseVo.getType());
-				logger.error(responseVo.getMessage());
-				logger.error(e.getMessage());
+
+			} else {
+
+				responseVo = ResponseVo.newFailMessage("尚未开发的功能。");
 			}
 
+			System.out.println(responseVo.toString());
+			
+			logger.info(responseVo.toString());
+
+		} catch (Exception e) {
+			logger.error(AuthanConstants.HANTHINK_TIME_FORMATTER.format(new Date()));
+			logger.error(responseVo.getType());
+			logger.error(responseVo.getMessage());
+			logger.error(e.getMessage());
+		}
+		
+		System.out.println("AuthanAutomationQuartzJob stopped...................................................................");
 	}
 
 }

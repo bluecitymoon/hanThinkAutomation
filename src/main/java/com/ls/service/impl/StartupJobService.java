@@ -19,9 +19,11 @@ import org.springframework.stereotype.Component;
 
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
+import com.ls.entity.Store;
 import com.ls.jobs.AuthanAutomationQuartzJob;
 import com.ls.jobs.AutomaticJobManager;
 import com.ls.repository.AutomaticJobRepository;
+import com.ls.repository.StoreRepository;
 import com.ls.service.AuthanAutomationService;
 
 @Component("StartupJobService")
@@ -32,8 +34,14 @@ private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
 	@Autowired
 	private AutomaticJobRepository automaticJobRepository;
 	
+	@Autowired
+	private StoreRepository storeRepository;
+	
 	@Resource(name = "authanService")
 	private AuthanAutomationService authanAutomationService;
+	
+	@Resource(name = "sosoAutomationService")
+	private AuthanAutomationService sosoAutomationService;
        
 	public void afterPropertiesSet() throws Exception {
 		List<AutomaticJob> allJobs = automaticJobRepository.findAll();
@@ -42,9 +50,20 @@ private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
 			if (StringUtils.isNotBlank(automaticJob.getStatus()) && automaticJob.getStatus().equals("已启动")) {
 
 				
+				Integer storeId = automaticJob.getStoreId();
+
+				if (storeId == null) {
+					System.out.println("can't find store");
+					return;
+				}
+
+				Store store = storeRepository.findOne(storeId);
+				String storeDatasourceIdentity = store.getIdentity();
 				JobDataMap jobDataMap = new JobDataMap();
 				jobDataMap.put("authanAutomationService", authanAutomationService);
+				jobDataMap.put("sosoAutomationService", sosoAutomationService);
 				jobDataMap.put("jobWillRun", automaticJob);
+				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 
 				try {
 

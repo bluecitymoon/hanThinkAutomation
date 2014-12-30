@@ -107,4 +107,9 @@ public class TestInitializationScripts {
 		menuRepository.save(ImmutableList.of(menu1, menu2, menu6, menu4));
 
 	}
+	
+	@Test
+	public void testPurETet() {
+		System.out.println(Integer.valueOf("03"));
+	}
 }

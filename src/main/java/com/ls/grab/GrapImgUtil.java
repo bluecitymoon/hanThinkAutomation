@@ -15,6 +15,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 
+import com.ls.constants.HanthinkProperties;
+
 public class GrapImgUtil {
 
 	public static void main(String[] args) {
@@ -57,18 +59,18 @@ public class GrapImgUtil {
 	public static synchronized String grabImgWithSrc(String imgSrc, String cookies) {
 
 		HttpClient client = HttpClientBuilder.create().build();
-		
+
 		HttpGet request = new HttpGet(imgSrc);
-			
+
 		request.addHeader(new BasicHeader("Cookie", cookies + "; login_entCode=shcmmy; login_userName=admin; ENT_CUSTOMIZATION=default_ent"));
-		
+
 		try {
 
 			HttpResponse response = client.execute(request);
 
 			String name = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 
-			File storeFile = new File("D:\\applications\\Tesseract-OCR\\" + name + ".jpg");
+			File storeFile = new File(HanthinkProperties.getString("tessertOcrInstallPath") + name + ".jpg");
 
 			if (!storeFile.exists()) {
 				storeFile.createNewFile();
@@ -83,7 +85,7 @@ public class GrapImgUtil {
 			IOUtils.closeQuietly(inputStream);
 			IOUtils.closeQuietly(fileOutputStream);
 
-			return name ;
+			return name;
 
 		} catch (IOException e) {
 			e.printStackTrace();

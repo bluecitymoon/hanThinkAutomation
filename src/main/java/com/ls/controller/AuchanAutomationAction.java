@@ -282,10 +282,22 @@ public class AuchanAutomationAction extends BaseAction {
 			return SUCCESS;
 		}
 
+		Integer storeId = jobInDb.getStoreId();
+
+		if (storeId == null) {
+			response = ResponseVo.newFailMessage("未知的数据源，检查这个任务是否配置了数据源。");
+
+			return SUCCESS;
+		}
+
+		Store store = storeRepository.findOne(storeId);
+		String storeDatasourceIdentity = store.getIdentity();
 		JobDataMap jobDataMap = new JobDataMap();
 		jobDataMap.put("authanAutomationService", authanAutomationService);
+		jobDataMap.put("sosoAutomationService", sosoAutomationService);
 		jobDataMap.put("jobWillRun", jobInDb);
-
+		jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
+		
 		try {
 
 			String startHourAndMin = jobInDb.getStart();
