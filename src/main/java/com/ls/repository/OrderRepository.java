@@ -8,4 +8,5 @@ import com.ls.entity.Order;
 public interface OrderRepository extends JpaRepository<Order, Integer> , JpaSpecificationExecutor<Order>{
 	Order findByOrderNumberAndStoreNumber(String orderNumber, String storeNumber);
 	Order findByOrderNumberAndAddress(String orderNumber, String address);
+	Order findByOrderNumber(String orderNumber);
 }

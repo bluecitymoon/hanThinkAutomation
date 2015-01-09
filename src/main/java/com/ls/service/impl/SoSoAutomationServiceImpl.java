@@ -92,7 +92,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		String orderNumber = titleMap.get("orderNumber");
 		String address = titleMap.get("address");
 		
-		Order existedOrder = orderRepository.findByOrderNumberAndAddress(orderNumber, address);
+		Order existedOrder = orderRepository.findByOrderNumber(orderNumber);
 		
 		return existedOrder == null;
 	}
@@ -477,6 +477,8 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (Exception e) {
 			
+			e.printStackTrace();
+			
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("出错了:" + e.getMessage());
 
@@ -532,8 +534,18 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			order.setCreateDate(HanthinkUtil.getNow());
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
-			Order savedOrder = orderRepository.saveAndFlush(order);
+			Order savedOrder = null;
+			try {
+				savedOrder = orderRepository.saveAndFlush(order);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
+			if (null == savedOrder) {
+				 continue;
+			}
+			
 			for (Map<String, String> singleDetailMap : detailMap) {
 
 				String description = toEmpty(singleDetailMap.get("description"));
@@ -547,8 +559,16 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 				productDetail.setCount(count);
 				productDetail.setMoneyAmountWithoutTax(moneyAmount);
 
-				productDetailRepository.save(productDetail);
+				try {
+					productDetail = productDetailRepository.saveAndFlush(productDetail);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
+				if (null == productDetail) {
+					continue;
+				}
 			}
 
 			savedOrderList.add(savedOrder);
