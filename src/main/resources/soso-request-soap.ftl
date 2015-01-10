@@ -51,6 +51,9 @@
 		<buhanshuijine>${product['moneyAmount']}</buhanshuijine>
 		<buhanshuidanjia></buhanshuidanjia>
 		<shuilv></shuilv>
+		<zengpinbianma></zengpinbianma>
+		<zengpinmiaoshu>${product['giftName']}</zengpinmiaoshu>
+		<zengpinshuliang>${product['giftCount']}</zengpinshuliang>
 	</xsdingdanzibiao>
 	</#list>
 	</#if>

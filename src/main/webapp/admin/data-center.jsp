@@ -93,7 +93,9 @@
 							<th>订货数</th>
 							<th>箱含量</th>
 							<th>未税进价</th>
-							
+							<th>赠品名称</th>
+							<th>赠品数量</th>
+							<th>赠品编码</th>
 						</tr>
 					</thead>
 					<tbody data-bind="foreach : loadedProductDetailList">
@@ -105,7 +107,9 @@
 							<td style="text-align: center" data-bind="text : count"></td>
 							<td style="text-align: center" data-bind="text : countInSingleBox"></td>
 							<td style="text-align: center" data-bind="text : priceWithoutTax"></td>
-							
+							<td style="text-align: center" data-bind="text : giftName"></td>
+							<td style="text-align: center" data-bind="text : giftCount"></td>
+							<td style="text-align: center" data-bind="text : giftCode"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -143,6 +147,9 @@
 				self.priceWithTax = '';
 				self.priceWithoutTax = '';
 				self.createDate = '';
+				self.giftName = '';
+				self.giftCount = '';
+				self.giftCode = '';
 				
 			};
 

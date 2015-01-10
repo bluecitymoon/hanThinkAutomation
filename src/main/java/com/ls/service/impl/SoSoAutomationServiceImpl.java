@@ -192,6 +192,8 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			
 			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
 			
+			System.out.println(ocrInstallPath);
+			
 			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
 				public boolean accept(File dir, String name) {
 					
@@ -262,7 +264,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		Object[] dataItem = listItems.toArray();
 
 		for (Object item : dataItem) {
+			
 			JSONObject detailObject = JSONObject.fromObject(item);
+			
 			Map<String, String> itemMap = Maps.newHashMap();
 
 			itemMap.put("description",  toEmpty(detailObject.getString("CELL3")));
@@ -271,6 +275,19 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			itemMap.put("moneyAmount",  toEmpty(detailObject.getString("CELL7")));
 			
 			itemMap.put("orderNumber",  toEmpty(orderNumber));
+			
+			String giftName = detailObject.getString("CELL5");
+			String giftCount = detailObject.getString("CELL6");
+			if (StringUtils.isNotBlank(giftName) && !giftName.equals("null")) {
+				itemMap.put("giftName", giftName);
+			} else {
+				itemMap.put("giftName", "");
+			}
+			if (StringUtils.isNotBlank(giftCount) && !giftCount.equals("null")) {
+				itemMap.put("giftCount", giftCount);
+			} else {
+				itemMap.put("giftCount", "");
+			}
 
 			ordersItemList.add(itemMap);
 		}
@@ -414,6 +431,8 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
+			
+			System.out.println(data);
 
 			String url = job.getClientIp() + job.getClientEnd();
 
@@ -425,7 +444,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			if (httpEntity != null) {
 				responseText = EntityUtils.toString(httpEntity);
 			}
-
+			
+			System.out.println(responseText);
+			
 			if (response.getStatusLine().getStatusCode() >= 200) {
 				// XMLSerializer xmlSerializer = new XMLSerializer();
 				// xmlSerializer.read(responseText)
@@ -551,6 +572,8 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 				String description = toEmpty(singleDetailMap.get("description"));
 				String count = toEmpty(singleDetailMap.get("count"));
 				String moneyAmount = toEmpty(singleDetailMap.get("moneyAmount"));
+				String giftName = toEmpty(singleDetailMap.get("giftName"));
+				String giftCount = toEmpty(singleDetailMap.get("giftCount"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
@@ -558,11 +581,12 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 				productDetail.setDescription(description);
 				productDetail.setCount(count);
 				productDetail.setMoneyAmountWithoutTax(moneyAmount);
+				productDetail.setGiftCount(giftCount);
+				productDetail.setGiftName(giftName);
 
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

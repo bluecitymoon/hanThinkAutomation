@@ -30,7 +30,34 @@ public class ProductDetail implements Serializable {
 	protected String priceWithoutTax;
 	protected Date createDate;
 	protected String moneyAmountWithoutTax;
+	protected String giftName;
+	protected String giftCount;
+	protected String giftCode;
 	
+	public String getGiftCode() {
+		return giftCode;
+	}
+
+	public void setGiftCode(String giftCode) {
+		this.giftCode = giftCode;
+	}
+
+	public String getGiftName() {
+		return giftName;
+	}
+
+	public void setGiftName(String giftName) {
+		this.giftName = giftName;
+	}
+
+	public String getGiftCount() {
+		return giftCount;
+	}
+
+	public void setGiftCount(String giftCount) {
+		this.giftCount = giftCount;
+	}
+
 	public String getMoneyAmountWithoutTax() {
 	
 		return moneyAmountWithoutTax;
