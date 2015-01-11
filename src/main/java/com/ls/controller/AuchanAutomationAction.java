@@ -45,6 +45,7 @@ import com.ls.repository.ProductDetailRepository;
 import com.ls.repository.StoreRepository;
 import com.ls.repository.UserRepository;
 import com.ls.service.AuthanAutomationService;
+import com.ls.service.DataManagementService;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.PagedElement;
 import com.ls.vo.ResponseVo;
@@ -230,7 +231,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 		} else {
 
-			AutomaticJob automaticJob = (AutomaticJob)JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
+			AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
 
 			if (automaticJob.getId() == null) {
 				automaticJob.setClientEnd("/hanthinkserver/service1.asmx");
@@ -255,7 +256,7 @@ public class AuchanAutomationAction extends BaseAction {
 	public String deleteJob() {
 
 		String jobJason = getParameter("job");
-		AutomaticJob automaticJob = (AutomaticJob)JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
+		AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
 
 		try {
 			authanAutomationService.deleteJob(automaticJob);
@@ -297,7 +298,7 @@ public class AuchanAutomationAction extends BaseAction {
 		jobDataMap.put("sosoAutomationService", sosoAutomationService);
 		jobDataMap.put("jobWillRun", jobInDb);
 		jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
-		
+
 		try {
 
 			String startHourAndMin = jobInDb.getStart();
@@ -330,7 +331,7 @@ public class AuchanAutomationAction extends BaseAction {
 				String uniqueGroupName = getUniqueGroupName(jobInDb);
 
 				JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).usingJobData(jobDataMap).withIdentity(jobIdentityKey, uniqueGroupName).build();
-				CronTriggerImpl singleTrigger = (CronTriggerImpl)CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
+				CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
 				singleTrigger.setName(jobIdentityKey);
 				singleTrigger.setGroup(uniqueGroupName);
 				Scheduler scheduler = AutomaticJobManager.getScheduler();
@@ -394,35 +395,6 @@ public class AuchanAutomationAction extends BaseAction {
 		return SUCCESS;
 	}
 
-	public String getAllGrabData() {
-
-		String currentIndexString = getParameter("currentIndex");
-		if (StringUtils.isEmpty(currentIndexString)) {
-			currentIndexString = "1";
-		}
-
-		PageRequest pageRequest = new PageRequest(Integer.valueOf(currentIndexString), 50, new Sort(Direction.DESC, "id"));
-
-		Page<Order> ordersResult = orderRepository.findAll(pageRequest);
-
-		orders = new PagedElement<Order>(ordersResult);
-
-		return SUCCESS;
-	}
-
-	public String showProductDetailsByOrderId() {
-
-		String orderId = getParameter("orderIdSelected");
-
-		if (StringUtils.isNotBlank(orderId)) {
-			productDetails = productDetailRepository.findByOrderId(Integer.valueOf(orderId));
-		} else {
-			productDetails = Lists.newArrayList();
-		}
-
-		return SUCCESS;
-	}
-
 	private String getUniqueGroupName(AutomaticJob jobInDb) {
 
 		return jobInDb.getDbName() + jobInDb.getName() + jobInDb.getId();
@@ -431,7 +403,7 @@ public class AuchanAutomationAction extends BaseAction {
 	private AutomaticJob getJobdetailsFromRequest() {
 
 		String jobJason = getParameter("job");
-		AutomaticJob automaticJob = (AutomaticJob)JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
+		AutomaticJob automaticJob = (AutomaticJob) JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
 
 		return automaticJob;
 	}

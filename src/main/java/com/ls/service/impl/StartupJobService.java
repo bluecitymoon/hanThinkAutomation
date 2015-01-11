@@ -37,7 +37,7 @@ private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
 	@Autowired
 	private StoreRepository storeRepository;
 	
-	@Resource(name = "authanService")
+	@Resource(name = "authanOrderSystemService")
 	private AuthanAutomationService authanAutomationService;
 	
 	@Resource(name = "sosoAutomationService")

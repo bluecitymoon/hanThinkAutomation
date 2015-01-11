@@ -78,14 +78,19 @@
 			</result>
 		</action>
 		
-		<action name="getAllGrabData" class="auchanAction" method="getAllGrabData">
+		<action name="getAllGrabData" class="consoleAction" method="getAllGrabData">
 			<result name="success" type="json">
 				<param name="root">orders</param>
 			</result>
 		</action>
-		<action name="showProductDetailsByOrderId" class="auchanAction" method="showProductDetailsByOrderId">
+		<action name="showProductDetailsByOrderId" class="consoleAction" method="showProductDetailsByOrderId">
 			<result name="success" type="json">
 				<param name="root">productDetails</param>
+			</result>
+		</action>
+		<action name="removeOrders" class="consoleAction" method="removeOrders">
+			<result name="success" type="json">
+				<param name="root">response</param>
 			</result>
 		</action>
 		

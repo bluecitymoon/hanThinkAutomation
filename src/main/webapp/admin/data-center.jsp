@@ -13,9 +13,6 @@
 	<s:include value="/jsps/common/menu.jsp" />
 	<section class="mainbg">
 		<div class="container" id="dataCenterContainer">
-
-
-			<!-- 
 			<div class="row">
 				<div class="app-wrapper ui-corner-top">
 					<div class="blue module ui-corner-top clearfix">
@@ -27,10 +24,16 @@
 							<div class="six columns">
 								<div class="row collapse">
 									<div class="eight columns">
-										<input id="userNameInput" type="text" class="addon-postfix" placeholder="" data-bind="value : userName" />
+										<select data-bind="options: $root.jobList,
+                      										optionsText: 'name',
+                       									    value: $root.selectedTaskId,
+                       									    optionsValue : 'id',
+                       									    selectedOption : $root.selectedTaskId,
+                       									    optionsCaption: '请选择...'">
+                       					</select>
 									</div>
 									<div class="four columns">
-										<button class="small nice blue button postfix" data-bind="click : searchUser">搜索</button>
+										<button class="small nice blue button postfix" data-bind="click : loadOrderList">搜索</button>
 									</div>
 								</div>
 							</div>
@@ -39,38 +42,45 @@
 						</div>
 					</div>
 				</div>
-				 -->
+			</div>	
 			<div class="row">
 				<div class="app-wrapper ui-corner-top">
 					<div class="blue module ui-corner-top clearfix">
 						<h2>数据列表</h2>
-						<h2 class="right"></h2>
+						<h2 class="right">
+							<a title="删除所有" class="white small button" data-bind="click : $root.removeAll"  href="#">删除所有</a>
+						</h2>
 					</div>
 					<div class="content">
 						<div class="row">
 							<table class="infoTable">
 								<thead>
 									<tr>
+										
 										<th>创建时间</th>
+										<th>任务名称</th>
 										<th>订单编号</th>
 										<th>供应商</th>
 										<th>店号</th>
 										<th>订单日期</th>
 										<th>预定收货日期</th>
 										<th>地址</th>
-										<th>明细</th>
+										<th>操作</th>
 									</tr>
 								</thead>
 								<tbody data-bind="foreach : orderList">
 									<tr>
 										<td style="text-align: center" data-bind="text : createDate"></td>
+										<td style="text-align: center" data-bind="text : jobName"></td>
 										<td style="text-align: center" data-bind="text : orderNumber"></td>
 										<td style="text-align: center" data-bind="text : supplierNumber"></td>
 										<td style="text-align: center" data-bind="text : storeNumber"></td>
 										<td style="text-align: center" data-bind="text : orderDate"></td>
 										<td style="text-align: center" data-bind="text : estimateTakeOverDate"></td>
 										<td style="text-align: left" data-bind="text : address"></td>
-										<td style="text-align: center"><a title="查看" data-bind="click : $root.showDetails" style="margin-left: 10px;" href="#"><i class="icon-user small icon-blue"></i></a></td>
+										<td style="text-align: center">
+											<a data-bind="click : $root.removeSingleOrder" href="#" title="删除"><i class="icon-trash small icon-red"></i></a>
+											<a title="查看" data-bind="click : $root.showDetails" style="margin-left: 20px;" href="#"><i class="icon-user small icon-blue"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
@@ -124,6 +134,7 @@
 		$(document).ready(function() {
 
 			var Order = function() {
+				
 				var self = this;
 				self.id = '';
 				self.orderNumber = '';
@@ -133,6 +144,7 @@
 				self.storeNumber = '';
 				self.createDate = '';
 				self.address = '';
+				self.jobName = '';
 			};
 
 			var ProductDetail = function() {
@@ -159,6 +171,64 @@
 				self.loadedProductDetailList = ko.observableArray([]);
 				self.currentIndex = ko.observable(1);
 				self.totalOrderCount = ko.observable(1);
+				self.jobList = ko.observableArray([]);
+				self.selectedTaskId = ko.observable('');
+				
+				self.searchOrder = function() {
+					$.ajax({
+						url : 'searchOrder.action',
+						success : function(data) {
+							
+						},
+						error : function(XMLHttpRequest, textStatus,
+								errorThrown) {
+						}
+					});
+				};
+				
+				self.removeAll = function() {
+					
+					if(window.confirm("确定删除？")) {
+						var orderIdList = new Array();
+						$.each(self.orderList(), function(index, item) {
+							orderIdList.push(item.id);
+						});
+						
+						if( orderIdList.length == 0) {
+							return;
+						}
+						
+						$.ajax({
+							url : 'removeOrders.action',
+							data : {
+								orderIdList : JSON.stringify(orderIdList)
+							},
+							success : function(data) {
+								
+								if(isOK (data)) {
+									self.loadOrderList();
+								}
+							}
+						});
+					}
+				};
+				self.removeSingleOrder = function(item, event) {
+						var orderIdList = new Array();
+						orderIdList.push(item.id);
+						
+						$.ajax({
+							url : 'removeOrders.action',
+							data : {
+								orderIdList : JSON.stringify(orderIdList)
+							},
+							success : function(data) {
+								if(isOK (data)) {
+									self.loadOrderList();
+								}
+							}
+						});
+				};
+				
 				self.showDetails = function(item, event) {
 					var orderIdSelected = item.id;
 					$.ajax({
@@ -192,7 +262,8 @@
 				self.loadOrderList = function() {
 					$.ajax({
 						url : 'getAllGrabData.action',
-						data : {currentIndex : self.currentIndex() - 1},
+						data : {currentIndex : self.currentIndex() - 1,
+								selectedTaskId : self.selectedTaskId()},
 						success : function(data) {
 							self.orderList(data.elements);
 							self.totalOrderCount(data.total);
@@ -215,6 +286,27 @@
 					});
 				};
 				self.loadOrderList();
+				
+				self.reloadJobList = function() {
+					$.ajax({
+						url : '/ls/user/readJobList.action',
+						success : function(data) {
+								try {
+								self.jobList(data);
+							} catch(e) {
+								Messenger().post({
+									message : ('加载任务列表失败，' + e),
+									showCloseButton : true
+								});
+							}
+						},
+						error : function(XMLHttpRequest, textStatus,
+								errorThrown) {
+						}
+					});
+				};
+				
+				self.reloadJobList();
 				
 				self.pageselectCallback = function(page_index, jq){
 					self.currentIndex(page_index + 1);

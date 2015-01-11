@@ -86,13 +86,13 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 	
-	private boolean checkIfOrderNotGrabed(Orders order) {
+	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
 		
 		Map<String, String> titleMap = order.getOrderTitleMap();
 		String orderNumber = titleMap.get("orderNumber");
 		String address = titleMap.get("address");
 		
-		Order existedOrder = orderRepository.findByOrderNumber(orderNumber);
+		Order existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
 		
 		return existedOrder == null;
 	}
@@ -166,7 +166,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 						titleMap.put("address",  toEmpty(address));
 						titleMap.put("estimateTakeOverDate",  toEmpty(estimateTakeOverDate));
 						
-						if (checkIfOrderNotGrabed(order)) {
+						if (checkIfOrderNotGrabed(order, authanJob.getId())) {
 							
 							String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
 							
@@ -211,43 +211,6 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		return ordersList;
 	}
 
-	private void saveToOrderList(JSONArray dataArray, List<Orders> ordersList, final WebClient webClient) throws JsonParseException, JsonMappingException, IOException {
-
-		Object[] objects = dataArray.toArray();
-
-		for (Object object : objects) {
-
-			Orders order = new Orders();
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			HashMap<String, String> titleMap = objectMapper.readValue(object.toString(), new TypeReference<HashMap<String, String>>(){
-			});
-			order.setOrderTitleMap(titleMap);
-
-			String orderNumber = titleMap.get("CELL0");
-			String orderDate = titleMap.get("CREATEON");
-			String address = titleMap.get("CELL3");
-			String estimateTakeOverDate = titleMap.get("CELL2");
-			
-			titleMap.put("orderNumber", orderNumber);
-			titleMap.put("orderDate", orderDate);
-			titleMap.put("address", address);
-			titleMap.put("estimateTakeOverDate", estimateTakeOverDate);
-			
-			if (checkIfOrderNotGrabed(order)) {
-				
-				String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
-				
-				Page detailPage = webClient.getPage(detailBaseUrl);
-
-				List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
-				order.setOrdersItemList(ordersItemList);
-
-				ordersList.add(order);
-			}
-		}
-
-	}
 
 	private List<Map<String, String>> parseDetails(String context, String orderNumber) {
 
@@ -450,7 +413,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			if (response.getStatusLine().getStatusCode() >= 200) {
 				// XMLSerializer xmlSerializer = new XMLSerializer();
 				// xmlSerializer.read(responseText)
-				saveOrders(orders);
+				saveOrders(orders, job);
 			} else {
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}
@@ -530,7 +493,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		return response;
 	}
 
-	public List<Order> saveOrders(List<Orders> orders) {
+	public List<Order> saveOrders(List<Orders> orders, AutomaticJob job) {
 
 		if (null == orders || orders.size() == 0) {
 			return null;
@@ -553,6 +516,8 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			order.setEstimateTakeOverDate(estimateTakeOverDate);
 			order.setOrderDate(orderDate);
 			order.setCreateDate(HanthinkUtil.getNow());
+			order.setJobId(job.getId());
+			order.setJobName(job.getName());
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;

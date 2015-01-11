@@ -24,7 +24,7 @@ public interface AuthanAutomationService {
 
 	ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob);
 
-	List<Order> saveOrders(List<Orders> orders);
+	List<Order> saveOrders(List<Orders> orders, AutomaticJob job);
 
 	void deleteJob(AutomaticJob automaticJob);
 

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,12 +32,12 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
@@ -89,27 +90,37 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			
 			final HtmlPage loginPage = webClient.getPage(url);
-
-			final List<HtmlForm> forms = loginPage.getForms();
-
-			HtmlForm form = null;
-			for (HtmlForm singleForm : forms) {
-				if (singleForm.getAttribute("id").equals("form1")) {
-					form = singleForm;
-				}
-			}
-
-			HtmlImage logInput = (HtmlImage) form.getHtmlElementsByTagName("img").get(0);
 			
-			final HtmlTextInput textField = form.getInputByName("userName");
-			final HtmlPasswordInput passwordField = form.getInputByName("userPwd");
+			WebRequest webRequest = new WebRequest(new URL("http://logistics.auchan.com.cn:8000/logi/login.do?method=login"), HttpMethod.POST);
+			List<NameValuePair> parameters = ImmutableList.of(
+			
+			new NameValuePair("userName", "su13017"),
+			new NameValuePair("userPwd", "13017")
+			);
+			webRequest.setRequestParameters(parameters);
+			
+			webClient.getPage(webRequest);
 
-			// Change the value of the text field
-			textField.setValueAttribute(authanJob.getUsername());
-			passwordField.setValueAttribute(authanJob.getPassword());
-
-			// click login button
-			logInput.click();
+//			final List<HtmlForm> forms = loginPage.getForms();
+//
+//			HtmlForm form = null;
+//			for (HtmlForm singleForm : forms) {
+//				if (singleForm.getAttribute("id").equals("form1")) {
+//					form = singleForm;
+//				}
+//			}
+//
+//			HtmlImage logInput = (HtmlImage) form.getHtmlElementsByTagName("img").get(0);
+//			
+//			final HtmlTextInput textField = form.getInputByName("userName");
+//			final HtmlPasswordInput passwordField = form.getInputByName("userPwd");
+//
+//			// Change the value of the text field
+//			textField.setValueAttribute(authanJob.getUsername());
+//			passwordField.setValueAttribute(authanJob.getPassword());
+//
+//			// click login button
+//			logInput.click();
 
 			String vendorNo = authanJob.getUsername().substring(2);
 			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
@@ -152,7 +163,7 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 							map.put("未税进价", "0" + priceInWithoutTax);
 						}
 					}
-					if(checkIfOrderNotGrabed(singleOrder)) {
+					if(checkIfOrderNotGrabed(singleOrder, authanJob.getId())) {
 						ordersList.add(singleOrder);
 					}
 					
@@ -247,7 +258,8 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 			if (response.getStatusLine().getStatusCode() >= 200) {
 				//XMLSerializer xmlSerializer = new XMLSerializer();
 				//xmlSerializer.read(responseText)
-				saveOrders(orders);
+				saveOrders(orders, job);
+				
 			} else {
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}
@@ -313,18 +325,18 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 		
 	}
 	
-	private boolean checkIfOrderNotGrabed(Orders order) {
+	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
 		
 		Map<String, String> titleMap = order.getOrderTitleMap();
 		String orderNumber = titleMap.get("订单号：");
 		String storeNumber = titleMap.get("店号：");
 		
-		Order existedOrder = orderRepository.findByOrderNumberAndStoreNumber(orderNumber, storeNumber);
+		Order existedOrder = orderRepository.findByOrderNumberAndStoreNumberAndJobId(orderNumber, storeNumber, jobId);
 		
 		return existedOrder == null;
 	}
 	
-	public List<Order> saveOrders(List<Orders> orders) {
+	public List<Order> saveOrders(List<Orders> orders, AutomaticJob automaticJob) {
 
 		if (null == orders || orders.size() == 0) {
 			return null;
@@ -349,6 +361,8 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 			order.setSupplierNumber(supplierNumber);
 			order.setOrderDate(orderDate);
 			order.setCreateDate(HanthinkUtil.getNow());
+			order.setJobId(automaticJob.getId());
+			order.setJobName(automaticJob.getName());
 			
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = orderRepository.saveAndFlush(order);
