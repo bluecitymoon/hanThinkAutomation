@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -256,10 +260,15 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 			}
 			
 			if (response.getStatusLine().getStatusCode() >= 200) {
-				//XMLSerializer xmlSerializer = new XMLSerializer();
-				//xmlSerializer.read(responseText)
+				
+				XMLSerializer xmlSerializer = new XMLSerializer();
+				JSON jsonObject = xmlSerializer.read(responseText);
+				
+				System.out.println(jsonObject.toString());
+				
 				saveOrders(orders, job);
 				
+				responseVo = ResponseVo.newSuccessMessage("采集成功。");
 			} else {
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}

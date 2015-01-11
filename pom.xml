@@ -18,13 +18,11 @@
 		<shiro.version>1.2.2</shiro.version>
 	</properties>
 	<dependencies>
-		<!-- 
 		<dependency>
-			<groupId>com.io7m.xom</groupId>
-			<artifactId>xom</artifactId>
-			<version>1.2.5</version>
-		</dependency>
-		 -->
+	<groupId>xom</groupId>
+	<artifactId>xom</artifactId>
+	<version>1.2.5</version>
+</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
