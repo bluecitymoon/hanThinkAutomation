@@ -6,11 +6,13 @@ public class Test {
 
 	public static void main(String[] args) {
 		
-		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><daorudanjuResponse xmlns=\"http://HanThink.com/\"><daorudanjuResult /></daorudanjuResponse></soap:Body></soap:Envelope>";
+//		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><daorudanjuResponse xmlns=\"http://HanThink.com/\"><daorudanjuResult /></daorudanjuResponse></soap:Body></soap:Envelope>";
+//		
+//		XMLSerializer xmlSerializer = new XMLSerializer();
+//		System.out.println(xmlSerializer.read(xml).toString());
 		
-		XMLSerializer xmlSerializer = new XMLSerializer();
-		System.out.println(xmlSerializer.read(xml).toString());
-		
+		String bigString  = " TESCO 乐 购 商 品 订 单 店别: 嘉善绿色物流 页1 页 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 订单号码 20553268 促销期数 紧急订单 订单日期 2015/01/08 交货日期 2015/01/16 订单类型 -PBS-PO- 电 话 传 真 店 址 浙江省嘉兴市嘉善县惠民街道新华路18号 邮 编 314100 厂商编号 10000560 名 称 上海友谊集团工具五金有限公司-家具五金 电 话 021-59143256- 传 真 02159143261 联 系 人 吴志强 地 址 上海市爱特路285弄8号 邮 编 200001 备 注 EXCELUP ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 商品货号/ 品名 规格 订购 箱 单件成本 成本 总成本 订购数量 应交 应交单件 订单 促销 国际条码 单位 入数 搭赠数量 总数 总数 (Ti Hi) 票折 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 104545013/ SP_6_友谊红柄钢丝钳150M 个 箱 6 8.45 50.72 304.31 6 6 36 1 1 N 6922458100016 M/1把 0.00 N 104545021/ SP_6_友谊红柄钢丝钳200M 个 箱 6 11.87 71.23 569.85 8 8 48 1 1 N 6922458100023 M/1把 0.00 N 104741090/ SP_6_友谊电子工具组套 套 箱 6 18.61 111.64 669.84 6 6 36 1 1 N 6922458110183 6PC/1套 0.00 N 104756460/ SP_20_漆刷0964 个 箱 20 2.32 46.32 231.62 5 5 100 1 1 N 6922458109644 0.00 N 104571078/ SP_12_友谊多功能刀 把 箱 12 8.91 106.87 748.10 7 7 84 1 1 N 6922458112255 0.00 N 104607974/ SP_15_工艺密码挂锁CL-202 个 箱 15 8.64 129.62 777.69 6 6 90 1 1 N 6922458132642 A 0.00 N 104621178/ SP_5_外热式电烙铁30W/30W 个 箱 5 11.33 56.67 340.00 6 6 30 1 1 N 6922458140203 0.00 N 104824012/ SP_10_2米卷尺 把 箱 10 2.88 28.80 201.62 7 7 70 1 1 N 6922458140265 0.00 N 105348370/ SP_12_橡塑柄十字螺丝批 个 箱 12 2.70 32.41 226.88 7 7 84 1 1 N 6922458141644 75mm 0.00 N 151552491/ SP_20_口罩(无纺布) 个 箱 20 0.94 18.80 94.02 5 5 100 1 1 N 6922458142689 0.00 N 151803638/ SP_20_点塑白手套 个 箱 20 4.36 87.18 610.26 7 7 140 1 1 N 6922458142849 0.00 N 106129523/ SP_6_全/友谊红柄尖嘴钳 把 箱 6 8.19 49.13 294.77 6 6 36 1 1 N 6922458100061 150mm/150mm 0.00 N 104728178/ SP_12_迷你尖嘴钳 把 箱 12 5.76 69.13 414.77 6 6 72 1 1 N 6922458120533 0.00 N ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Terms & Conditions / 备注 : 1.Tesco新DC将很快开始运营，请注意订单上的送货地址，感谢对Tesco的支持！ 2.商品单价不包含供应商在商品购销合同中承诺给予的折扣! The unit price of the goods do not include the rebates committed by supplier under commodity sales and purchase agreement ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── ";
+		String bigString2 = "";
 	}
 
 }

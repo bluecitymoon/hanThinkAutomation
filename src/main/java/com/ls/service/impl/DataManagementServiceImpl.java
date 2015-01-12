@@ -32,7 +32,6 @@ public class DataManagementServiceImpl implements DataManagementService {
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 
-	@Override
 	public Page<Order> loadOrderInPage(Integer jobId, Pageable pageable) {
 		
 		return orderRepository.findAll(generateSpecification(jobId), pageable);
@@ -65,7 +64,6 @@ public class DataManagementServiceImpl implements DataManagementService {
 
 	}
 
-	@Override
 	@Secured({"ROLE_ADMIN"})
 	public void removeOrders(Collection<Integer> orders) {
 		
