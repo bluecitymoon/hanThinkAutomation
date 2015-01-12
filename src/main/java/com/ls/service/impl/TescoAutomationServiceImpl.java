@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import net.sf.json.JSON;
 import net.sf.json.xml.XMLSerializer;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -24,7 +23,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +34,20 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ls.constants.AuthanConstants;
 import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
 import com.ls.exception.ConfigurationException;
-import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
@@ -130,57 +129,68 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 			
 			String vendorNo = matcher.replaceAll("").trim();
 			
-			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
-		
-			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
-
-			//urls
-			List<String> orderIdList = HtmlParserUtilPlanB.findOrderListInOrderSystem(ordersListHtml);
+			String testUrl = "https://tesco.chinab2bi.com/tesco/sp/purOrder/pdfView.hlt?seed&fileName=MERGE_10000560@supplier.cn.tesco.com_20150108172411.txt&createDate=20150108&poId=5736399&parentVendor=100262";
 			
-			if (orderIdList.size() == 0) {
-				return null;
+			final TextPage testResultPage = webClient.getPage(testUrl);
+			
+			String resutString = testResultPage.getWebResponse().getContentAsString();
+			String[] elements = resutString.split("\\n");
+			for (String string : elements) {
+				System.out.println(string);
 			}
 			
-			if (orderIdList.size() > 100000) {
-				logger.error("data is too big");
-			}
-
-			String orderDetailUrl = "http://logistics.auchan.com.cn:8000";
-			for (String orderId : orderIdList) {
-
-				String singleOrderDetail = orderDetailUrl + orderId;
-				final HtmlPage singleOrderDetailPage = webClient.getPage(singleOrderDetail);
-
-				String singleOrderHtml = singleOrderDetailPage.getWebResponse().getContentAsString();
-
-				Orders singleOrder = null;
-				try {
-					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml);
 					
-					Map<String, String> titlesMap = singleOrder.getOrderTitleMap();
-					titlesMap.put("供应商：", vendorNo);
-					
-					String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
-					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
-					for (Map<String, String> map : detailsMaps) {
-						map.put("订单号：", childTableId);
-						
-						String priceInWithoutTax = map.get("未税进价");
-						if (StringUtils.isNotBlank(priceInWithoutTax) && priceInWithoutTax.startsWith(".")) {
-							map.put("未税进价", "0" + priceInWithoutTax);
-						}
-					}
-					if(checkIfOrderNotGrabed(singleOrder, authanJob.getId())) {
-						ordersList.add(singleOrder);
-					}
-					
-
-				} catch (ParserException e) {
-					logger.error("parse error for order id " + orderId + ", " + singleOrderDetail);
-				}
-			}
-
-			webClient.closeAllWindows();
+//			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
+//		
+//			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
+//
+//			//urls
+//			List<String> orderIdList = HtmlParserUtilPlanB.findOrderListInOrderSystem(ordersListHtml);
+//			
+//			if (orderIdList.size() == 0) {
+//				return null;
+//			}
+//			
+//			if (orderIdList.size() > 100000) {
+//				logger.error("data is too big");
+//			}
+//
+//			String orderDetailUrl = "http://logistics.auchan.com.cn:8000";
+//			for (String orderId : orderIdList) {
+//
+//				String singleOrderDetail = orderDetailUrl + orderId;
+//				final HtmlPage singleOrderDetailPage = webClient.getPage(singleOrderDetail);
+//
+//				String singleOrderHtml = singleOrderDetailPage.getWebResponse().getContentAsString();
+//
+//				Orders singleOrder = null;
+//				try {
+//					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml);
+//					
+//					Map<String, String> titlesMap = singleOrder.getOrderTitleMap();
+//					titlesMap.put("供应商：", vendorNo);
+//					
+//					String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
+//					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
+//					for (Map<String, String> map : detailsMaps) {
+//						map.put("订单号：", childTableId);
+//						
+//						String priceInWithoutTax = map.get("未税进价");
+//						if (StringUtils.isNotBlank(priceInWithoutTax) && priceInWithoutTax.startsWith(".")) {
+//							map.put("未税进价", "0" + priceInWithoutTax);
+//						}
+//					}
+//					if(checkIfOrderNotGrabed(singleOrder, authanJob.getId())) {
+//						ordersList.add(singleOrder);
+//					}
+//					
+//
+//				} catch (ParserException e) {
+//					logger.error("parse error for order id " + orderId + ", " + singleOrderDetail);
+//				}
+//			}
+//
+//			webClient.closeAllWindows();
 
 		} catch (FailingHttpStatusCodeException e) {
 			loggerError(e, start, end);

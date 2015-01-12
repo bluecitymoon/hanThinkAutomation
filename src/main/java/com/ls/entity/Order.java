@@ -2,11 +2,13 @@ package com.ls.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.struts2.json.annotations.JSON;
 
@@ -28,6 +30,9 @@ public class Order implements Serializable {
 	protected Date createDate;
 	protected String grabTips;
 	protected String address;
+	
+	@Transient
+	List<ProductDetail> productDetails;
 
 	
 	public Integer getJobId() {
@@ -141,4 +146,19 @@ public class Order implements Serializable {
 		this.storeNumber = storeNumber;
 	}
 
+	public List<ProductDetail> getProductDetails() {
+		return productDetails;
+	}
+
+	public void setProductDetails(List<ProductDetail> productDetails) {
+		this.productDetails = productDetails;
+	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", jobId=" + jobId + ", jobName=" + jobName + ", orderNumber=" + orderNumber + ", supplierNumber=" + supplierNumber + ", orderDate=" + orderDate + ", estimateTakeOverDate=" + estimateTakeOverDate + ", storeNumber=" + storeNumber
+				+ ", savedToERP=" + savedToERP + ", createDate=" + createDate + ", grabTips=" + grabTips + ", address=" + address + "]";
+	}
+
+	
 }

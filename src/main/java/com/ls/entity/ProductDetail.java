@@ -26,6 +26,7 @@ public class ProductDetail implements Serializable {
 	protected String description;
 	protected String count;
 	protected String countInSingleBox;
+	protected String boxCount;
 	protected String priceWithTax;
 	protected String priceWithoutTax;
 	protected Date createDate;
@@ -34,6 +35,14 @@ public class ProductDetail implements Serializable {
 	protected String giftCount;
 	protected String giftCode;
 	
+	public String getBoxCount() {
+		return boxCount;
+	}
+
+	public void setBoxCount(String boxCount) {
+		this.boxCount = boxCount;
+	}
+
 	public String getGiftCode() {
 		return giftCode;
 	}
@@ -176,6 +185,10 @@ public class ProductDetail implements Serializable {
 	
 		this.priceWithoutTax = priceWithoutTax;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "ProductDetail [id=" + id + ", orderId=" + orderId + ", orderNumber=" + orderNumber + ", productNumber=" + productNumber + ", barCode=" + barCode + ", description=" + description + ", count=" + count + ", countInSingleBox=" + countInSingleBox + ", boxCount="
+				+ boxCount + ", priceWithTax=" + priceWithTax + ", priceWithoutTax=" + priceWithoutTax + ", createDate=" + createDate + ", moneyAmountWithoutTax=" + moneyAmountWithoutTax + ", giftName=" + giftName + ", giftCount=" + giftCount + ", giftCode=" + giftCode + "]";
+	}
 }

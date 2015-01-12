@@ -37,7 +37,7 @@ public class TestTesco {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(4);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(3);
 
 		metroAutomationService.grabOrders("2014-12-27", "2014-12-27", automaticJob);
 	}
