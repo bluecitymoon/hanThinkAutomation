@@ -19,6 +19,8 @@ public class AuthanAutomationQuartzJob implements Job {
 	private AuthanAutomationService authanAutzmationService;
 
 	private AuthanAutomationService sosoAutomationService;
+	
+	private AuthanAutomationService tescoAutomationService; 
 
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
 
@@ -29,6 +31,8 @@ public class AuthanAutomationQuartzJob implements Job {
 		authanAutzmationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("authanAutomationService");
 
 		sosoAutomationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("sosoAutomationService");
+		
+		tescoAutomationService  = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("tescoSystemService");
 		
 		Date today = new Date();
 		AutomaticJob authanJob = (AutomaticJob) context.getJobDetail().getJobDataMap().get("jobWillRun");
@@ -73,6 +77,10 @@ public class AuthanAutomationQuartzJob implements Job {
 			} else if (storeDatasourceIdentity.equals("AUTHAN")) {
 				
 				responseVo = authanAutzmationService.postDataToWebService(lastRunDate, now, authanJob);
+
+			}  else if (storeDatasourceIdentity.equals("TESCO")) {
+
+				responseVo = tescoAutomationService.postDataToWebService(lastRunDate, now, authanJob);
 
 			} else {
 

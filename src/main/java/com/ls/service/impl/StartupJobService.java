@@ -27,29 +27,32 @@ import com.ls.repository.StoreRepository;
 import com.ls.service.AuthanAutomationService;
 
 @Component("StartupJobService")
-public class StartupJobService implements InitializingBean{
-	
-private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
-	
+public class StartupJobService implements InitializingBean {
+
+	private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
+
 	@Autowired
 	private AutomaticJobRepository automaticJobRepository;
-	
+
 	@Autowired
 	private StoreRepository storeRepository;
-	
+
 	@Resource(name = "authanOrderSystemService")
 	private AuthanAutomationService authanAutomationService;
-	
+
+	@Resource(name = "tescoSystemService")
+	private AuthanAutomationService tescoAutomationService;
+
 	@Resource(name = "sosoAutomationService")
 	private AuthanAutomationService sosoAutomationService;
-       
+
 	public void afterPropertiesSet() throws Exception {
+
 		List<AutomaticJob> allJobs = automaticJobRepository.findAll();
-		
+
 		for (AutomaticJob automaticJob : allJobs) {
 			if (StringUtils.isNotBlank(automaticJob.getStatus()) && automaticJob.getStatus().equals("已启动")) {
 
-				
 				Integer storeId = automaticJob.getStoreId();
 
 				if (storeId == null) {
@@ -62,6 +65,8 @@ private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
 				JobDataMap jobDataMap = new JobDataMap();
 				jobDataMap.put("authanAutomationService", authanAutomationService);
 				jobDataMap.put("sosoAutomationService", sosoAutomationService);
+				jobDataMap.put("tescoSystemService", tescoAutomationService);
+				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 				jobDataMap.put("jobWillRun", automaticJob);
 				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 
@@ -94,9 +99,9 @@ private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
 						String jobIdentityKey = automaticJob.getName() + automaticJob.getDbName() + "-" + jobStartHour + ":" + startMin;
 
 						String uniqueGroupName = getUniqueGroupName(automaticJob);
-						
+
 						JobDetail jobDetail = JobBuilder.newJob(AuthanAutomationQuartzJob.class).usingJobData(jobDataMap).withIdentity(jobIdentityKey, uniqueGroupName).build();
-						CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
+						CronTriggerImpl singleTrigger = (CronTriggerImpl)CronScheduleBuilder.dailyAtHourAndMinute(jobStartHour, startMin).build();
 						singleTrigger.setName(jobIdentityKey);
 						singleTrigger.setGroup(uniqueGroupName);
 						Scheduler scheduler = AutomaticJobManager.getScheduler();
@@ -131,6 +136,7 @@ private Logger logger = LoggerFactory.getLogger(StartupJobService.class);
 	}
 
 	private String getUniqueGroupName(AutomaticJob jobInDb) {
+
 		return jobInDb.getDbName() + jobInDb.getName() + jobInDb.getId();
 	}
 }

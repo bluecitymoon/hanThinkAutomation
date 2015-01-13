@@ -9,7 +9,7 @@
 <!--<![endif]-->
 <s:include value="/jsps/common/head.jsp" />
 <body>
-	<s:include value="/jsps/common/brand.jsp" />
+	<s:include file="/jsps/common/brand.jsp" />
 	<s:include value="/jsps/common/menu.jsp" />
 	<section class="mainbg">
 		<div class="container" id ="userModeContainer">

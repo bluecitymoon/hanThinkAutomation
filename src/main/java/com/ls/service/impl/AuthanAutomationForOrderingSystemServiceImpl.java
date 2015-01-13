@@ -294,25 +294,6 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 		return responseVo;
 	}
 
-	public HttpResponse postWebService(String url, String xmlData) throws ClientProtocolException, IOException {
-		
-		HttpResponse response = null;
-		HttpClient httpClient = HttpClientBuilder.create().build();
-
-		byte[] b = xmlData.getBytes("utf-8");
-
-		InputStream is = new ByteArrayInputStream(b, 0, b.length);
-
-		HttpPost request = new HttpPost(url);
-		
-		request.setHeader("Content-Type", " text/xml; charset=UTF-8");
-		request.setEntity(new InputStreamEntity(is));
-
-		response = httpClient.execute(request);
-		
-		return response;
-	}
-
 	@Secured({"ROLE_ADMIN"})
 	public ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob) {
 

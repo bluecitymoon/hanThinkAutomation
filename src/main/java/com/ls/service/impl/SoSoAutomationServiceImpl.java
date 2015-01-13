@@ -1,10 +1,8 @@
 package com.ls.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,14 +20,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -472,25 +463,6 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		}
 
 		return responseVo;
-	}
-
-	public HttpResponse postWebService(String url, String xmlData) throws ClientProtocolException, IOException {
-
-		HttpResponse response = null;
-		HttpClient httpClient = HttpClientBuilder.create().build();
-
-		byte[] b = xmlData.getBytes("utf-8");
-
-		InputStream is = new ByteArrayInputStream(b, 0, b.length);
-
-		HttpPost request = new HttpPost(url);
-
-		request.setHeader("Content-Type", " text/xml; charset=UTF-8");
-		request.setEntity(new InputStreamEntity(is));
-
-		response = httpClient.execute(request);
-
-		return response;
 	}
 
 	public List<Order> saveOrders(List<Orders> orders, AutomaticJob job) {

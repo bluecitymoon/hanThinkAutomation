@@ -1,39 +1,34 @@
 package com.ls.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Splitter;
-import com.google.common.io.Files;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
-import com.ls.vo.Orders;
+import com.ls.util.HanthinkUtil;
 
 public class Test {
 
 	/**
 	 * @param args
+	 * @throws ParserConfigurationException 
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-		String fileName = "D:\\workspace\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\demo.txt";
-		try {
-			List<String> lines = Files.readLines(new File(fileName), Charset.defaultCharset());
-			String[] linesString = lines.toArray(new String[] {});
-
-			parseTescoOrdersTemplate(linesString);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static void main(String[] args) throws ParserConfigurationException {
+		
+		String fileName = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><daorudanjuResponse xmlns=\"http://HanThink.com/\"><daorudanjuResult>aaa<daorudanjuResult /></daorudanjuResponse></soap:Body></soap:Envelope>";
+		
+		String[] splitResult = fileName.split("daorudanjuResult");
+		
+		for (String string : splitResult) {
+			System.out.println(string);
 		}
+		
 	}
 
 	public static Order parseTescoOrdersTemplate(String[] lines) {
@@ -104,8 +99,9 @@ public class Test {
 		}
 		
 		ProductDetail productDetail = new ProductDetail();
+		productDetail.setCreateDate(HanthinkUtil.getNow());
 		
-		String productNumber = productDetailList.get(0).replace("\\", "");
+		String productNumber = productDetailList.get(0).replace("/", "");
 		productDetail.setProductNumber(productNumber);
 		String description = productDetailList.get(1);
 		productDetail.setDescription(description);
