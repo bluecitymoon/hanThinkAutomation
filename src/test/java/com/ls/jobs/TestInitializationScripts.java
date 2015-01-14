@@ -49,8 +49,9 @@ public class TestInitializationScripts {
 		Store store2 = new Store("宝钢", "BAOGANG");
 		Store store3 = new Store("图搜天下", "SOSO");
 		Store store4 = new Store("乐购", "TESCO");
+		Store store5 = new Store("家乐福", "CARREFOUR");
 
-		storeRepository.save(ImmutableList.of(store, store1, store2, store3));
+		storeRepository.save(ImmutableList.of(store, store1, store2, store3, store4, store5));
 
 	}
 

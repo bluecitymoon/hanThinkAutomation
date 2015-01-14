@@ -1,7 +1,6 @@
 package com.ls.service.impl;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -21,8 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +31,9 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
@@ -62,11 +59,11 @@ import com.ls.vo.ResponseVo;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@Service("sosoAutomationService")
+@Service("carrefourAutomationService")
 @Scope("prototype")
-public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
+public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationService {
 
-	private Logger logger = LoggerFactory.getLogger(SoSoAutomationServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(CarrefourAutomationServiceImpl.class);
 
 	@Autowired
 	AutomaticJobRepository automaticJobRepository;
@@ -76,15 +73,15 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	@Autowired
 	ProductDetailRepository productDetailRepository;
-	
+
 	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
-		
+
 		Map<String, String> titleMap = order.getOrderTitleMap();
 		String orderNumber = titleMap.get("orderNumber");
 		String address = titleMap.get("address");
-		
+
 		Order existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
-		
+
 		return existedOrder == null;
 	}
 
@@ -94,114 +91,109 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
-			throw new ConfigurationException();
+			throw new ConfigurationException("未知的任务.");
 		}
-		
-		if (StringUtils.isEmpty(authanJob.getCompanyCode())) {
-			
-			throw new ConfigurationException("未配置企业代码");
-		}
-		
+
 		Date now = new Date();
+
 		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 
 		try {
 
-			final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+			final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 
 			tryToLogin(webClient, authanJob);
 
-			String getOrdersListRequestUrl = "http://report.sosgps.net.cn/report-1.0/order/getDynamicPageData.do";
-			String getTotalCountUrl = "http://report.sosgps.net.cn/report-1.0/order/countOrderData.do";
+//			String getOrdersListRequestUrl = "http://report.sosgps.net.cn/report-1.0/order/getDynamicPageData.do";
+//			String getTotalCountUrl = "http://report.sosgps.net.cn/report-1.0/order/countOrderData.do";
+//
+//			HtmlPage totalCountPage = webClient.getPage(getTotalCountUrl + getQueryParameters(start, end));
+//
+//			String countResponse = totalCountPage.getWebResponse().getContentAsString();
+//
+//			Integer totalCount = 0;
+//			if (StringUtils.isBlank(countResponse)) {
+//
+//				throw new RuntimeException("获取数据总数失败，可能是因为登陆失败。");
+//			} else {
+//				totalCount = JSONArray.fromObject(countResponse).getInt(1);
+//
+//				int pageCount = totalCount / 10;
+//
+//				for (int index = 1; index <= pageCount + 1; index++) {
+//
+//					String retrievingDataUrl = getOrdersListRequestUrl + getQueryParameters(start, end) + "&page=" + index;
+//
+//					String responseData = webClient.getPage(retrievingDataUrl).getWebResponse().getContentAsString();
+//
+//					JSONArray dataArray = JSONObject.fromObject(responseData).getJSONArray("rows");
+//
+//					Object[] orderListArray = dataArray.toArray();
+//
+//					for (Object singleOrder : orderListArray) {
+//
+//						Orders order = new Orders();
+//						ObjectMapper objectMapper = new ObjectMapper();
+//
+//						HashMap<String, String> titleMap = objectMapper.readValue(singleOrder.toString(), new TypeReference<HashMap<String, String>>(){
+//						});
+//						order.setOrderTitleMap(titleMap);
+//
+//						String orderNumber = titleMap.get("CELL0");
+//						String orderDate = titleMap.get("CREATEON");
+//						String address = titleMap.get("CELL3");
+//						String estimateTakeOverDate = titleMap.get("CELL2");
+//
+//						titleMap.put("orderNumber", toEmpty(orderNumber));
+//						titleMap.put("orderDate", toEmpty(orderDate));
+//						titleMap.put("address", toEmpty(address));
+//						titleMap.put("estimateTakeOverDate", toEmpty(estimateTakeOverDate));
+//
+//						if (checkIfOrderNotGrabed(order, authanJob.getId())) {
+//
+//							String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
+//
+//							Page detailPage = webClient.getPage(detailBaseUrl);
+//
+//							List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
+//							order.setOrdersItemList(ordersItemList);
+//
+//							ordersList.add(order);
+//						}
+//					}
+//
+//				}
+//
+//			}
+//
+//			Date endTime = new Date();
+//			authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
+//
+//			automaticJobRepository.saveAndFlush(authanJob);
 
-			HtmlPage totalCountPage = webClient.getPage(getTotalCountUrl + getQueryParameters(start, end));
+		} finally {
 
-			String countResponse = totalCountPage.getWebResponse().getContentAsString();
-
-			Integer totalCount = 0;
-			if (StringUtils.isBlank(countResponse)) {
-
-				throw new RuntimeException("获取数据总数失败，可能是因为登陆失败。");
-			} else {
-				totalCount = JSONArray.fromObject(countResponse).getInt(1);
-
-				int pageCount = totalCount / 10;
-
-				for (int index = 1; index <= pageCount + 1; index++) {
-
-					String retrievingDataUrl = getOrdersListRequestUrl + getQueryParameters(start, end) + "&page=" + index;
-					
-					String responseData = webClient.getPage(retrievingDataUrl).getWebResponse().getContentAsString();
-
-					JSONArray dataArray = JSONObject.fromObject(responseData).getJSONArray("rows");
-					
-					Object[] orderListArray = dataArray.toArray();
-
-					for (Object singleOrder : orderListArray) {
-
-						Orders order = new Orders();
-						ObjectMapper objectMapper = new ObjectMapper();
-
-						HashMap<String, String> titleMap = objectMapper.readValue(singleOrder.toString(), new TypeReference<HashMap<String, String>>(){});
-						order.setOrderTitleMap(titleMap);
-
-						String orderNumber = titleMap.get("CELL0");
-						String orderDate = titleMap.get("CREATEON");
-						String address = titleMap.get("CELL3");
-						String estimateTakeOverDate = titleMap.get("CELL2");
-						
-						titleMap.put("orderNumber", toEmpty(orderNumber));
-						titleMap.put("orderDate",  toEmpty(orderDate));
-						titleMap.put("address",  toEmpty(address));
-						titleMap.put("estimateTakeOverDate",  toEmpty(estimateTakeOverDate));
-						
-						if (checkIfOrderNotGrabed(order, authanJob.getId())) {
-							
-							String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
-							
-							Page detailPage = webClient.getPage(detailBaseUrl);
-
-							List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
-							order.setOrdersItemList(ordersItemList);
-
-							ordersList.add(order);
-						}
-					}
-
-				}
-
-			}
-
-			Date endTime = new Date();
-			authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
-
-			automaticJobRepository.saveAndFlush(authanJob);
-
-		}  finally {
-			
-			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-			
-			System.out.println(ocrInstallPath);
-			
-			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
-				public boolean accept(File dir, String name) {
-					
-					if (name.endsWith("txt") || name.endsWith("jpg")) {
-						return true;
-					}
-					return false;
-				}
-			});
-			
-			for (File file : filesNeedToBeDeleted) {
-				file.delete();
-			}
+//			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
+//
+//			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
+//
+//				public boolean accept(File dir, String name) {
+//
+//					if (name.endsWith("txt") || name.endsWith("jpg")) {
+//						return true;
+//					}
+//					return false;
+//				}
+//			});
+//
+//			for (File file : filesNeedToBeDeleted) {
+//				file.delete();
+//			}
 		}
 		return ordersList;
 	}
-
 
 	private List<Map<String, String>> parseDetails(String context, String orderNumber) {
 
@@ -218,18 +210,18 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		Object[] dataItem = listItems.toArray();
 
 		for (Object item : dataItem) {
-			
+
 			JSONObject detailObject = JSONObject.fromObject(item);
-			
+
 			Map<String, String> itemMap = Maps.newHashMap();
 
-			itemMap.put("description",  toEmpty(detailObject.getString("CELL3")));
-			itemMap.put("count",  toEmpty(detailObject.getString("CELL4")));
-			
-			itemMap.put("moneyAmount",  toEmpty(detailObject.getString("CELL7")));
-			
-			itemMap.put("orderNumber",  toEmpty(orderNumber));
-			
+			itemMap.put("description", toEmpty(detailObject.getString("CELL3")));
+			itemMap.put("count", toEmpty(detailObject.getString("CELL4")));
+
+			itemMap.put("moneyAmount", toEmpty(detailObject.getString("CELL7")));
+
+			itemMap.put("orderNumber", toEmpty(orderNumber));
+
 			String giftName = detailObject.getString("CELL5");
 			String giftCount = detailObject.getString("CELL6");
 			if (StringUtils.isNotBlank(giftName) && !giftName.equals("null")) {
@@ -251,15 +243,16 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 	}
 
 	private String toEmpty(String input) {
-		
+
 		String inputString = StringUtils.trimToEmpty(input);
-		
+
 		if (inputString.toLowerCase().equals("null")) {
 			inputString = "";
 		}
-		
+
 		return inputString;
 	}
+
 	public String getQueryParameters(String start, String end) {
 
 		String baseUrl = "?_search=false&endTime=" + end + "&rows=10&sord=asc&startTime=" + start;
@@ -269,29 +262,34 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
-		URL url = new URL("http://v30.sosgps.net.cn/platform-1.0/systemindex.do");
+		URL url = new URL("https://supplierweb.carrefour.com/");
 
 		final HtmlPage loginPage = webClient.getPage(url);
+		
+		HtmlForm form = loginPage.getFormByName("loginForm");
 
-		HtmlForm form = loginPage.getFormByName("LoginForm");
+		HtmlImage validationCodeImage = null;
 
-		HtmlElement logInput = null;
 		List<HtmlImage> images = form.getHtmlElementsByTagName("img");
 
 		for (HtmlImage htmlImage : images) {
 
-			if (StringUtils.isNotBlank(htmlImage.getAttribute("onclick")) && htmlImage.getAttribute("onclick").equals("submitForm()")) {
-				logInput = htmlImage;
+			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("includes/image.jsp")) {
+				validationCodeImage = htmlImage;
 				break;
 			}
 		}
-
-		final HtmlTextInput companyCodeTextInput = form.getInputByName("empCode");
-		final HtmlTextInput usernameTextInput = form.getInputByName("userAccount");
+		
+		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
+		validationCodeImage.saveAs(new File(fileName));
+		
+		Thread.sleep(1000);
+		
+		final HtmlTextInput usernameTextInput = form.getInputByName("login");
 		final HtmlPasswordInput passwordField = form.getInputByName("password");
-		final HtmlTextInput validateCodeTextInput = form.getInputByName("validateCode");
+		final HtmlTextInput validateCodeTextInput = form.getInputByName("validate");
+		final HtmlImageInput loginButton = form.getInputByName("imageField");
 
-		companyCodeTextInput.setValueAttribute(automaticJob.getCompanyCode());
 		usernameTextInput.setValueAttribute(automaticJob.getUsername());
 		passwordField.setValueAttribute(automaticJob.getPassword());
 
@@ -304,28 +302,49 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		}
 
 		String baseCookieValue = Joiner.on(";").join(keyvaluePairList);
-		baseCookieValue += ";login_entCode=" + automaticJob.getCompanyCode() + "; login_userName=" + automaticJob.getUsername() + "; ENT_CUSTOMIZATION=default_ent";
+		
+		System.out.println(baseCookieValue);
+		
+		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
+		String command = ocrInstallPath + "tesseract.exe " + fileName + " " + fileName;
+		
+		System.out.println(command);
 
-		String validationCode = generateNewValidationCode(baseCookieValue, webClient);
+		Process process = Runtime.getRuntime().exec(command);
+		process.waitFor();
 
-		validateCodeTextInput.setValueAttribute(validationCode);
-
-		Page responsePage = logInput.click();
-
-		String nextUrl = responsePage.getUrl().toString();
-
-		if (nextUrl.contains("loginAlone.do")) {
-			String parameters = nextUrl.split("\\?")[1];
-			String reportCenterBase = "http://report.sosgps.net.cn/report-1.0/loginAlone.do?";
-
-			Page reportBasePage = webClient.getPage(reportCenterBase + parameters);
-
-			return reportBasePage.getUrl().toString();
-
-		} else {
-
-			return tryToLogin(webClient, automaticJob);
-		}
+		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
+		
+		System.out.println(code);
+		
+		Thread.sleep(1000);
+		
+		validateCodeTextInput.setValueAttribute(code);
+		
+		Page loginResultPage = loginButton.click();
+		
+		System.out.println(loginResultPage.getUrl().toString());
+//
+//		validateCodeTextInput.setValueAttribute(validationCode);
+//
+//		Page responsePage = loginButton.click();
+//
+//		String nextUrl = responsePage.getUrl().toString();
+//
+//		if (nextUrl.contains("loginAlone.do")) {
+//			String parameters = nextUrl.split("\\?")[1];
+//			String reportCenterBase = "http://report.sosgps.net.cn/report-1.0/loginAlone.do?";
+//
+//			Page reportBasePage = webClient.getPage(reportCenterBase + parameters);
+//
+//			return reportBasePage.getUrl().toString();
+//
+//		} else {
+//
+//			return tryToLogin(webClient, automaticJob);
+//		}
+		
+		return null;
 	}
 
 	public String generateNewValidationCode(String cookies, WebClient webClient) throws FailingHttpStatusCodeException, IOException, InterruptedException {
@@ -340,7 +359,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		Process process = Runtime.getRuntime().exec(command);
 		process.waitFor();
 
-		String code = Files.readFirstLine(new File( ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
+		String code = Files.readFirstLine(new File(ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
 		if (StringUtils.isNotBlank(code)) {
 			code = code.replace(" ", "");
 		}
@@ -385,7 +404,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
-			
+
 			System.out.println(data);
 
 			String url = job.getClientIp() + job.getClientEnd();
@@ -398,9 +417,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			if (httpEntity != null) {
 				responseText = EntityUtils.toString(httpEntity);
 			}
-			
+
 			System.out.println(responseText);
-			
+
 			if (response.getStatusLine().getStatusCode() >= 200) {
 				// XMLSerializer xmlSerializer = new XMLSerializer();
 				// xmlSerializer.read(responseText)
@@ -419,7 +438,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			return responseVo;
 
 		} catch (FailingHttpStatusCodeException e) {
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
 
@@ -437,23 +456,23 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (URISyntaxException e) {
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (InterruptedException e) {
-			//??!
+			// ??!
 		} catch (TemplateException e) {
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("封装模板时发生了错误：" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("出错了:" + e.getMessage());
 
@@ -501,9 +520,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			}
 
 			if (null == savedOrder) {
-				 continue;
+				continue;
 			}
-			
+
 			for (Map<String, String> singleDetailMap : detailMap) {
 
 				String description = toEmpty(singleDetailMap.get("description"));

@@ -9,7 +9,7 @@
 <!--<![endif]-->
 <s:include value="/jsps/common/head.jsp" />
 <body>
-	<s:include file="/jsps/common/brand.jsp" />
+	<s:include value="/jsps/common/brand.jsp" />
 	<s:include value="/jsps/common/menu.jsp" />
 	<section class="mainbg">
 		<div class="container" id ="userModeContainer">
@@ -81,7 +81,7 @@
 												<td style="text-align: center" data-bind="text : id"></td>
 												<td style="text-align: center" data-bind="text : name"></td>
 												<td style="text-align: center" data-bind="text : username"></td>
-												<td style="text-align: center">
+												<td style="text-align: center"> 
 												
 													<span data-bind="visible : active">激活</span>	
 													<span data-bind="visible : !active">关闭</span>											
