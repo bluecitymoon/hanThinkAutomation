@@ -25,10 +25,10 @@ public class TestCarrerfour {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(5);
-		for (int i = 0; i < 10; i++) {
+		AutomaticJob automaticJob = automaticJobRepository.findOne(4);
+		//for (int i = 0; i < 10; i++) {
 			carrefourAutomationService.grabOrders("2014-12-27", "2014-12-27", automaticJob);
-		}
+		//}
 		
 	}
 

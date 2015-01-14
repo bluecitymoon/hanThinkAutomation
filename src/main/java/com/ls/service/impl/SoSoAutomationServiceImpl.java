@@ -181,23 +181,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 		}  finally {
 			
-			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-			
-			System.out.println(ocrInstallPath);
-			
-			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
-				public boolean accept(File dir, String name) {
-					
-					if (name.endsWith("txt") || name.endsWith("jpg")) {
-						return true;
-					}
-					return false;
-				}
-			});
-			
-			for (File file : filesNeedToBeDeleted) {
-				file.delete();
-			}
+			cleanUpValidationCodeFiles();
 		}
 		return ordersList;
 	}

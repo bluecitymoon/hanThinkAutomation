@@ -1,6 +1,8 @@
 package com.ls.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.ls.constants.HanthinkProperties;
 import com.ls.entity.AutomaticJob;
 import com.ls.exception.ConfigurationException;
 import com.ls.repository.AutomaticJobRepository;
@@ -97,5 +100,28 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 			return ResponseVo.newSuccessMessage(soapMessage);
 		}
 		
+	}
+	
+	public void cleanUpValidationCodeFiles() {
+		
+		try {
+			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
+			
+			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
+				public boolean accept(File dir, String name) {
+					
+					if (name.endsWith("txt") || name.endsWith("jpg")) {
+						return true;
+					}
+					return false;
+				}
+			});
+			
+			for (File file : filesNeedToBeDeleted) {
+				file.delete();
+			}
+		} catch (Exception e) {
+		}
+	
 	}
 }
