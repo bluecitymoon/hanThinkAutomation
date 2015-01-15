@@ -1,6 +1,7 @@
 package com.ls.util;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.ls.entity.Role;
 import com.ls.entity.User;
 import com.ls.vo.ResponseVo;
@@ -92,6 +92,13 @@ public class HanthinkUtil {
 		}
 	}
 
+	public static String getCarrefourDateQueryString(String standerdString) throws ParseException {
+		
+		Date date = XinXinConstants.SIMPLE_DATE_FORMATTER.parse(standerdString);
+		
+		return new SimpleDateFormat(XinXinConstants.SIMPLE_DATE_FORMAT_CARREFOUR).format(date);
+	}
+	
 	public static Date getNow() {
 
 		return getStandardDate(new Date());

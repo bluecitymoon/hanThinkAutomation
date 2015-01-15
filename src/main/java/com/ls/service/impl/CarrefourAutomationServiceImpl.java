@@ -6,20 +6,19 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.htmlparser.Parser;
+import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
@@ -38,10 +36,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.constants.HanthinkProperties;
@@ -80,16 +75,16 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 		Map<String, String> titleMap = order.getOrderTitleMap();
 		String orderNumber = titleMap.get("orderNumber");
-		String address = titleMap.get("address");
+		String storeNumberEnglish = titleMap.get("storeNumberEnglish");
 
-		Order existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
+		Order existedOrder = orderRepository.findByOrderNumberAndJobIdAndStoreNumberEnglish(orderNumber, jobId, storeNumberEnglish);
 
 		return existedOrder == null;
 	}
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
-		List<Orders> ordersList = Lists.newArrayList();
+		List<Orders> ordersList = null;
 
 		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
@@ -100,173 +95,102 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 
-		try {
+		final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
+		webClient.getOptions().setCssEnabled(false);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
 
-			final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
-			webClient.getOptions().setCssEnabled(false);
-			webClient.getOptions().setThrowExceptionOnScriptError(false);
+		tryToLogin(webClient, authanJob);
 
-			tryToLogin(webClient, authanJob);
+		webClient.getPage("https://supplierweb.carrefour.com/callSSO.jsp");
 
-			String goToPOpageUrl = "https://supplierweb.carrefour.com/callSSO.jsp";
-			HtmlPage poHtmlPage = webClient.getPage(goToPOpageUrl);
-			
-			System.out.println(poHtmlPage.getUrl().toString());
-			
-			String archivePageUrl = "https://platform.powere2e.com/platform/mailbox/openArchive.htm";
-			HtmlPage archivePage = webClient.getPage(archivePageUrl);
-			System.out.println(archivePage.getWebResponse().getContentAsString());
-			
-			// String getOrdersListRequestUrl =
-			// "http://report.sosgps.net.cn/report-1.0/order/getDynamicPageData.do";
-			// String getTotalCountUrl =
-			// "http://report.sosgps.net.cn/report-1.0/order/countOrderData.do";
-			//
-			// HtmlPage totalCountPage = webClient.getPage(getTotalCountUrl +
-			// getQueryParameters(start, end));
-			//
-			// String countResponse =
-			// totalCountPage.getWebResponse().getContentAsString();
-			//
-			// Integer totalCount = 0;
-			// if (StringUtils.isBlank(countResponse)) {
-			//
-			// throw new RuntimeException("获取数据总数失败，可能是因为登陆失败。");
-			// } else {
-			// totalCount = JSONArray.fromObject(countResponse).getInt(1);
-			//
-			// int pageCount = totalCount / 10;
-			//
-			// for (int index = 1; index <= pageCount + 1; index++) {
-			//
-			// String retrievingDataUrl = getOrdersListRequestUrl +
-			// getQueryParameters(start, end) + "&page=" + index;
-			//
-			// String responseData =
-			// webClient.getPage(retrievingDataUrl).getWebResponse().getContentAsString();
-			//
-			// JSONArray dataArray =
-			// JSONObject.fromObject(responseData).getJSONArray("rows");
-			//
-			// Object[] orderListArray = dataArray.toArray();
-			//
-			// for (Object singleOrder : orderListArray) {
-			//
-			// Orders order = new Orders();
-			// ObjectMapper objectMapper = new ObjectMapper();
-			//
-			// HashMap<String, String> titleMap =
-			// objectMapper.readValue(singleOrder.toString(), new
-			// TypeReference<HashMap<String, String>>(){
-			// });
-			// order.setOrderTitleMap(titleMap);
-			//
-			// String orderNumber = titleMap.get("CELL0");
-			// String orderDate = titleMap.get("CREATEON");
-			// String address = titleMap.get("CELL3");
-			// String estimateTakeOverDate = titleMap.get("CELL2");
-			//
-			// titleMap.put("orderNumber", toEmpty(orderNumber));
-			// titleMap.put("orderDate", toEmpty(orderDate));
-			// titleMap.put("address", toEmpty(address));
-			// titleMap.put("estimateTakeOverDate",
-			// toEmpty(estimateTakeOverDate));
-			//
-			// if (checkIfOrderNotGrabed(order, authanJob.getId())) {
-			//
-			// String detailBaseUrl =
-			// "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue="
-			// + orderNumber;
-			//
-			// Page detailPage = webClient.getPage(detailBaseUrl);
-			//
-			// List<Map<String, String>> ordersItemList =
-			// parseDetails(detailPage.getWebResponse().getContentAsString(),
-			// orderNumber);
-			// order.setOrdersItemList(ordersItemList);
-			//
-			// ordersList.add(order);
-			// }
-			// }
-			//
-			// }
-			//
-			// }
-			//
-			// Date endTime = new Date();
-			// authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
-			//
-			// automaticJobRepository.saveAndFlush(authanJob);
+		List<String> orderIds = getAllOrderFileIds(webClient, start, end);
 
-		} finally {
+		print(orderIds);
 
-			// String ocrInstallPath =
-			// HanthinkProperties.getString("tessertOcrInstallPath");
-			//
-			// File[] filesNeedToBeDeleted = new
-			// File(ocrInstallPath).listFiles(new FilenameFilter(){
-			//
-			// public boolean accept(File dir, String name) {
-			//
-			// if (name.endsWith("txt") || name.endsWith("jpg")) {
-			// return true;
-			// }
-			// return false;
-			// }
-			// });
-			//
-			// for (File file : filesNeedToBeDeleted) {
-			// file.delete();
-			// }
-		}
+		ordersList = parseDetails(orderIds, webClient, authanJob.getId());
+
 		return ordersList;
 	}
 
-	private List<Map<String, String>> parseDetails(String context, String orderNumber) {
+	private List<Orders> parseDetails(List<String> orderIds, WebClient webClient, Integer jobId) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 
-		List<Map<String, String>> ordersItemList = new ArrayList<Map<String, String>>();
+		List<Orders> ordersList = Lists.newArrayList();
 
-		JSONArray rootElement = JSONArray.fromObject(context);
-		if (rootElement.size() == 0) {
-			return ordersItemList;
+		if (orderIds == null || orderIds.isEmpty()) {
+			return ordersList;
 		}
 
-		JSONObject firstElement = rootElement.getJSONObject(0);
+		for (String guid : orderIds) {
 
-		JSONArray listItems = JSONArray.fromObject(JSONObject.fromObject(firstElement.get("data")).get("listItems"));
-		Object[] dataItem = listItems.toArray();
+			try {
+				String detailUrl = "https://platform.powere2e.com/platform/mailbox/performDocAction.htm?guid=" + guid + "&actionId=1";
+				HtmlPage singleDetailPage = webClient.getPage(detailUrl);
 
-		for (Object item : dataItem) {
+				String singleDetailPageHtml = singleDetailPage.getWebResponse().getContentAsString();
 
-			JSONObject detailObject = JSONObject.fromObject(item);
+				Parser htmlParser = new Parser();
+				htmlParser.setInputHTML(singleDetailPageHtml);
 
-			Map<String, String> itemMap = Maps.newHashMap();
+				CarrefourDetailFinder carrefourDetailFinder = new CarrefourDetailFinder();
+				htmlParser.visitAllNodesWith(carrefourDetailFinder);
 
-			itemMap.put("description", toEmpty(detailObject.getString("CELL3")));
-			itemMap.put("count", toEmpty(detailObject.getString("CELL4")));
+				Orders order = carrefourDetailFinder.getOrder();
 
-			itemMap.put("moneyAmount", toEmpty(detailObject.getString("CELL7")));
+				if (order != null && checkIfOrderNotGrabed(order, jobId)) {
+					ordersList.add(order);
+				}
 
-			itemMap.put("orderNumber", toEmpty(orderNumber));
+			} catch (ParserException e) {
 
-			String giftName = detailObject.getString("CELL5");
-			String giftCount = detailObject.getString("CELL6");
-			if (StringUtils.isNotBlank(giftName) && !giftName.equals("null")) {
-				itemMap.put("giftName", giftName);
-			} else {
-				itemMap.put("giftName", "");
-			}
-			if (StringUtils.isNotBlank(giftCount) && !giftCount.equals("null")) {
-				itemMap.put("giftCount", giftCount);
-			} else {
-				itemMap.put("giftCount", "");
 			}
 
-			ordersItemList.add(itemMap);
 		}
 
-		return ordersItemList;
+		return ordersList;
+	}
 
+	private List<String> getAllOrderFileIds(WebClient webClient, String start, String end) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+
+		List<String> allGuidList = new ArrayList<String>();
+		try {
+			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
+			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(start);
+
+			int page = 1;
+
+			boolean hasNextPage = true;
+			while (hasNextPage) {
+				String archivePageUrl = "https://platform.powere2e.com/platform/mailbox/openInbox.htm?&receivedDateFrom=" + carrefourStart + "&receivedDateTo=" + carrefourEnd + "&searchText=&gotoPage=" + page;
+
+				print("Visiting page " + page + "--> " + archivePageUrl);
+
+				HtmlPage archivePage = webClient.getPage(archivePageUrl);
+				String archivePageContent = archivePage.getWebResponse().getContentAsString();
+
+				Parser htmlParser = new Parser();
+				htmlParser.setInputHTML(archivePageContent);
+
+				CarrefourDetailLinkingFinder carrefourDetailLinkingFinder = new CarrefourDetailLinkingFinder();
+				htmlParser.visitAllNodesWith(carrefourDetailLinkingFinder);
+
+				List<String> singlePageList = carrefourDetailLinkingFinder.getGuidList();
+				if (null == singlePageList || singlePageList.isEmpty()) {
+					break;
+				}
+				allGuidList.addAll(singlePageList);
+
+				hasNextPage = carrefourDetailLinkingFinder.hasNextPage();
+
+				page++;
+			}
+
+		} catch (ParseException e) {
+			throw new RuntimeException("非标准的日期格式");
+		} catch (ParserException e) {
+
+		}
+
+		return allGuidList;
 	}
 
 	private String toEmpty(String input) {
@@ -288,8 +212,9 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 	}
 
 	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+
 		System.out.println("Trying to login......");
-		
+
 		URL url = new URL(CARREFOUR_ROOT_URL);
 
 		final HtmlPage loginPage = webClient.getPage(url);
@@ -333,18 +258,18 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 		validateCodeTextInput.setValueAttribute(code);
 
-		HtmlPage loginResultPage = (HtmlPage) loginButton.click();
-		
+		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+
 		try {
 			loginResultPage.getFormByName("loginForm");
 		} catch (ElementNotFoundException e) {
-			
+
 			cleanUpValidationCodeFiles();
 			System.out.println("Log in successfully.");
-			
+
 			return null;
 		}
-			
+
 		tryToLogin(webClient, automaticJob);
 
 		return null;
@@ -378,7 +303,7 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("soso-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("carrefour-request-soap.ftl");
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -419,13 +344,18 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 			String responseText = null;
 			if (httpEntity != null) {
 				responseText = EntityUtils.toString(httpEntity);
+
+				responseVo = handleResponse(responseText);
+
+				if (responseVo.getType().equals("FAIL")) {
+
+					return responseVo;
+				}
 			}
 
 			System.out.println(responseText);
 
 			if (response.getStatusLine().getStatusCode() >= 200) {
-				// XMLSerializer xmlSerializer = new XMLSerializer();
-				// xmlSerializer.read(responseText)
 				saveOrders(orders, job);
 			} else {
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
@@ -499,27 +429,29 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
 			String orderNumber = titleMap.get("orderNumber");
-			String address = titleMap.get("address");
+			String supplierNumber = titleMap.get("supplierNumber");
+			String storeNumber = titleMap.get("storeNumber");
+			String storeNumberEnglish = titleMap.get("storeNumberEnglish");
 
 			String estimateTakeOverDate = titleMap.get("estimateTakeOverDate");
 			String orderDate = titleMap.get("orderDate");
 
 			Order order = new Order();
 			order.setOrderNumber(orderNumber);
-			order.setAddress(address);
+			order.setSupplierNumber(supplierNumber);
 			order.setEstimateTakeOverDate(estimateTakeOverDate);
 			order.setOrderDate(orderDate);
 			order.setCreateDate(HanthinkUtil.getNow());
 			order.setJobId(job.getId());
 			order.setJobName(job.getName());
+			order.setStoreNumber(storeNumber);
+			order.setStoreNumberEnglish(storeNumberEnglish);
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
 			try {
 				savedOrder = orderRepository.saveAndFlush(order);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
 			if (null == savedOrder) {
@@ -530,18 +462,24 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 				String description = toEmpty(singleDetailMap.get("description"));
 				String count = toEmpty(singleDetailMap.get("count"));
-				String moneyAmount = toEmpty(singleDetailMap.get("moneyAmount"));
-				String giftName = toEmpty(singleDetailMap.get("giftName"));
+				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
 				String giftCount = toEmpty(singleDetailMap.get("giftCount"));
+				String barCode = toEmpty(singleDetailMap.get("barCode"));
+				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
+				String countInSingleBox = toEmpty(singleDetailMap.get("countInSingleBox"));
+				String priceWithoutTax = toEmpty(singleDetailMap.get("priceWithoutTax"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
 				productDetail.setDescription(description);
 				productDetail.setCount(count);
-				productDetail.setMoneyAmountWithoutTax(moneyAmount);
+				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
 				productDetail.setGiftCount(giftCount);
-				productDetail.setGiftName(giftName);
+				productDetail.setBarCode(barCode);
+				productDetail.setProductNumber(productNumber);
+				productDetail.setCountInSingleBox(countInSingleBox);
+				productDetail.setPriceWithoutTax(priceWithoutTax);
 
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);

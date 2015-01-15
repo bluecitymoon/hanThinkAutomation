@@ -14,6 +14,8 @@ public class XinXinConstants {
 	
 	public static final String SIMPLE_DATE_FORMAT_STRING = "yyyy-MM-dd";
 	
+	public static final String SIMPLE_DATE_FORMAT_CARREFOUR = "dd-MM-yyyy";
+	
 	public static final String MONTH_AND_DAY_DATE_FORMAT_STRING = "MM-dd";
 	public static final String POST_DATE_FORMAT_STRING = "yyyyMMdd";
 	

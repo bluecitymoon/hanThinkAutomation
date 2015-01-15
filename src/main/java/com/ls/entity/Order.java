@@ -26,6 +26,7 @@ public class Order implements Serializable {
 	protected String orderDate;
 	protected String estimateTakeOverDate;
 	protected String storeNumber; // also equals address
+	protected String storeNumberEnglish;
 	protected boolean savedToERP;
 	protected Date createDate;
 	protected String grabTips;
@@ -152,6 +153,16 @@ public class Order implements Serializable {
 
 	public void setProductDetails(List<ProductDetail> productDetails) {
 		this.productDetails = productDetails;
+	}
+	
+	public String getStoreNumberEnglish() {
+	
+		return storeNumberEnglish;
+	}
+	
+	public void setStoreNumberEnglish(String storeNumberEnglish) {
+	
+		this.storeNumberEnglish = storeNumberEnglish;
 	}
 
 	@Override

@@ -124,4 +124,12 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 		}
 	
 	}
+	
+	public void print(Object something) {
+		if (null == something) {
+			System.out.println("NULL!!!!");
+		} else {
+			System.out.println(something);
+		}
+	}
 }
