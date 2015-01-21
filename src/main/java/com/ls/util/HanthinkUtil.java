@@ -99,6 +99,12 @@ public class HanthinkUtil {
 		return new SimpleDateFormat(XinXinConstants.SIMPLE_DATE_FORMAT_CARREFOUR).format(date);
 	}
 	
+	public static String getCarrefourDateToStandardString(String carrefourString) throws ParseException {
+		
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(carrefourString);
+		
+		return new SimpleDateFormat(XinXinConstants.SIMPLE_DATE_FORMAT_STRING).format(date);
+	}
 	public static Date getNow() {
 
 		return getStandardDate(new Date());

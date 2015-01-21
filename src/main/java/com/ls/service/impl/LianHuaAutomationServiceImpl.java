@@ -27,15 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
@@ -55,7 +52,7 @@ import com.ls.vo.ResponseVo;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@Service("carrefourAutomationService")
+@Service("lianHuaAutomationService")
 @Scope("prototype")
 public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationService {
 
@@ -218,59 +215,75 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 		URL url = new URL(LIANHUA_ROOT_URL);
 
 		final HtmlPage loginPage = webClient.getPage(url);
-
-		HtmlForm form = loginPage.getFormByName("loginForm");
-
-		HtmlImage validationCodeImage = null;
-
-		List<HtmlImage> images = form.getHtmlElementsByTagName("img");
-
-		for (HtmlImage htmlImage : images) {
-
-			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("includes/image.jsp")) {
-				validationCodeImage = htmlImage;
-				break;
-			}
-		}
-
-		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
-		validationCodeImage.saveAs(new File(fileName));
-
-		Thread.sleep(1000);
-
-		final HtmlTextInput usernameTextInput = form.getInputByName("login");
-		final HtmlPasswordInput passwordField = form.getInputByName("password");
-		final HtmlTextInput validateCodeTextInput = form.getInputByName("validate");
-		final HtmlImageInput loginButton = form.getInputByName("imageField");
-
-		usernameTextInput.setValueAttribute(automaticJob.getUsername());
-		passwordField.setValueAttribute(automaticJob.getPassword());
-
-		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-		String command = ocrInstallPath + "tesseract.exe " + fileName + " " + fileName;
-
-		Process process = Runtime.getRuntime().exec(command);
-		process.waitFor();
-
-		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
-
-		Thread.sleep(1000);
-
-		validateCodeTextInput.setValueAttribute(code);
-
-		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
-
-		try {
-			loginResultPage.getFormByName("loginForm");
-		} catch (ElementNotFoundException e) {
-
-			cleanUpValidationCodeFiles();
-			System.out.println("Log in successfully.");
-
-			return null;
-		}
-
-		tryToLogin(webClient, automaticJob);
+		
+		WebRequest webRequest = new WebRequest(new URL("http://b2b.chinalh.com/login.do"), HttpMethod.POST);
+		List<NameValuePair> parameterList = new ArrayList<NameValuePair>();
+		parameterList.add(new NameValuePair("username", "LH29392001"));
+		parameterList.add(new NameValuePair("password", "shyygj1!"));
+		parameterList.add(new NameValuePair("checkText", "fuck"));
+		parameterList.add(new NameValuePair("checkCode", "fuck"));
+		webRequest.setRequestParameters(parameterList );
+		
+		webClient.getPage(webRequest);
+		
+		String testUrl = "http://edi.chinalh.com/lhscm/cm/business/form/returns/returns.do?search=true&accid=&bgid=0002&datebegin=2015-01-21&dateend=2015-01-21&datetype=2&deptid=&findnew=true&limit=20&orderby=bg_org_id";
+		
+		HtmlPage page = webClient.getPage(testUrl);
+		
+		System.out.println(page.getWebResponse().getContentAsString());
+		
+//		HtmlForm form = loginPage.getFormByName("loginForm");
+//
+//		HtmlImage validationCodeImage = null;
+//
+//		List<HtmlImage> images = form.getHtmlElementsByTagName("img");
+//
+//		for (HtmlImage htmlImage : images) {
+//
+//			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("includes/image.jsp")) {
+//				validationCodeImage = htmlImage;
+//				break;
+//			}
+//		}
+//
+//		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
+//		validationCodeImage.saveAs(new File(fileName));
+//
+//		Thread.sleep(1000);
+//
+//		final HtmlTextInput usernameTextInput = form.getInputByName("login");
+//		final HtmlPasswordInput passwordField = form.getInputByName("password");
+//		final HtmlTextInput validateCodeTextInput = form.getInputByName("validate");
+//		final HtmlImageInput loginButton = form.getInputByName("imageField");
+//
+//		usernameTextInput.setValueAttribute(automaticJob.getUsername());
+//		passwordField.setValueAttribute(automaticJob.getPassword());
+//
+//		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
+//		String command = ocrInstallPath + "tesseract.exe " + fileName + " " + fileName;
+//
+//		Process process = Runtime.getRuntime().exec(command);
+//		process.waitFor();
+//
+//		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
+//
+//		Thread.sleep(1000);
+//
+//		validateCodeTextInput.setValueAttribute(code);
+//
+//		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+//
+//		try {
+//			loginResultPage.getFormByName("loginForm");
+//		} catch (ElementNotFoundException e) {
+//
+//			cleanUpValidationCodeFiles();
+//			System.out.println("Log in successfully.");
+//
+//			return null;
+//		}
+//
+//		tryToLogin(webClient, automaticJob);
 
 		return null;
 	}

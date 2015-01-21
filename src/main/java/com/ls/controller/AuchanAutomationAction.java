@@ -81,6 +81,10 @@ public class AuchanAutomationAction extends BaseAction {
 
 	@Resource(name = "sosoAutomationService")
 	private AuthanAutomationService sosoAutomationService;
+	
+	@Resource(name = "carrefourAutomationService")
+	private AuthanAutomationService carrefourAutomationService;
+	
 
 	@Autowired
 	private OrderRepository orderRepository;
@@ -133,6 +137,9 @@ public class AuchanAutomationAction extends BaseAction {
 
 				response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
 
+			} else if(storeDatasourceIdentity.equals("CARREFOUR")) {
+				
+				response = carrefourAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
 			} else {
 
 				response = ResponseVo.newFailMessage("尚未开发的功能。");
@@ -298,6 +305,7 @@ public class AuchanAutomationAction extends BaseAction {
 		jobDataMap.put("authanAutomationService", authanAutomationService);
 		jobDataMap.put("sosoAutomationService", sosoAutomationService);
 		jobDataMap.put("tescoSystemService", tescoAutomationService);
+		jobDataMap.put("carrefourAutomationService", carrefourAutomationService);
 		jobDataMap.put("jobWillRun", jobInDb);
 		jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 

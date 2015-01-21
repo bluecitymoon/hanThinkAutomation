@@ -39,7 +39,10 @@ public class StartupJobService implements InitializingBean {
 
 	@Resource(name = "authanOrderSystemService")
 	private AuthanAutomationService authanAutomationService;
-
+	
+	@Resource(name = "carrefourAutomationService")
+	private AuthanAutomationService carrefourAutomationService;
+	
 	@Resource(name = "tescoSystemService")
 	private AuthanAutomationService tescoAutomationService;
 
@@ -66,6 +69,7 @@ public class StartupJobService implements InitializingBean {
 				jobDataMap.put("authanAutomationService", authanAutomationService);
 				jobDataMap.put("sosoAutomationService", sosoAutomationService);
 				jobDataMap.put("tescoSystemService", tescoAutomationService);
+				jobDataMap.put("carrefourAutomationService", carrefourAutomationService);
 				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 				jobDataMap.put("jobWillRun", automaticJob);
 				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);

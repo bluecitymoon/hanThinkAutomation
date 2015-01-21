@@ -145,7 +145,7 @@ public class CarrefourDetailFinder extends NodeVisitor {
 
 					if (StringUtils.isNotBlank(tdcontent)) {
 						try {
-							String standardDate = HanthinkUtil.getCarrefourDateQueryString(tdcontent);
+							String standardDate = HanthinkUtil.getCarrefourDateToStandardString(tdcontent);
 							orderTitleMap.put("orderDate", standardDate);
 
 						} catch (ParseException e) {
@@ -161,7 +161,7 @@ public class CarrefourDetailFinder extends NodeVisitor {
 
 					if (StringUtils.isNotBlank(tdcontent)) {
 						try {
-							String standardDate = HanthinkUtil.getCarrefourDateQueryString(tdcontent);
+							String standardDate = HanthinkUtil.getCarrefourDateToStandardString(tdcontent);
 							orderTitleMap.put("estimateTakeOverDate", standardDate);
 
 						} catch (ParseException e) {

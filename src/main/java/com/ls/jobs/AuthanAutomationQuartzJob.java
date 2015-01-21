@@ -22,6 +22,8 @@ public class AuthanAutomationQuartzJob implements Job {
 	
 	private AuthanAutomationService tescoAutomationService; 
 
+	private AuthanAutomationService carrefourAutomationService;
+	
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -34,6 +36,7 @@ public class AuthanAutomationQuartzJob implements Job {
 		
 		tescoAutomationService  = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("tescoSystemService");
 		
+		carrefourAutomationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("carrefourAutomationService"); 
 		Date today = new Date();
 		AutomaticJob authanJob = (AutomaticJob) context.getJobDetail().getJobDataMap().get("jobWillRun");
 		System.out.println("Job -- >" + authanJob.toString());
@@ -82,7 +85,10 @@ public class AuthanAutomationQuartzJob implements Job {
 
 				responseVo = tescoAutomationService.postDataToWebService(lastRunDate, now, authanJob);
 
-			} else {
+			} else if(storeDatasourceIdentity.equals("CARREFOUR")) {
+				
+				responseVo = carrefourAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+			}else {
 
 				responseVo = ResponseVo.newFailMessage("尚未开发的功能。");
 			}
