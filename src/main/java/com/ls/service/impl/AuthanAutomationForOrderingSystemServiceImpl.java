@@ -1,8 +1,6 @@
 package com.ls.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,18 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import net.sf.json.xml.XMLSerializer;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
@@ -261,15 +250,19 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 			
 			if (response.getStatusLine().getStatusCode() >= 200) {
 				
-				XMLSerializer xmlSerializer = new XMLSerializer();
-				JSON jsonObject = xmlSerializer.read(responseText);
-				
-				System.out.println(jsonObject.toString());
-				
-				saveOrders(orders, job);
+				responseVo = handleResponse(responseText);
+
+				if (responseVo.getType().equals("FAIL")) {
+
+					return responseVo;
+				} else {
+					saveOrders(orders, job);
+				}
 				
 				responseVo = ResponseVo.newSuccessMessage("采集成功。");
+				
 			} else {
+				
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}
 			

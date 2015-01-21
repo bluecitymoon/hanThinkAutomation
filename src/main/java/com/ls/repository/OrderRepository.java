@@ -14,4 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
 	Order findByOrderNumberAndJobId(String orderNumber, Integer jobId);
 
 	Order findByOrderNumberAndJobIdAndStoreNumberEnglish(String orderNumber, Integer jobId, String storeNumberEnglish);
+
+	Order findByOrderNumberAndStoreNumber(String orderNumber, String storeNumber);
 }
