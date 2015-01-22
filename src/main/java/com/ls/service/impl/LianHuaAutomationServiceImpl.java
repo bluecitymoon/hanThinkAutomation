@@ -1,17 +1,17 @@
 package com.ls.service.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -33,19 +33,17 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
-import com.ls.constants.HanthinkProperties;
 import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
 import com.ls.exception.ConfigurationException;
-import com.ls.grab.GrapImgUtil;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
 import com.ls.util.HanthinkUtil;
+import com.ls.vo.LihuaListJsonObject;
+import com.ls.vo.LihuaResponseObject;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 
@@ -68,17 +66,7 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 
-	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
-
-		Map<String, String> titleMap = order.getOrderTitleMap();
-		String orderNumber = titleMap.get("orderNumber");
-		String storeNumberEnglish = titleMap.get("storeNumberEnglish");
-
-		Order existedOrder = orderRepository.findByOrderNumberAndJobIdAndStoreNumberEnglish(orderNumber, jobId, storeNumberEnglish);
-
-		return existedOrder == null;
-	}
-
+	
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		List<Orders> ordersList = null;
@@ -98,96 +86,87 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 
 		tryToLogin(webClient, authanJob);
 
-		webClient.getPage("https://supplierweb.carrefour.com/callSSO.jsp");
-
-		List<String> orderIds = getAllOrderFileIds(webClient, start, end);
-
-		print(orderIds);
-
-		ordersList = parseDetails(orderIds, webClient, authanJob.getId());
+		ordersList = parseTitlesTable(webClient, start, end, authanJob);
 
 		return ordersList;
 	}
 
-	private List<Orders> parseDetails(List<String> orderIds, WebClient webClient, Integer jobId) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	private List<Orders> parseTitlesTable(WebClient webClient, String start, String end, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 
-		List<Orders> ordersList = Lists.newArrayList();
+		List<Orders> result = new ArrayList<Orders>();
 
-		if (orderIds == null || orderIds.isEmpty()) {
-			return ordersList;
+		String baseQueryUrl = "http://edi.chinalh.com/lhscm/cm/business/form/po/po.do?search=true&accid=&bgid=0002&datebegin=" + start + "&dateend=" + end + "&datetype=1&deptid=&findnew=&limit=3000&orderby=bg_org_id&orgid=&pono=&status=-1";
+
+		System.out.println("visiting --> " + baseQueryUrl);
+
+		String resultQuery = webClient.getPage(baseQueryUrl).getWebResponse().getContentAsString();
+
+		JSONObject jsonObject = JSONObject.fromObject(resultQuery);
+
+		JSONArray detailListJsonArray = jsonObject.getJSONArray("rows");
+
+		LihuaResponseObject lihuaResponseObject = (LihuaResponseObject)JSONObject.toBean(jsonObject, LihuaResponseObject.class);
+
+		@SuppressWarnings({"deprecation", "unchecked"})
+		List<LihuaListJsonObject> detaiList = JSONArray.toList(detailListJsonArray, LihuaListJsonObject.class);
+
+		int count = Integer.valueOf(lihuaResponseObject.getCount());
+		if (count > 3000) {
+			throw new RuntimeException("查询订单数量过大，请缩小查询范围。");
 		}
 
-		for (String guid : orderIds) {
+		for (LihuaListJsonObject orderJsonObject : detaiList) {
 
-			try {
-				String detailUrl = "https://platform.powere2e.com/platform/mailbox/performDocAction.htm?guid=" + guid + "&actionId=1";
-				HtmlPage singleDetailPage = webClient.getPage(detailUrl);
+			String storeNumber = HanthinkUtil.getNumbersInString(orderJsonObject.getOrgid());
+			String orderNumber = orderJsonObject.getPono();
+			Order existedOrder = orderRepository.findByOrderNumberAndStoreNumberAndJobId(orderNumber, storeNumber, automaticJob.getId());
 
-				String singleDetailPageHtml = singleDetailPage.getWebResponse().getContentAsString();
-
-				Parser htmlParser = new Parser();
-				htmlParser.setInputHTML(singleDetailPageHtml);
-
-				CarrefourDetailFinder carrefourDetailFinder = new CarrefourDetailFinder();
-				htmlParser.visitAllNodesWith(carrefourDetailFinder);
-
-				Orders order = carrefourDetailFinder.getOrder();
-
-				if (order != null && checkIfOrderNotGrabed(order, jobId)) {
-					ordersList.add(order);
-				}
-
-			} catch (ParserException e) {
-
+			if (null != existedOrder) {
+				continue;
 			}
 
-		}
+			String orderId = orderJsonObject.getId();
 
-		return ordersList;
-	}
+			Orders orders = new Orders();
+			result.add(orders);
 
-	private List<String> getAllOrderFileIds(WebClient webClient, String start, String end) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+			Map<String, String> orderTitleMap = new HashMap<String, String>();
 
-		List<String> allGuidList = new ArrayList<String>();
-		try {
-			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
-			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(start);
+			orders.setOrderTitleMap(orderTitleMap);
+			
+			orderTitleMap.put("orderNumber", orderNumber);
+			orderTitleMap.put("supplierNumber", automaticJob.getUsername());
+			orderTitleMap.put("estimateTakeOverDate", orderJsonObject.getReply_delivery_date());
+			orderTitleMap.put("storeNumber", storeNumber);
+			orderTitleMap.put("orderDate", orderJsonObject.getBilldate());
+			orderTitleMap.put("orderId", orderId);
 
-			int page = 1;
+			String lianhuaOrderDetailUrl = "http://edi.chinalh.com/lhscm/cm/business/form/po/poreportview.do?headerid=" + orderId;
 
-			boolean hasNextPage = true;
-			while (hasNextPage) {
-				String archivePageUrl = "https://platform.powere2e.com/platform/mailbox/openInbox.htm?&receivedDateFrom=" + carrefourStart + "&receivedDateTo=" + carrefourEnd + "&searchText=&gotoPage=" + page;
+			System.out.println("visiting --> " + lianhuaOrderDetailUrl);
 
-				print("Visiting page " + page + "--> " + archivePageUrl);
+			if (StringUtils.isNotBlank(orderId)) {
 
-				HtmlPage archivePage = webClient.getPage(archivePageUrl);
-				String archivePageContent = archivePage.getWebResponse().getContentAsString();
-
+				HtmlPage singleDetailPage = webClient.getPage(lianhuaOrderDetailUrl);
 				Parser htmlParser = new Parser();
-				htmlParser.setInputHTML(archivePageContent);
 
-				CarrefourDetailLinkingFinder carrefourDetailLinkingFinder = new CarrefourDetailLinkingFinder();
-				htmlParser.visitAllNodesWith(carrefourDetailLinkingFinder);
+				try {
+					htmlParser.setInputHTML(singleDetailPage.getWebResponse().getContentAsString());
+					LianHuaDetailFinder lianHuaDetailFinder = new LianHuaDetailFinder(orderNumber);
 
-				List<String> singlePageList = carrefourDetailLinkingFinder.getGuidList();
-				if (null == singlePageList || singlePageList.isEmpty()) {
-					break;
+					htmlParser.visitAllNodesWith(lianHuaDetailFinder);
+
+					List<Map<String, String>> ordersItemList = lianHuaDetailFinder.getOrdersItemList();
+					
+					orders.setOrdersItemList(ordersItemList);
+
+				} catch (ParserException e) {
+
 				}
-				allGuidList.addAll(singlePageList);
-
-				hasNextPage = carrefourDetailLinkingFinder.hasNextPage();
-
-				page++;
 			}
-
-		} catch (ParseException e) {
-			throw new RuntimeException("非标准的日期格式");
-		} catch (ParserException e) {
-
 		}
 
-		return allGuidList;
+		return result;
 	}
 
 	private String toEmpty(String input) {
@@ -201,122 +180,33 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 		return inputString;
 	}
 
-	public String getQueryParameters(String start, String end) {
 
-		String baseUrl = "?_search=false&endTime=" + end + "&rows=10&sord=asc&startTime=" + start;
-
-		return baseUrl;
-	}
-
-	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+	public void tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		System.out.println("LianHua Trying to login......");
 
 		URL url = new URL(LIANHUA_ROOT_URL);
 
 		final HtmlPage loginPage = webClient.getPage(url);
-		
+
 		WebRequest webRequest = new WebRequest(new URL("http://b2b.chinalh.com/login.do"), HttpMethod.POST);
 		List<NameValuePair> parameterList = new ArrayList<NameValuePair>();
-		parameterList.add(new NameValuePair("username", "LH29392001"));
-		parameterList.add(new NameValuePair("password", "shyygj1!"));
+		parameterList.add(new NameValuePair("username", automaticJob.getUsername()));
+		parameterList.add(new NameValuePair("password", automaticJob.getPassword()));
 		parameterList.add(new NameValuePair("checkText", "fuck"));
 		parameterList.add(new NameValuePair("checkCode", "fuck"));
-		webRequest.setRequestParameters(parameterList );
-		
+		webRequest.setRequestParameters(parameterList);
+
 		webClient.getPage(webRequest);
-		
-		String testUrl = "http://edi.chinalh.com/lhscm/cm/business/form/returns/returns.do?search=true&accid=&bgid=0002&datebegin=2015-01-21&dateend=2015-01-21&datetype=2&deptid=&findnew=true&limit=20&orderby=bg_org_id";
-		
-		HtmlPage page = webClient.getPage(testUrl);
-		
-		System.out.println(page.getWebResponse().getContentAsString());
-		
-//		HtmlForm form = loginPage.getFormByName("loginForm");
-//
-//		HtmlImage validationCodeImage = null;
-//
-//		List<HtmlImage> images = form.getHtmlElementsByTagName("img");
-//
-//		for (HtmlImage htmlImage : images) {
-//
-//			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("includes/image.jsp")) {
-//				validationCodeImage = htmlImage;
-//				break;
-//			}
-//		}
-//
-//		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
-//		validationCodeImage.saveAs(new File(fileName));
-//
-//		Thread.sleep(1000);
-//
-//		final HtmlTextInput usernameTextInput = form.getInputByName("login");
-//		final HtmlPasswordInput passwordField = form.getInputByName("password");
-//		final HtmlTextInput validateCodeTextInput = form.getInputByName("validate");
-//		final HtmlImageInput loginButton = form.getInputByName("imageField");
-//
-//		usernameTextInput.setValueAttribute(automaticJob.getUsername());
-//		passwordField.setValueAttribute(automaticJob.getPassword());
-//
-//		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-//		String command = ocrInstallPath + "tesseract.exe " + fileName + " " + fileName;
-//
-//		Process process = Runtime.getRuntime().exec(command);
-//		process.waitFor();
-//
-//		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
-//
-//		Thread.sleep(1000);
-//
-//		validateCodeTextInput.setValueAttribute(code);
-//
-//		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
-//
-//		try {
-//			loginResultPage.getFormByName("loginForm");
-//		} catch (ElementNotFoundException e) {
-//
-//			cleanUpValidationCodeFiles();
-//			System.out.println("Log in successfully.");
-//
-//			return null;
-//		}
-//
-//		tryToLogin(webClient, automaticJob);
 
-		return null;
-	}
-
-	public String generateNewValidationCode(String cookies, WebClient webClient) throws FailingHttpStatusCodeException, IOException, InterruptedException {
-
-		String getNewValidationCodeURL = "http://v30.sosgps.net.cn/platform-1.0/systemadmin/validateCode.do?timestamp=" + System.currentTimeMillis();
-
-		String fileName = GrapImgUtil.grabImgWithSrc(getNewValidationCodeURL, cookies);
-		Thread.sleep(1000);
-		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-		String command = ocrInstallPath + "tesseract.exe " + ocrInstallPath + fileName + ".jpg " + ocrInstallPath + fileName;
-
-		Process process = Runtime.getRuntime().exec(command);
-		process.waitFor();
-
-		String code = Files.readFirstLine(new File(ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
-		if (StringUtils.isNotBlank(code)) {
-			code = code.replace(" ", "");
-		}
-		boolean isValidCode = (StringUtils.isNotBlank(code) && code.length() == 4 && StringUtils.isNumeric(code));
-
-		if (isValidCode) {
-			return code;
-		} else {
-			return generateNewValidationCode(cookies, webClient);
-		}
+		System.out.println("LianHua logged in......");
+		// TODO check if login success.
 
 	}
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("carrefour-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("lianhua-request-soap.ftl");
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -363,16 +253,12 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 				if (responseVo.getType().equals("FAIL")) {
 
 					return responseVo;
+				} else {
+					saveOrders(orders, job);
 				}
 			}
 
 			System.out.println(responseText);
-
-			if (response.getStatusLine().getStatusCode() >= 200) {
-				saveOrders(orders, job);
-			} else {
-				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
-			}
 
 		} catch (ConfigurationException e) {
 
@@ -481,7 +367,11 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
 				String countInSingleBox = toEmpty(singleDetailMap.get("countInSingleBox"));
 				String priceWithoutTax = toEmpty(singleDetailMap.get("priceWithoutTax"));
+				String moneyAmountWithTax = toEmpty(singleDetailMap.get("moneyAmountWithTax"));
+				String taxRate = toEmpty(singleDetailMap.get("taxRate"));
 
+				String priceWithTax = toEmpty(singleDetailMap.get("priceWithTax"));
+				
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
@@ -493,7 +383,10 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 				productDetail.setProductNumber(productNumber);
 				productDetail.setCountInSingleBox(countInSingleBox);
 				productDetail.setPriceWithoutTax(priceWithoutTax);
-
+				productDetail.setMoneyAmountWithTax(moneyAmountWithTax);
+				productDetail.setTaxRate(taxRate);
+				productDetail.setPriceWithTax(priceWithTax);
+				
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);
 				} catch (Exception e) {

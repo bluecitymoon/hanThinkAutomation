@@ -48,7 +48,10 @@ public class StartupJobService implements InitializingBean {
 
 	@Resource(name = "sosoAutomationService")
 	private AuthanAutomationService sosoAutomationService;
-
+	
+	@Resource(name = "lianHuaAutomationService")
+	private AuthanAutomationService lianHuaAutomationService;
+	
 	public void afterPropertiesSet() throws Exception {
 
 		List<AutomaticJob> allJobs = automaticJobRepository.findAll();
@@ -71,6 +74,8 @@ public class StartupJobService implements InitializingBean {
 				jobDataMap.put("tescoSystemService", tescoAutomationService);
 				jobDataMap.put("carrefourAutomationService", carrefourAutomationService);
 				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
+				jobDataMap.put("lianHuaAutomationService", lianHuaAutomationService);
+				
 				jobDataMap.put("jobWillRun", automaticJob);
 				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 

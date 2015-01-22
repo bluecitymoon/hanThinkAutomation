@@ -2,6 +2,8 @@ package com.ls.jobs;
 
 import java.util.Date;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -24,6 +26,8 @@ public class AuthanAutomationQuartzJob implements Job {
 
 	private AuthanAutomationService carrefourAutomationService;
 	
+	private AuthanAutomationService lianHuaAutomationService;
+	
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -37,6 +41,9 @@ public class AuthanAutomationQuartzJob implements Job {
 		tescoAutomationService  = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("tescoSystemService");
 		
 		carrefourAutomationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("carrefourAutomationService"); 
+		
+		lianHuaAutomationService = (AuthanAutomationService) context.getJobDetail().getJobDataMap().get("carrefourAutomationService"); 
+		
 		Date today = new Date();
 		AutomaticJob authanJob = (AutomaticJob) context.getJobDetail().getJobDataMap().get("jobWillRun");
 		System.out.println("Job -- >" + authanJob.toString());
@@ -88,6 +95,10 @@ public class AuthanAutomationQuartzJob implements Job {
 			} else if(storeDatasourceIdentity.equals("CARREFOUR")) {
 				
 				responseVo = carrefourAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+				
+			}else if(storeDatasourceIdentity.equals("LIANHUA")) {
+				
+				responseVo = lianHuaAutomationService.postDataToWebService(lastRunDate, now, authanJob);
 			}else {
 
 				responseVo = ResponseVo.newFailMessage("尚未开发的功能。");

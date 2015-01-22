@@ -370,14 +370,6 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 			return responseVo;
 
-		} catch (FailingHttpStatusCodeException e) {
-
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
-
-			logger.error("postDataToWebService error" + responseVo.toString());
-
-			return responseVo;
 		} catch (MalformedURLException e) {
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
@@ -402,17 +394,7 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 			responseVo.setMessage("封装模板时发生了错误：" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
-			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("出错了:" + e.getMessage());
-
-			logger.error("postDataToWebService error" + responseVo.toString());
-
-			return responseVo;
-		}
+		} 
 
 		return responseVo;
 	}

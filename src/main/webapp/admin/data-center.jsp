@@ -104,6 +104,9 @@
 							<th>箱含量</th>
 							<th>未税单价</th>
 							<th>未税总价</th>
+							<th>含税单价</th>
+							<th>含税总价</th>
+							<th>税率</th>
 							<th>赠品名称</th>
 							<th>赠品数量</th>
 							<th>赠品编码</th>
@@ -119,6 +122,9 @@
 							<td style="text-align: center" data-bind="text : countInSingleBox"></td>
 							<td style="text-align: center" data-bind="text : priceWithoutTax"></td>
 							<td style="text-align: center" data-bind="text : moneyAmountWithoutTax"></td>
+							<td style="text-align: center" data-bind="text : priceWithTax"></td>
+							<td style="text-align: center" data-bind="text : moneyAmountWithTax"></td>
+							<td style="text-align: center" data-bind="text : taxRate"></td>
 							<td style="text-align: center" data-bind="text : giftName"></td>
 							<td style="text-align: center" data-bind="text : giftCount"></td>
 							<td style="text-align: center" data-bind="text : giftCode"></td>
@@ -165,7 +171,9 @@
 				self.giftName = '';
 				self.giftCount = '';
 				self.giftCode = '';
-				
+				self.priceWithTax = '';
+				self.taxRate = '';
+				self.moneyAmountWithTax = '';
 			};
 
 			var DataCenterModel = function() {

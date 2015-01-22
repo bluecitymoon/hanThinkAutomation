@@ -19,14 +19,17 @@ public class Test {
 	 */
 	public static void main(String[] args) throws IOException, ParserException {
 		
-		String fileContent = Files.toString(new File("D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\superdetail.html"), Charset.defaultCharset());
+		String fileContent = Files.toString(new File("D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\lianhua_detail.html"), Charset.defaultCharset());
 		
 		Parser htmlParser = new Parser();
 		htmlParser.setInputHTML(fileContent);
-		CarrefourDetailFinder carrefourDetailLinkingFinder = new CarrefourDetailFinder();
-		htmlParser.visitAllNodesWith(carrefourDetailLinkingFinder);
+		//CarrefourDetailFinder carrefourDetailLinkingFinder = new CarrefourDetailFinder();
 		
-		System.out.println(carrefourDetailLinkingFinder.getOrder());
+		LianHuaDetailFinder lianHuaDetailFinder = new LianHuaDetailFinder("aaaa");
+		htmlParser.visitAllNodesWith(lianHuaDetailFinder);
+		
+		System.out.println(lianHuaDetailFinder.getOrdersItemList());
+		//System.out.println(carrefourDetailLinkingFinder.getOrder());
 	}
 
 }

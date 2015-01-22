@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
@@ -93,18 +95,19 @@ public class HanthinkUtil {
 	}
 
 	public static String getCarrefourDateQueryString(String standerdString) throws ParseException {
-		
+
 		Date date = XinXinConstants.SIMPLE_DATE_FORMATTER.parse(standerdString);
-		
+
 		return new SimpleDateFormat(XinXinConstants.SIMPLE_DATE_FORMAT_CARREFOUR).format(date);
 	}
-	
+
 	public static String getCarrefourDateToStandardString(String carrefourString) throws ParseException {
-		
+
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(carrefourString);
-		
+
 		return new SimpleDateFormat(XinXinConstants.SIMPLE_DATE_FORMAT_STRING).format(date);
 	}
+
 	public static Date getNow() {
 
 		return getStandardDate(new Date());
@@ -147,7 +150,23 @@ public class HanthinkUtil {
 		} catch (Exception e) {
 
 		}
-		
+
 		return null;
+	}
+
+	public static String getNumbersInString(String content) {
+
+		Pattern pattern = Pattern.compile("\\d+");
+		Matcher matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			return matcher.group(0);
+		}
+		return null;
+	}
+	
+	public static void main(String[] args) {
+
+		String test = "1003(asdf)";
+		System.out.println(getNumbersInString(test));
 	}
 }

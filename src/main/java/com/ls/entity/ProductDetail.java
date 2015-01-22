@@ -27,14 +27,36 @@ public class ProductDetail implements Serializable {
 	protected String count;
 	protected String countInSingleBox;
 	protected String boxCount;
+	protected String taxRate;
 	protected String priceWithTax;
 	protected String priceWithoutTax;
 	protected Date createDate;
 	protected String moneyAmountWithoutTax;
+	protected String moneyAmountWithTax;
 	protected String giftName;
 	protected String giftCount;
 	protected String giftCode;
 	
+	public String getMoneyAmountWithTax() {
+	
+		return moneyAmountWithTax;
+	}
+	
+	public void setMoneyAmountWithTax(String moneyAmountWithTax) {
+	
+		this.moneyAmountWithTax = moneyAmountWithTax;
+	}
+
+	public String getTaxRate() {
+	
+		return taxRate;
+	}
+	
+	public void setTaxRate(String taxRate) {
+	
+		this.taxRate = taxRate;
+	}
+
 	public String getBoxCount() {
 		return boxCount;
 	}
