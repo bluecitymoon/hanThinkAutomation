@@ -5,14 +5,16 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.htmlparser.Tag;
-import org.htmlparser.tags.ImageTag;
 import org.htmlparser.tags.LinkTag;
+import org.htmlparser.tags.Span;
 import org.htmlparser.visitors.NodeVisitor;
 
 public class CarrefourDetailLinkingFinder extends NodeVisitor {
 
 	private List<String> guidList;
-	private boolean hasNextPageFlag = false;
+	private List<Integer> otherPageIndexs = new ArrayList<Integer>();
+
+	private int currentIndex;
 
 	public void visitTag(Tag tag) {
 
@@ -20,9 +22,9 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 			LinkTag linkTag = (LinkTag)tag;
 
 			String onclickAttribute = linkTag.getAttribute("onclick");
-
+			
 			if (StringUtils.isNotBlank(onclickAttribute) && onclickAttribute.startsWith("viewMessage('")) {
-
+				System.out.println("find link attribute -->" + onclickAttribute);
 				if (null == guidList) {
 					guidList = new ArrayList<String>();
 				}
@@ -30,17 +32,26 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 
 				guidList.add(elements[3]);
 			}
-		}
 
-		if (tag instanceof ImageTag) {
+			String className = linkTag.getAttribute("class");
+			if (StringUtils.isNotBlank(className) && className.equals("pageLink")) {
+				
+				otherPageIndexs.add(Integer.valueOf(linkTag.toPlainTextString().trim()));
 
-			ImageTag imageTag = (ImageTag)tag;
-			String src = imageTag.getAttribute("src");
-			if (StringUtils.isNotBlank(src) && src.equals("/platform/images/last1a.gif")) {
-				hasNextPageFlag = true;
 			}
 		}
 
+		if (tag instanceof Span) {
+
+			Span span = (Span)tag;
+
+			String className = span.getAttribute("class");
+			if (StringUtils.isNotBlank(className) && className.equals("currentPage")) {
+				
+				currentIndex = Integer.valueOf(span.toPlainTextString().trim());
+				
+			}
+		}
 	}
 
 	public List<String> getGuidList() {
@@ -49,11 +60,22 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 	}
 
 	public boolean hasNextPage() {
+		
+		System.out.println("Other page index list --> " + otherPageIndexs.toString());
+		System.out.println("current page index is --> " + currentIndex);
 
-		if (guidList == null || guidList.size() == 0) {
+		if (otherPageIndexs.isEmpty()) {
 			return false;
 		}
-		return hasNextPageFlag;
+		
+		for(Integer otherSingleIndex : otherPageIndexs) {
+			
+			if (otherSingleIndex > currentIndex) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }

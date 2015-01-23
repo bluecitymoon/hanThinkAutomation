@@ -29,10 +29,7 @@ public class TestCarrerfour {
 	public void testGrabOrders() throws Exception {
 
 		AutomaticJob automaticJob = automaticJobRepository.findOne(5);
-		// for (int i = 0; i < 10; i++) {
-		List<Orders> orders = carrefourAutomationService.grabOrders("2015-01-15", "2015-01-15", automaticJob);
-		System.out.println(orders);
-		// }
+		List<Orders> orders = carrefourAutomationService.grabOrders("2015-01-23", "2015-01-23", automaticJob);
 
 	}
 

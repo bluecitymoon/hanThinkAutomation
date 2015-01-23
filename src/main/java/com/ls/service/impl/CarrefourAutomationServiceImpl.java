@@ -155,12 +155,15 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		try {
 			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
 			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(start);
-
+			
+			webClient.getPage("https://platform.powere2e.com/platform/mailbox/openInbox.htm?showAll");
+			
 			int page = 1;
 
 			boolean hasNextPage = true;
 			while (hasNextPage) {
-				String archivePageUrl = "https://platform.powere2e.com/platform/mailbox/openInbox.htm?&receivedDateFrom=" + carrefourStart + "&receivedDateTo=" + carrefourEnd + "&searchText=&gotoPage=" + page;
+				
+				String archivePageUrl = "https://platform.powere2e.com/platform/mailbox/navigateInbox.htm?&receivedDateFrom=" + carrefourStart + "&receivedDateTo=" + carrefourEnd + "&searchText=&gotoPage=" + page;
 
 				print("Visiting page " + page + "--> " + archivePageUrl);
 
@@ -174,9 +177,7 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 				htmlParser.visitAllNodesWith(carrefourDetailLinkingFinder);
 
 				List<String> singlePageList = carrefourDetailLinkingFinder.getGuidList();
-				if (null == singlePageList || singlePageList.isEmpty()) {
-					break;
-				}
+				
 				allGuidList.addAll(singlePageList);
 
 				hasNextPage = carrefourDetailLinkingFinder.hasNextPage();
