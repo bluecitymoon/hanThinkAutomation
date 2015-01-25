@@ -28,11 +28,8 @@ public class TestMetro {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(5);
-		// for (int i = 0; i < 10; i++) {
+		AutomaticJob automaticJob = automaticJobRepository.findOne(21);
 		List<Orders> orders = metroAutomationService.grabOrders("2015-1-20", "2015-1-20", automaticJob);
-		System.out.println(orders);
-		// }
 
 	}
 

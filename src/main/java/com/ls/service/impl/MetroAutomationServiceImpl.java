@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -20,7 +19,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.htmlparser.util.ParserException;
+import org.htmlparser.Parser;
+import org.htmlparser.Tag;
+import org.htmlparser.tags.ImageTag;
+import org.htmlparser.tags.LinkTag;
+import org.htmlparser.visitors.NodeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +36,11 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -44,7 +49,6 @@ import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
 import com.ls.exception.ConfigurationException;
-import com.ls.grab.HtmlParserUtilPlanB;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
@@ -90,109 +94,167 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 
 			String logonUrl = "https://portal.metro-link.com/cleartrust/ct_logon.asp";
 			// login
-			List<NameValuePair> parameters = ImmutableList.of(new NameValuePair("auth_mode", "SECURID"), new NameValuePair("override_uri_retention", "true"),
-			// new NameValuePair("password", automaticJob.getPassword()),
-			// new NameValuePair("user", automaticJob.getUsername())
-
-				new NameValuePair("password", "Metro52609"), new NameValuePair("user", "yx_jiangfeng@163.com"));
-
-			// webRequest.getRequestParameters().add(new NameValuePair("password", "Metro52609"));
-			// webRequest.getRequestParameters().add(new NameValuePair("user", "yx_jiangfeng@163.com"));
-
+			List<NameValuePair> parameters = ImmutableList.of(new NameValuePair("auth_mode", "SECURID"), new NameValuePair("override_uri_retention", "true"), new NameValuePair("password", automaticJob.getPassword()), new NameValuePair("user", automaticJob.getUsername()));
+			
 			// do login
 			HtmlPage logonPage = fireMetroEvent(parameters, logonUrl, webClient);
-			
+
+			//webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			HtmlPage gotoHomePage = webClient.getPage("https://portal.metro-link.com/irj/portal/mcc");
 			
-			System.out.println(gotoHomePage.getWebResponse().getContentAsString());
-
-			String sapStupidLoadingUrl = "https://portal.metro-link.com/webdynpro/resources/sap.com/pb/PageBuilder";
-
-//			String selectStartDate =
-//				"ComboBox_SelectIdaaaa.OrdersView.DropDownByIndexKey0ByEnterfalseurEventNameCOMBOBOXSELECTIONCHANGEInputField_ValidateIdaaaa.OrdersView.inputOrderDateFromValue" + start +
-//					"ClientActionsubmitAsyncurEventNameValidateForm_RequestId...formAsynctrueFocusInfo@{}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
-//			String selectEndDate = "InputField_ValidateIdaaaa.OrdersView.inputOrderDateToValue" + end + "ClientActionsubmitAsyncurEventNameValidateForm_RequestId...formAsynctrueFocusInfo@{\"sFocussedId\": \"ls-datepicker\"}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
-//			String clickSearchButton = "Button_PressIdaaaa.OrdersView.ButtonSearchClientActionsubmiturEventNameBUTTONCLICKForm_RequestId...formAsyncfalseFocusInfo@{\"sFocussedId\": \"aaaa.OrdersView.ButtonSearch\"}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
-//
-//			NameValuePair startEventQueueName = new NameValuePair("SAPEVENTQUEUE", selectStartDate);
-//			List<NameValuePair> startList = ImmutableList.of(startEventQueueName);
-//			HtmlPage startPage = fireMetroEvent(startList, sapStupidLoadingUrl, webClient);
+//			int count = 1;
 //			
-//			System.out.println(startPage.asText());
+//			while (true ) {
+//				System.out.println("Try " + count);
+//				
+//				Thread.sleep(2000);
+//				
+//				String homePageHtml = gotoHomePage.getWebResponse().getContentAsString();
+//				
+//				MetroSMCCLinkFindingVistor nodeVisitor = new MetroSMCCLinkFindingVistor();
 //
-//			NameValuePair endEventQueueName = new NameValuePair("SAPEVENTQUEUE", selectEndDate);	
-//			List<NameValuePair> endList = ImmutableList.of(endEventQueueName);
-//			HtmlPage endPage = fireMetroEvent(endList, sapStupidLoadingUrl, webClient);
-//
-//			System.err.println(endPage.asText());
-//
-//			NameValuePair clickSearchButtonEventQueueName = new NameValuePair("SAPEVENTQUEUE", clickSearchButton);
-//			List<NameValuePair> searchList = ImmutableList.of(clickSearchButtonEventQueueName);
-//			HtmlPage searchResultPage = fireMetroEvent(searchList, sapStupidLoadingUrl, webClient);
-//
-//			System.out.println(searchResultPage.asText());
+//				Parser parser = new Parser();
+//				parser.setInputHTML(homePageHtml);
+//				parser.visitAllNodesWith(nodeVisitor);
+//				
+//				if (nodeVisitor.hasLoadedEverything()) {
+//					break;
+//				}
+//				count ++;
+//			}
+			
+			String pickContentLink = "https://portal.metro-link.com/irj/servlet/prt/portal/prteventname/Navigate/prtroot/pcd!3aportal_content!2fevery_user!2fgeneral!2fdefaultAjaxframeworkContent!2fcom.sap.portal.contentarea?windowId=WID1422152557681&supportInitialNavNodesFilter=true&filterViewIdList=%3Bmcc%3Bcommon%3B&NavigationTarget=navurl%3A%2F%2F89931e705c670c2d1d62a4768cec5f9d";
+			HtmlPage page = webClient.getPage(pickContentLink);
+			
+			String result = page.getWebResponse().getContentAsString();
+			MetroSMCCLinkFindingVistor nodeVisitor = new MetroSMCCLinkFindingVistor();
 
-//			String vendorNo = automaticJob.getUsername().substring(2);
-//			final HtmlPage orderResultPage = webClient.getPage(makeParametersToSearchOrderList(start, end, null, vendorNo));
-//
-//			String ordersListHtml = orderResultPage.getWebResponse().getContentAsString();
+			Parser parser = new Parser();
+			parser.setInputHTML(result);
+			parser.visitAllNodesWith(nodeVisitor);
+			
+			HtmlTableDataCell tableColumn = HanthinkUtil.getFirstElementByXPath(gotoHomePage, "//*[@id=\"expandLeftPanel\"]");
+			System.out.println(tableColumn.click().getWebResponse().getContentAsString());
+			
+			String suspectUrl1 = "https://portal.metro-link.com/irj/servlet/prt/prtrw/prtroot/pcd!3acom.sap.portal.system!2fpcc!2fregionalization!2fcom.sap.portal.pcc!2fStagingAreaId!2fMCC!2fCorporate!2fApplications!2fSCM!2f00-EmptyRegion_zh!2fruntimeToolbar/gwtasynchevent/GetTags/gwtasyncheventtype/text/";
+			//ImageTag imageTag = HanthinkUtil.getFirstElementByXPath(gotoHomePage, "//*[@id=\"imagePlaceHolder\"]");
+
+			//System.out.println(imageTag.toHtml());
+
+			// String selectStartDate =
+			// "ComboBox_SelectIdaaaa.OrdersView.DropDownByIndexKey0ByEnterfalseurEventNameCOMBOBOXSELECTIONCHANGEInputField_ValidateIdaaaa.OrdersView.inputOrderDateFromValue"
+			// + start +
+			// "ClientActionsubmitAsyncurEventNameValidateForm_RequestId...formAsynctrueFocusInfo@{}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
+			// String selectEndDate =
+			// "InputField_ValidateIdaaaa.OrdersView.inputOrderDateToValue"
+			// + end +
+			// "ClientActionsubmitAsyncurEventNameValidateForm_RequestId...formAsynctrueFocusInfo@{\"sFocussedId\": \"ls-datepicker\"}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
+			// String clickSearchButton =
+			// "Button_PressIdaaaa.OrdersView.ButtonSearchClientActionsubmiturEventNameBUTTONCLICKForm_RequestId...formAsyncfalseFocusInfo@{\"sFocussedId\": \"aaaa.OrdersView.ButtonSearch\"}HashDomChangedfalseIsDirtyfalseEnqueueCardinalitysingle";
+			//
+			// NameValuePair startEventQueueName = new
+			// NameValuePair("SAPEVENTQUEUE", selectStartDate);
+			// List<NameValuePair> startList =
+			// ImmutableList.of(startEventQueueName);
+			// HtmlPage startPage = fireMetroEvent(startList,
+			// sapStupidLoadingUrl, webClient);
+			//
+			// System.out.println(startPage.asText());
+			//
+			// NameValuePair endEventQueueName = new
+			// NameValuePair("SAPEVENTQUEUE", selectEndDate);
+			// List<NameValuePair> endList =
+			// ImmutableList.of(endEventQueueName);
+			// HtmlPage endPage = fireMetroEvent(endList, sapStupidLoadingUrl,
+			// webClient);
+			//
+			// System.err.println(endPage.asText());
+			//
+			// NameValuePair clickSearchButtonEventQueueName = new
+			// NameValuePair("SAPEVENTQUEUE", clickSearchButton);
+			// List<NameValuePair> searchList =
+			// ImmutableList.of(clickSearchButtonEventQueueName);
+			// HtmlPage searchResultPage = fireMetroEvent(searchList,
+			// sapStupidLoadingUrl, webClient);
+			//
+			// System.out.println(searchResultPage.asText());
+
+			// String vendorNo = automaticJob.getUsername().substring(2);
+			// final HtmlPage orderResultPage =
+			// webClient.getPage(makeParametersToSearchOrderList(start, end,
+			// null, vendorNo));
+			//
+			// String ordersListHtml =
+			// orderResultPage.getWebResponse().getContentAsString();
 
 			// urls
-//			List<String> orderIdList = HtmlParserUtilPlanB.findOrderListInOrderSystem(ordersListHtml);
-//
-//			if (orderIdList.size() == 0) {
-//				return null;
-//			}
-//
-//			if (orderIdList.size() > 100000) {
-//				logger.error("data is too big");
-//			}
-//
-//			String orderDetailUrl = "http://logistics.auchan.com.cn:8000";
-//			for (String orderId : orderIdList) {
-//
-//				String singleOrderDetail = orderDetailUrl + orderId;
-//				final HtmlPage singleOrderDetailPage = webClient.getPage(singleOrderDetail);
-//
-//				String singleOrderHtml = singleOrderDetailPage.getWebResponse().getContentAsString();
-//
-//				Orders singleOrder = null;
-//				try {
-//					singleOrder = HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml);
-//
-//					Map<String, String> titlesMap = singleOrder.getOrderTitleMap();
-//					titlesMap.put("供应商：", vendorNo);
-//
-//					String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
-//					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
-//					for (Map<String, String> map : detailsMaps) {
-//						map.put("订单号：", childTableId);
-//
-//						String priceInWithoutTax = map.get("未税进价");
-//						if (StringUtils.isNotBlank(priceInWithoutTax) && priceInWithoutTax.startsWith(".")) {
-//							map.put("未税进价", "0" + priceInWithoutTax);
-//						}
-//					}
-//					if (checkIfOrderNotGrabed(singleOrder)) {
-//						ordersList.add(singleOrder);
-//					}
-//
-//				} catch (ParserException e) {
-//					logger.error("parse error for order id " + orderId + ", " + singleOrderDetail);
-//				}
-//			}
-//
-//			webClient.closeAllWindows();
+			// List<String> orderIdList =
+			// HtmlParserUtilPlanB.findOrderListInOrderSystem(ordersListHtml);
+			//
+			// if (orderIdList.size() == 0) {
+			// return null;
+			// }
+			//
+			// if (orderIdList.size() > 100000) {
+			// logger.error("data is too big");
+			// }
+			//
+			// String orderDetailUrl = "http://logistics.auchan.com.cn:8000";
+			// for (String orderId : orderIdList) {
+			//
+			// String singleOrderDetail = orderDetailUrl + orderId;
+			// final HtmlPage singleOrderDetailPage =
+			// webClient.getPage(singleOrderDetail);
+			//
+			// String singleOrderHtml =
+			// singleOrderDetailPage.getWebResponse().getContentAsString();
+			//
+			// Orders singleOrder = null;
+			// try {
+			// singleOrder =
+			// HtmlParserUtilPlanB.parseOrderInOrderSystem(singleOrderHtml);
+			//
+			// Map<String, String> titlesMap = singleOrder.getOrderTitleMap();
+			// titlesMap.put("供应商：", vendorNo);
+			//
+			// String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
+			// List<Map<String, String>> detailsMaps =
+			// singleOrder.getOrdersItemList();
+			// for (Map<String, String> map : detailsMaps) {
+			// map.put("订单号：", childTableId);
+			//
+			// String priceInWithoutTax = map.get("未税进价");
+			// if (StringUtils.isNotBlank(priceInWithoutTax) &&
+			// priceInWithoutTax.startsWith(".")) {
+			// map.put("未税进价", "0" + priceInWithoutTax);
+			// }
+			// }
+			// if (checkIfOrderNotGrabed(singleOrder)) {
+			// ordersList.add(singleOrder);
+			// }
+			//
+			// } catch (ParserException e) {
+			// logger.error("parse error for order id " + orderId + ", " +
+			// singleOrderDetail);
+			// }
+			// }
+			//
+			// webClient.closeAllWindows();
 
 		} catch (FailingHttpStatusCodeException e) {
+			e.printStackTrace();
 			loggerError(e, start, end);
 		} catch (MalformedURLException e) {
+			e.printStackTrace();
 			loggerError(e, start, end);
 		} catch (ElementNotFoundException e) {
+			e.printStackTrace();
 			loggerError(e, start, end);
 		} catch (IOException e) {
+			e.printStackTrace();
 			loggerError(e, start, end);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("grab order failed for start : " + start + " end : " + end + ", meets unexpected exception!! error message is -> " + e.getMessage());
 		}
 
@@ -316,21 +378,21 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 		return response;
 	}
 
-	@Secured({"ROLE_ADMIN"})
+	@Secured({ "ROLE_ADMIN" })
 	public ResponseVo startupJobManually(String start, String end, AutomaticJob automaticJob) {
 
 		return postDataToWebService(start, end, automaticJob);
 
 	}
 
-	@Secured({"ROLE_ADMIN"})
+	@Secured({ "ROLE_ADMIN" })
 	public void deleteJob(AutomaticJob automaticJob) {
 
 		automaticJobRepository.delete(automaticJob);
 
 	}
 
-	@Secured({"ROLE_ADMIN"})
+	@Secured({ "ROLE_ADMIN" })
 	public void saveOrUpdateJob(AutomaticJob automaticJob) {
 
 		automaticJobRepository.saveAndFlush(automaticJob);
