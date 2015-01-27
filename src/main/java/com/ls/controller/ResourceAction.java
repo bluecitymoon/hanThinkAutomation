@@ -28,7 +28,7 @@ public class ResourceAction extends BaseAction {
 
 	@Autowired
 	private StoreRepository storeRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -42,23 +42,26 @@ public class ResourceAction extends BaseAction {
 	public String findAllStores() {
 
 		stores = storeRepository.findAll();
+		for (Store store : stores) {
+			store.setUsers(null);
+		}
 
 		return SUCCESS;
 	}
 
 	public String findAssignedStores() {
-		
+
 		User currentUser = null;
-		
+
 		String userId = getParameter("userId");
 		if (StringUtils.isEmpty(userId)) {
 			currentUser = userService.getCurrentLoggedInUser();
 		} else {
 			currentUser = userRepository.findOne(Integer.valueOf(userId));
 		}
-		 
+
 		List<Integer> assignedStores = storeRepository.findOrderedStoreIdsByUserId(currentUser.getId());
-		
+
 		orderedStores = Lists.newArrayList();
 
 		for (Integer store : assignedStores) {
@@ -69,43 +72,47 @@ public class ResourceAction extends BaseAction {
 	}
 
 	public String findAssignedDetailedStores() {
-		
+
 		User currentUser = userService.getCurrentLoggedInUser();
-		 
+
 		orderedDetailedStores = storeRepository.findByUsers(ImmutableList.of(currentUser));
-		
+
+		for (Store singleStore : orderedDetailedStores) {
+			singleStore.setUsers(null);
+		}
+
 		return SUCCESS;
 	}
 
 	public String updateUserStore() {
-		
+
 		String selectedStoresJson = getParameter("selectedStores");
 		String userIdJson = getParameter("userId");
-		
+
 		if (StringUtils.isBlank(userIdJson)) {
-			setResponse(ResponseVo.newFailMessage("用户信息缺失")); 
+			setResponse(ResponseVo.newFailMessage("用户信息缺失"));
 		}
-		
+
 		Object[] cityArray = JSONArray.fromObject(selectedStoresJson).toArray();
-		
+
 		List<Integer> storeIds = Lists.newArrayList();
 		for (Object cityIdString : cityArray) {
 			storeIds.add(Integer.valueOf(cityIdString.toString()));
 		}
-		
+
 		ResponseVo response = userService.updateUserStore(storeIds, Integer.valueOf(userIdJson));
 		setResponse(response);
-		
+
 		return SUCCESS;
 	}
-	
+
 	public List<Store> getOrderedDetailedStores() {
-	
+
 		return orderedDetailedStores;
 	}
-	
+
 	public void setOrderedDetailedStores(List<Store> orderedDetailedStores) {
-	
+
 		this.orderedDetailedStores = orderedDetailedStores;
 	}
 

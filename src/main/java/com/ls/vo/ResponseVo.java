@@ -91,5 +91,4 @@ public class ResponseVo {
 		this.object = object;
 	}
 	
-	
 }

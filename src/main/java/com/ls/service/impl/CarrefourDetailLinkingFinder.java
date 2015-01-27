@@ -24,7 +24,7 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 			String onclickAttribute = linkTag.getAttribute("onclick");
 			
 			if (StringUtils.isNotBlank(onclickAttribute) && onclickAttribute.startsWith("viewMessage('")) {
-				System.out.println("find link attribute -->" + onclickAttribute);
+
 				if (null == guidList) {
 					guidList = new ArrayList<String>();
 				}

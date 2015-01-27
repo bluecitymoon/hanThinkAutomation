@@ -93,6 +93,16 @@ public class UserAction extends BaseAction {
 
 		users = userRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
 
+		for (User user : users) {
+			user.setPassword(null);
+			user.setStores(null);
+
+			List<Role> roles = user.getRoles();
+			for (Role role : roles) {
+				role.setUsers(null);
+			}
+		}
+
 		return SUCCESS;
 	}
 
@@ -138,6 +148,7 @@ public class UserAction extends BaseAction {
 
 		return SUCCESS;
 	}
+
 	public String disactiveUser() {
 
 		try {
@@ -149,7 +160,7 @@ public class UserAction extends BaseAction {
 			}
 
 			User userEntity = HanthinkUtil.getJavaObjectFromJsonString(userJson, User.class);
-			
+
 			User refreshUser = userRepository.findOne(userEntity.getId());
 
 			refreshUser.setActive(false);

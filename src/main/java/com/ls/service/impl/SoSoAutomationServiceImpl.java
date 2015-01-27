@@ -76,15 +76,21 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	@Autowired
 	ProductDetailRepository productDetailRepository;
-	
+
 	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
-		
+
 		Map<String, String> titleMap = order.getOrderTitleMap();
 		String orderNumber = titleMap.get("orderNumber");
 		String address = titleMap.get("address");
-		
-		Order existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
-		
+
+		Order existedOrder = null;
+		try {
+			existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
+		} catch (javax.persistence.NonUniqueResultException e) {
+			
+			return false;
+		}
+
 		return existedOrder == null;
 	}
 
@@ -96,12 +102,12 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			logger.error("configuration for job authan is not good.");
 			throw new ConfigurationException();
 		}
-		
+
 		if (StringUtils.isEmpty(authanJob.getCompanyCode())) {
-			
+
 			throw new ConfigurationException("未配置企业代码");
 		}
-		
+
 		Date now = new Date();
 		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
 
@@ -132,11 +138,11 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 				for (int index = 1; index <= pageCount + 1; index++) {
 
 					String retrievingDataUrl = getOrdersListRequestUrl + getQueryParameters(start, end) + "&page=" + index;
-					
+
 					String responseData = webClient.getPage(retrievingDataUrl).getWebResponse().getContentAsString();
 
 					JSONArray dataArray = JSONObject.fromObject(responseData).getJSONArray("rows");
-					
+
 					Object[] orderListArray = dataArray.toArray();
 
 					for (Object singleOrder : orderListArray) {
@@ -144,23 +150,24 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 						Orders order = new Orders();
 						ObjectMapper objectMapper = new ObjectMapper();
 
-						HashMap<String, String> titleMap = objectMapper.readValue(singleOrder.toString(), new TypeReference<HashMap<String, String>>(){});
+						HashMap<String, String> titleMap = objectMapper.readValue(singleOrder.toString(), new TypeReference<HashMap<String, String>>(){
+						});
 						order.setOrderTitleMap(titleMap);
 
 						String orderNumber = titleMap.get("CELL0");
 						String orderDate = titleMap.get("CREATEON");
 						String address = titleMap.get("CELL3");
 						String estimateTakeOverDate = titleMap.get("CELL2");
-						
+
 						titleMap.put("orderNumber", toEmpty(orderNumber));
-						titleMap.put("orderDate",  toEmpty(orderDate));
-						titleMap.put("address",  toEmpty(address));
-						titleMap.put("estimateTakeOverDate",  toEmpty(estimateTakeOverDate));
-						
+						titleMap.put("orderDate", toEmpty(orderDate));
+						titleMap.put("address", toEmpty(address));
+						titleMap.put("estimateTakeOverDate", toEmpty(estimateTakeOverDate));
+
 						if (checkIfOrderNotGrabed(order, authanJob.getId())) {
-							
+
 							String detailBaseUrl = "http://report.sosgps.net.cn/report-1.0/order/getPopupDynamicPageData.do?code=13836306053711&linkField=v30_bd_order.code&linkFieldValue=" + orderNumber;
-							
+
 							Page detailPage = webClient.getPage(detailBaseUrl);
 
 							List<Map<String, String>> ordersItemList = parseDetails(detailPage.getWebResponse().getContentAsString(), orderNumber);
@@ -179,13 +186,12 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			automaticJobRepository.saveAndFlush(authanJob);
 
-		}  finally {
-			
+		} finally {
+
 			cleanUpValidationCodeFiles();
 		}
 		return ordersList;
 	}
-
 
 	private List<Map<String, String>> parseDetails(String context, String orderNumber) {
 
@@ -202,18 +208,18 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		Object[] dataItem = listItems.toArray();
 
 		for (Object item : dataItem) {
-			
+
 			JSONObject detailObject = JSONObject.fromObject(item);
-			
+
 			Map<String, String> itemMap = Maps.newHashMap();
 
-			itemMap.put("description",  toEmpty(detailObject.getString("CELL3")));
-			itemMap.put("count",  toEmpty(detailObject.getString("CELL4")));
-			
-			itemMap.put("moneyAmount",  toEmpty(detailObject.getString("CELL7")));
-			
-			itemMap.put("orderNumber",  toEmpty(orderNumber));
-			
+			itemMap.put("description", toEmpty(detailObject.getString("CELL3")));
+			itemMap.put("count", toEmpty(detailObject.getString("CELL4")));
+
+			itemMap.put("moneyAmount", toEmpty(detailObject.getString("CELL7")));
+
+			itemMap.put("orderNumber", toEmpty(orderNumber));
+
 			String giftName = detailObject.getString("CELL5");
 			String giftCount = detailObject.getString("CELL6");
 			if (StringUtils.isNotBlank(giftName) && !giftName.equals("null")) {
@@ -235,15 +241,16 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 	}
 
 	private String toEmpty(String input) {
-		
+
 		String inputString = StringUtils.trimToEmpty(input);
-		
+
 		if (inputString.toLowerCase().equals("null")) {
 			inputString = "";
 		}
-		
+
 		return inputString;
 	}
+
 	public String getQueryParameters(String start, String end) {
 
 		String baseUrl = "?_search=false&endTime=" + end + "&rows=10&sord=asc&startTime=" + start;
@@ -324,7 +331,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		Process process = Runtime.getRuntime().exec(command);
 		process.waitFor();
 
-		String code = Files.readFirstLine(new File( ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
+		String code = Files.readFirstLine(new File(ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
 		if (StringUtils.isNotBlank(code)) {
 			code = code.replace(" ", "");
 		}
@@ -369,7 +376,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
-			
+
 			System.out.println(data);
 
 			String url = job.getClientIp() + job.getClientEnd();
@@ -381,16 +388,16 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			String responseText = null;
 			if (httpEntity != null) {
 				responseText = EntityUtils.toString(httpEntity);
-			}
-			
-			System.out.println(responseText);
-			
-			if (response.getStatusLine().getStatusCode() >= 200) {
-				// XMLSerializer xmlSerializer = new XMLSerializer();
-				// xmlSerializer.read(responseText)
-				saveOrders(orders, job);
-			} else {
-				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
+
+				ResponseVo soapResponseVo = handleResponse(responseText);
+				if (soapResponseVo.getType().equals("FAIL")) {
+					return soapResponseVo;
+				} else {
+					try {
+						saveOrders(orders, job);
+					} catch (Exception e) {
+					}
+				}
 			}
 
 		} catch (ConfigurationException e) {
@@ -403,7 +410,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			return responseVo;
 
 		} catch (FailingHttpStatusCodeException e) {
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
 
@@ -421,23 +428,23 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (URISyntaxException e) {
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("连接数据源时出现了网络问题" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (InterruptedException e) {
-			//??!
+			// ??!
 		} catch (TemplateException e) {
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("封装模板时发生了错误：" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
-			
+
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
 			responseVo.setMessage("出错了:" + e.getMessage());
 
@@ -485,9 +492,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			}
 
 			if (null == savedOrder) {
-				 continue;
+				continue;
 			}
-			
+
 			for (Map<String, String> singleDetailMap : detailMap) {
 
 				String description = toEmpty(singleDetailMap.get("description"));

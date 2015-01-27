@@ -232,6 +232,7 @@
 
 	<script src="/ls/js/knockout-jqueryui.min.js"></script>
 	<script src="/ls/js/jquery.dataTables.js"></script>
+	<script src="/ls/js/jquery.pagination.js"></script>
 	<script>
 		function activeCurrentMenuItem() {
 			$('#jobCenter').addClass('active');	

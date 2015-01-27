@@ -171,6 +171,7 @@ public class HtmlParserUtilPlanB {
 
 		} catch (ParserException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return orderList;

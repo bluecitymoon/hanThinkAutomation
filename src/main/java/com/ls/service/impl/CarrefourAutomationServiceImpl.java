@@ -183,6 +183,10 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 				hasNextPage = carrefourDetailLinkingFinder.hasNextPage();
 
 				page++;
+				
+				if (page > 10000) {
+					break;
+				}
 			}
 
 		} catch (ParseException e) {

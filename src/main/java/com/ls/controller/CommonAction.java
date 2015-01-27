@@ -33,6 +33,8 @@ public class CommonAction extends BaseAction {
 		String username = HanthinkUtil.getCurrentUserName();
 		
 		user = userRepository.findByUsername(username);
+		user.setStores(null);
+		user.setPassword(null);
 		
 		List<Role> roles = user.getRoles();
 		for (Role role : roles) {
