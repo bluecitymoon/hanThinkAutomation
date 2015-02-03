@@ -83,15 +83,18 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		String orderNumber = titleMap.get("orderNumber");
 		String address = titleMap.get("address");
 
-		Order existedOrder = null;
+		List<Order> existedOrderList = null;
 		try {
-			existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
+			existedOrderList = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
 		} catch (javax.persistence.NonUniqueResultException e) {
+			
+			return false;
+		} catch (Exception e) {
 			
 			return false;
 		}
 
-		return existedOrder == null;
+		return existedOrderList == null || existedOrderList.isEmpty();
 	}
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {

@@ -66,7 +66,6 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 
-	
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		List<Orders> ordersList = null;
@@ -133,7 +132,7 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 			Map<String, String> orderTitleMap = new HashMap<String, String>();
 
 			orders.setOrderTitleMap(orderTitleMap);
-			
+
 			orderTitleMap.put("orderNumber", orderNumber);
 			orderTitleMap.put("supplierNumber", automaticJob.getUsername());
 			orderTitleMap.put("estimateTakeOverDate", orderJsonObject.getReply_delivery_date());
@@ -156,8 +155,14 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 
 					htmlParser.visitAllNodesWith(lianHuaDetailFinder);
 
+					String cancelDate = lianHuaDetailFinder.getOrderCancelDate();
+
+					if (StringUtils.isNotBlank(cancelDate)) {
+						orderTitleMap.put("estimateTakeOverDate", cancelDate);
+					}
+
 					List<Map<String, String>> ordersItemList = lianHuaDetailFinder.getOrdersItemList();
-					
+
 					orders.setOrdersItemList(ordersItemList);
 
 				} catch (ParserException e) {
@@ -179,7 +184,6 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 
 		return inputString;
 	}
-
 
 	public void tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
@@ -371,7 +375,7 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 				String taxRate = toEmpty(singleDetailMap.get("taxRate"));
 
 				String priceWithTax = toEmpty(singleDetailMap.get("priceWithTax"));
-				
+
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
@@ -386,7 +390,7 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 				productDetail.setMoneyAmountWithTax(moneyAmountWithTax);
 				productDetail.setTaxRate(taxRate);
 				productDetail.setPriceWithTax(priceWithTax);
-				
+
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);
 				} catch (Exception e) {

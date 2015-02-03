@@ -332,9 +332,19 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 
 		String orderNumber = order.getOrderNumber();
 
-		Order existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
+		List<Order> existedOrderList = null;
+		try {
+			existedOrderList = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
+		} catch (javax.persistence.NonUniqueResultException e) {
+			
+			return false;
+		} catch (Exception e) {
+			
+			return false;
+		}
 
-		return existedOrder == null;
+		return existedOrderList == null || existedOrderList.isEmpty();
+
 	}
 
 	public void saveOrders(AutomaticJob automaticJob) {

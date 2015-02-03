@@ -1,5 +1,7 @@
 package com.ls.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -11,7 +13,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
 
 	Order findByOrderNumberAndAddress(String orderNumber, String address);
 
-	Order findByOrderNumberAndJobId(String orderNumber, Integer jobId);
+	List<Order> findByOrderNumberAndJobId(String orderNumber, Integer jobId);
 
 	Order findByOrderNumberAndJobIdAndStoreNumberEnglish(String orderNumber, Integer jobId, String storeNumberEnglish);
 

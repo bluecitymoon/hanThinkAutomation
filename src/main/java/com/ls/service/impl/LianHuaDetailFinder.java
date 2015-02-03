@@ -15,13 +15,15 @@ import org.htmlparser.visitors.NodeVisitor;
 public class LianHuaDetailFinder extends NodeVisitor {
 
 	private String orderNumber;
-	
+
+	private String orderCancelDate;
+
 	private List<Map<String, String>> ordersItemList = new ArrayList<Map<String, String>>();
 
 	public LianHuaDetailFinder(String orderNumber) {
 
 		super();
-		
+
 		this.orderNumber = orderNumber;
 	}
 
@@ -44,7 +46,7 @@ public class LianHuaDetailFinder extends NodeVisitor {
 
 						Map<String, String> detailMap = new HashMap<String, String>();
 						detailMap.put("orderNumber", orderNumber);
-						
+
 						ordersItemList.add(detailMap);
 
 						TableColumn[] tds = tableRow.getColumns();
@@ -63,24 +65,26 @@ public class LianHuaDetailFinder extends NodeVisitor {
 								case 4:
 									detailMap.put("description", textReallyNeeded);
 									break;
-								case 7:
-									detailMap.put("count", textReallyNeeded);
-									break;
+
 								case 10:
 									detailMap.put("giftCount", textReallyNeeded);
 									break;
 
+								case 11:
+									detailMap.put("count", textReallyNeeded);
+									break;
+
 								case 14:
-									
+
 									try {
 										String taxRate = textReallyNeeded.replace("%", "");
 										taxRate = "0." + taxRate;
 										detailMap.put("taxRate", taxRate);
-										
+
 									} catch (Exception e) {
 										detailMap.put("taxRate", "");
 									}
-									
+
 									break;
 
 								case 15:
@@ -107,6 +111,26 @@ public class LianHuaDetailFinder extends NodeVisitor {
 					}
 				}
 			}
+
+			if (StringUtils.isNotBlank(className) && className.equals("cTableBody") && StringUtils.isNotBlank(align) && align.equals("left") && StringUtils.isNotBlank(width) && width.equals("980px")) {
+
+				TableRow[] rows = tableTag.getRows();
+
+				if (rows != null && rows.length > 1) {
+					TableRow rowINeed = rows[1];
+					TableColumn[] columns = rowINeed.getColumns();
+
+					if (columns != null && columns.length > 3) {
+
+						String cancelDateColumnText = columns[3].toPlainTextString().trim();
+
+						if (cancelDateColumnText.contains("订货取消日期：")) {
+							orderCancelDate = cancelDateColumnText.substring("订货取消日期：".length()).replace(".", "-");
+						}
+					}
+
+				}
+			}
 		}
 
 	}
@@ -114,6 +138,11 @@ public class LianHuaDetailFinder extends NodeVisitor {
 	public List<Map<String, String>> getOrdersItemList() {
 
 		return ordersItemList;
+	}
+
+	public String getOrderCancelDate() {
+
+		return orderCancelDate;
 	}
 
 }
