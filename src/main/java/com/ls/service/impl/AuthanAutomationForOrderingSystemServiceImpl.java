@@ -143,7 +143,7 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 
 					Map<String, String> titlesMap = singleOrder.getOrderTitleMap();
 					titlesMap.put("供应商：", vendorNo);
-
+					
 					String childTableId = singleOrder.getOrderTitleMap().get("订单号：");
 					List<Map<String, String>> detailsMaps = singleOrder.getOrdersItemList();
 					for (Map<String, String> map : detailsMaps) {
@@ -181,7 +181,9 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
 		automaticJobRepository.saveAndFlush(authanJob);
-
+		
+		fillUniqueIdentityForOrdersList(ordersList);
+		
 		return ordersList;
 	}
 
@@ -231,6 +233,8 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
+			
+			System.out.println(data);
 
 			String url = job.getClientIp() + job.getClientEnd();
 
@@ -261,6 +265,8 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}
 
+			System.out.println(responseVo.toString());
+			
 		} catch (ConfigurationException e) {
 
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
@@ -341,6 +347,7 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 			order.setCreateDate(HanthinkUtil.getNow());
 			order.setJobId(automaticJob.getId());
 			order.setJobName(automaticJob.getName());
+			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = orderRepository.saveAndFlush(order);

@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -61,6 +63,48 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 		automaticJobRepository.saveAndFlush(automaticJob);
 
 	}
+
+	public String getRandomUUID() {
+
+		return UUID.randomUUID().toString();
+	}
+
+	public void fillUniqueIdentityForOrders(Orders orders) {
+
+		Map<String, String> titlesMap = orders.getOrderTitleMap();
+
+		String uuid = UUID.randomUUID().toString();
+
+		titlesMap.put("uuid", uuid);
+
+		List<Map<String, String>> detailsMaps = orders.getOrdersItemList();
+		for (Map<String, String> map : detailsMaps) {
+			map.put("uuid", uuid);
+		}
+
+	}
+
+	public void fillUniqueIdentityForOrdersList(List<Orders> ordersList) {
+		
+		if (null == ordersList || ordersList.isEmpty()) {
+			return;
+		}
+		
+		for (Orders orders : ordersList) {
+			
+			Map<String, String> titlesMap = orders.getOrderTitleMap();
+
+			String uuid = UUID.randomUUID().toString();
+
+			titlesMap.put("uuid", uuid);
+
+			List<Map<String, String>> detailsMaps = orders.getOrdersItemList();
+			for (Map<String, String> map : detailsMaps) {
+				map.put("uuid", uuid);
+			}
+		}
+
+	}
 	
 	public HttpResponse postWebService(String url, String xmlData) throws ClientProtocolException, IOException {
 
@@ -80,52 +124,54 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 
 		return response;
 	}
-	
+
 	public ResponseVo handleResponse(String soapMessage) {
-		
+
 		if (StringUtils.isEmpty(soapMessage) || !soapMessage.contains("daorudanjuResult")) {
-			
+
 			return ResponseVo.newFailMessage("无法处理的SOAP返回消息 --> " + soapMessage);
-			
+
 		}
 		String[] splitResult = soapMessage.split("daorudanjuResult");
-		
+
 		if (splitResult.length == 2) {
-			
+
 			return ResponseVo.newSuccessMessage("采集成功");
 		} else if (splitResult.length == 3) {
 			return ResponseVo.newFailMessage("SOAP处理失败，" + splitResult[1].replace("<", "").replace(">", ""));
 		} else {
-			
+
 			return ResponseVo.newSuccessMessage(soapMessage);
 		}
-		
+
 	}
-	
+
 	public void cleanUpValidationCodeFiles() {
-		
+
 		try {
 			String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-			
+
 			File[] filesNeedToBeDeleted = new File(ocrInstallPath).listFiles(new FilenameFilter(){
+
 				public boolean accept(File dir, String name) {
-					
+
 					if (name.endsWith("txt") || name.endsWith("jpg")) {
 						return true;
 					}
 					return false;
 				}
 			});
-			
+
 			for (File file : filesNeedToBeDeleted) {
 				file.delete();
 			}
 		} catch (Exception e) {
 		}
-	
+
 	}
-	
+
 	public void print(Object something) {
+
 		if (null == something) {
 			System.out.println("NULL!!!!");
 		} else {

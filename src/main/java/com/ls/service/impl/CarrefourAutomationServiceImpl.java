@@ -108,7 +108,9 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		print(orderIds);
 
 		ordersList = parseDetails(orderIds, webClient, authanJob.getId());
-
+		
+		fillUniqueIdentityForOrdersList(ordersList);
+		
 		return ordersList;
 	}
 
@@ -154,7 +156,7 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		List<String> allGuidList = new ArrayList<String>();
 		try {
 			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
-			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(start);
+			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(end);
 			
 			webClient.getPage("https://platform.powere2e.com/platform/mailbox/openInbox.htm?showAll");
 			
@@ -178,6 +180,9 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 
 				List<String> singlePageList = carrefourDetailLinkingFinder.getGuidList();
 				
+				if (null == singlePageList) {
+					break;
+				}
 				allGuidList.addAll(singlePageList);
 
 				hasNextPage = carrefourDetailLinkingFinder.hasNextPage();
@@ -433,7 +438,7 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 			order.setJobName(job.getName());
 			order.setStoreNumber(storeNumber);
 			order.setStoreNumberEnglish(storeNumberEnglish);
-
+			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
 			try {

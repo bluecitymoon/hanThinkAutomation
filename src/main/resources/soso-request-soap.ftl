@@ -12,7 +12,7 @@
 	<#list orders as order>
 	<#assign titleMap = order.orderTitleMap/>
 	<xsdingdanzhubiao>
-		<id>${titleMap['orderNumber']}</id>
+		<id>${titleMap['uuid']}</id>
 		<changbian></changbian>
 		<#if titleMap['orderNumber']??>
 		<kehudanhao>${titleMap['orderNumber']}</kehudanhao>
@@ -39,7 +39,7 @@
 	<#assign productList = order.ordersItemList/>
 	<#list productList as product>
 	<xsdingdanzibiao>
-		<zhubiaoid>${product['orderNumber']}</zhubiaoid>
+		<zhubiaoid>${product['uuid']}</zhubiaoid>
 		<huohao></huohao>
 		<tiaoxingma></tiaoxingma>
 		<shangpinmiaoshu>${product['description']}</shangpinmiaoshu>

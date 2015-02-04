@@ -19,6 +19,7 @@ public class Order implements Serializable {
 	@Id
 	@GeneratedValue
 	protected Integer id;
+	protected String uuid;
 	protected Integer jobId;
 	protected String jobName;
 	protected String orderNumber;
@@ -34,8 +35,18 @@ public class Order implements Serializable {
 	
 	@Transient
 	List<ProductDetail> productDetails;
-
 	
+	
+	public String getUuid() {
+	
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+	
+		this.uuid = uuid;
+	}
+
 	public Integer getJobId() {
 		return jobId;
 	}

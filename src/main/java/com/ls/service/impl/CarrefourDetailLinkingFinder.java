@@ -9,6 +9,8 @@ import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.Span;
 import org.htmlparser.visitors.NodeVisitor;
 
+import com.ls.util.HanthinkUtil;
+
 public class CarrefourDetailLinkingFinder extends NodeVisitor {
 
 	private List<String> guidList;
@@ -35,9 +37,13 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 
 			String className = linkTag.getAttribute("class");
 			if (StringUtils.isNotBlank(className) && className.equals("pageLink")) {
+				String otherIndexString = linkTag.toPlainTextString();
 				
-				otherPageIndexs.add(Integer.valueOf(linkTag.toPlainTextString().trim()));
+				if (StringUtils.isNotBlank(otherIndexString)) {
+					otherPageIndexs.add(Integer.valueOf(otherIndexString.trim()));
 
+				}
+				
 			}
 		}
 
@@ -48,8 +54,11 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 			String className = span.getAttribute("class");
 			if (StringUtils.isNotBlank(className) && className.equals("currentPage")) {
 				
-				currentIndex = Integer.valueOf(span.toPlainTextString().trim());
+				String spanText = span.toPlainTextString();
 				
+				if (StringUtils.isNotBlank(spanText)) {
+					currentIndex = Integer.valueOf(spanText.trim());
+				}
 			}
 		}
 	}

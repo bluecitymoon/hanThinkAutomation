@@ -193,6 +193,9 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			cleanUpValidationCodeFiles();
 		}
+		
+		fillUniqueIdentityForOrdersList(ordersList);
+		
 		return ordersList;
 	}
 
@@ -484,7 +487,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 			order.setCreateDate(HanthinkUtil.getNow());
 			order.setJobId(job.getId());
 			order.setJobName(job.getName());
-
+			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
 			try {

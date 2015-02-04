@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,7 +136,10 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 				String[] lines = resutString.split("\\n");
 
 				Order order = parseTescoOrdersTemplate(lines);
-
+				String uuid = UUID.randomUUID().toString();
+				
+				order.setUuid(uuid);
+				
 				System.out.println(order);
 
 				if (order != null && notExistedOrder(order, authanJob.getId())) {
@@ -153,6 +157,7 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 					orderTitleMap.put("estimateTakeOverDate", order.getEstimateTakeOverDate());
 					orderTitleMap.put("storeNumber", order.getStoreNumber());
 					orderTitleMap.put("orderDate", order.getOrderDate());
+					orderTitleMap.put("uuid", uuid);
 
 					List<ProductDetail> productDetails = order.getProductDetails();
 					for (ProductDetail productDetail : productDetails) {
@@ -169,6 +174,8 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 						detailMap.put("boxCount", productDetail.getBoxCount());
 						detailMap.put("priceWithoutTax", productDetail.getPriceWithoutTax());
 						detailMap.put("moneyAmountWithoutTax", productDetail.getMoneyAmountWithoutTax());
+						detailMap.put("uuid", uuid);
+						
 					}
 
 					ordersList.add(orders);
@@ -192,7 +199,9 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
 		automaticJobRepository.saveAndFlush(authanJob);
-
+		
+		fillUniqueIdentityForOrdersList(ordersList);
+		
 		return ordersList;
 	}
 

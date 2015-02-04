@@ -86,7 +86,7 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 		tryToLogin(webClient, authanJob);
 
 		ordersList = parseTitlesTable(webClient, start, end, authanJob);
-
+		fillUniqueIdentityForOrdersList(ordersList);
 		return ordersList;
 	}
 
@@ -349,7 +349,7 @@ public class LianHuaAutomationServiceImpl extends AbstractAuthanAutomationServic
 			order.setJobName(job.getName());
 			order.setStoreNumber(storeNumber);
 			order.setStoreNumberEnglish(storeNumberEnglish);
-
+			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
 			try {

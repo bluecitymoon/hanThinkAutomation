@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,6 +168,9 @@ public class HanthinkUtil {
 	public static void main(String[] args) {
 
 		String test = "1003(asdf)";
-		System.out.println(getNumbersInString(test));
+	//	System.out.println(getNumbersInString(test));
+		for (int i = 0; i < 100; i++) {
+			System.out.println(UUID.randomUUID()); 
+		}
 	}
 }

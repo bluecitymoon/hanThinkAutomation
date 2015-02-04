@@ -159,7 +159,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 			logger.error(response.toString());
 			logger.error(e.getMessage());
-
+			e.printStackTrace();
 			return SUCCESS;
 		}
 

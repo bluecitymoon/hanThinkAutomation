@@ -56,20 +56,20 @@
 							<table class="infoTable">
 								<thead>
 									<tr>
-										
-										<th>创建时间</th>
+										<th style="text-align: center">数据编号</th>
+										<th>采集时间</th>
 										<th>任务名称</th>
 										<th>订单编号</th>
 										<th>供应商</th>
 										<th>店号</th>
 										<th>订单日期</th>
 										<th>预定收货日期</th>
-										<th>地址</th>
 										<th>操作</th>
 									</tr>
 								</thead>
 								<tbody data-bind="foreach : orderList">
 									<tr>
+										<td style="text-align: center" data-bind="text : uuid"></td>
 										<td style="text-align: center" data-bind="text : createDate"></td>
 										<td style="text-align: center" data-bind="text : jobName"></td>
 										<td style="text-align: center" data-bind="text : orderNumber"></td>
@@ -77,7 +77,7 @@
 										<td style="text-align: center" data-bind="text : storeNumber"></td>
 										<td style="text-align: center" data-bind="text : orderDate"></td>
 										<td style="text-align: center" data-bind="text : estimateTakeOverDate"></td>
-										<td style="text-align: left" data-bind="text : address"></td>
+										
 										<td style="text-align: center">
 											<a data-bind="click : $root.removeSingleOrder" href="#" title="删除"><i class="icon-trash small icon-red"></i></a>
 											<a title="查看" data-bind="click : $root.showDetails" style="margin-left: 20px;" href="#"><i class="icon-user small icon-blue"></i></a></td>
@@ -153,6 +153,7 @@
 				self.createDate = '';
 				self.address = '';
 				self.jobName = '';
+				self.uuid = '';
 			};
 
 			var ProductDetail = function() {
