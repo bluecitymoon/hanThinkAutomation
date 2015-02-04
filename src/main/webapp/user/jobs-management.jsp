@@ -16,6 +16,18 @@
 	<section class="mainbg">
 		<div class="container" id="jobsContainer">
 			<div class="row">
+				<div class="three columns">
+					<select data-bind="options: $root.allStores,
+                      											optionsText: 'name',
+                       									    	value: $root.selectedStoreId,
+                       									    	optionsValue : 'id',
+                       									    	selectedOption : $root.selectedStoreId,
+                       									    	optionsCaption: '请选择数据源...'">
+							</select>
+				</div>
+			</div>
+			
+			<div class="row">
 				<div id="moduleTabs" class="app-wrapper ui-corner-top">
 				<nav class="blue module-nav ui-corner-top clearfix">
 					<section class="moduleNavigation">
@@ -28,17 +40,7 @@
 				<div id="tabs-1">
 
 					<div class="content">
-
 							<div class="row">
-								<div class="three columns">
-									<select data-bind="options: $root.allStores,
-                      											optionsText: 'name',
-                       									    	value: $root.selectedStoreId,
-                       									    	optionsValue : 'id',
-                       									    	selectedOption : $root.selectedStoreId,
-                       									    	optionsCaption: '请选择数据源...'">
-									</select>
-								</div>
 								<div class="three columns">
 									<sec:authorize ifAllGranted="ROLE_ADMIN">  
  										 <select data-bind="options: $root.allUsers,
@@ -51,9 +53,14 @@
 									</sec:authorize>
 								</div>
 								<div class="three columns">
+									
 								</div>
 								<div class="three columns">
-									<a class="tiny blue button right" href="#" data-bind="click : $root.clearForm">新建任务</a>
+								</div>
+								<div class="three columns">
+									<sec:authorize ifAllGranted="ROLE_ADMIN">
+										<a class="tiny blue button right" href="#" data-bind="click : $root.clearForm">新建任务</a>
+									</sec:authorize>
 								</div>
 							</div>
 							<table class="infoTable" id="jobListTable">
@@ -63,7 +70,9 @@
 											<th class="text-center">帐套</th>
 											<th class="text-center">任务状态</th>
 											<th class="text-center">管理</th>
-											<th class="text-center">启动/停止</th>
+											<sec:authorize ifAllGranted="ROLE_ADMIN">
+												<th class="text-center">启动/停止</th>
+											</sec:authorize>
 										</tr>
 									</thead>
 									<tbody data-bind="foreach: jobList">
@@ -76,10 +85,12 @@
 												<a style="margin-left : 15px;" title="删除" href="#" data-bind="click : $root.deleteJob"><i class="icon-trash small icon-red"></i></a>
 												<a style="margin-left : 15px;" title="拷贝任务" href="#" data-bind="click : $root.copyJob"><i class="icon-copy small icon-green"></i></a>
 											</td>
+											<sec:authorize ifAllGranted="ROLE_ADMIN">
 											<td class="text-center">
 												<a  href="#" data-bind="click : $root.startJob" title="启动"><i class="icon-play-sign small icon-blue"></i></a> 
 												<a  href="#" style="margin-left : 15px;" data-bind="click : $root.stopJob" title="停止"><i class="icon-stop small icon-red"></i></a>
 											</td>
+											</sec:authorize>
 										</tr>
 									</tbody>
 								</table>

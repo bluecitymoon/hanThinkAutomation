@@ -134,7 +134,7 @@
 							});
 						};
 						self.showOrderedResource = function(item, event) {
-							console.debug(item);
+							
 							self.selectedUser(item);
 							self.selectedStores([]);
 							$.ajax({	

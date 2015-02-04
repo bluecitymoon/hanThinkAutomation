@@ -28,29 +28,6 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="app-wrapper ui-corner-top">
-					<div class="blue module ui-corner-top clearfix">
-						<h2>搜索</h2>
-					</div>
-					<div class="content">
-						<div class="row">
-							<div class="three columns"></div>
-							<div class="six columns">
-								<div class="row collapse">
-									<div class="eight columns">
-										<input id="userNameInput" type="text" class="addon-postfix" placeholder="请输入用户姓名" data-bind="value : userName" />
-									</div>
-									<div class="four columns">
-										<button class="small nice blue button postfix" data-bind="click : searchUser">搜索</button>
-									</div>
-								</div>
-							</div>
-							<div class="three columns"></div>
-							<br>
-						</div>
-					</div>
-				</div>
-
 				<div class="row">
 					<div class="app-wrapper ui-corner-top">
 							<div class="blue module ui-corner-top clearfix">
@@ -121,12 +98,13 @@
 	<script src="/ls/js/User.js"></script>
 	<script>
 		$(document).ready( function() {
+			
 			var Role = function() {
 				var self = this;
 				self.id = '';
 				self.name = '';
 				self.description = '';
-			}
+			};
 					var UserModel = function() {
 						var self = this;
 						self.userName = ko.observable('');
@@ -274,27 +252,6 @@
 							});
 						};
 						
-						self.searchUser = function() {
-							$.ajax({	url : 'ajaxFindUser.action',
-										data : {
-											userName : self.userName()
-										},
-										success : function(data) {
-											self.users(data);
-										}
-									});
-						};
-						
-						self.loadUserAccouts = function() {
-							//apply country auto-complete 
-							$.ajax({                        
-								  url: 'getAllUserAccounts.action',
-								  async: false,      
-								  success: function(data) {   
-									  $("#userNameInput").autocomplete({ source: data, minLength: 2 });
-								  }
-								});
-						};
 						
 						self.loadAllUsers = function() {
 							//load all
@@ -336,10 +293,10 @@
 						};
 					};
 					var model = new UserModel();
-					model.loadUserAccouts();
 					model.loadAllUsers();
 					
 					var $userModeContainer = $("#userModeContainer")[0];
+					
 					ko.applyBindings(model, userModeContainer);
 					
 				});
