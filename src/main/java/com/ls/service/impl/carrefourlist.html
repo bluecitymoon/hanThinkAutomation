@@ -1,0 +1,998 @@
+
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>PowerE2E Platform</title>
+
+<link href="/platform/css/style.css" rel="stylesheet" type="text/css">
+<!--[if IE 6]>
+<link href="/platform/css/iehack.css" rel="stylesheet" type="text/css">
+<![endif]--> 
+
+<script language="javaScript" src="/platform/javaScript/sessionTimer.js"></script>
+<script language="javaScript" src="/platform/javaScript/Calendar.js"></script>
+<script language="javaScript" src="/platform/javaScript/common.js"></script>
+<script language="javaScript" src="/platform/javaScript/alerts/ZH/zh_pageAlerts.js"></script>
+<script language="javaScript" src="/platform/javaScript/zh_datePicker.js"></script>
+<script language="javaScript" src="/platform/javaScript/mailbox/mailbox.js"></script>
+<script language="javaScript" src="/platform/javaScript/rolloverPopup.js"></script>
+
+
+<script language="javascript">
+	window.top.helpFileName =  'help' + '_zh.html';
+		
+	function showDocumentDot(id){
+		var dotId = id + "dot";
+		document.getElementById(dotId).src='/platform/images/activeFolder.gif';
+	} 
+	function hideDocumentDot(id){
+		var dotId = id + "dot";
+		document.getElementById(dotId).src='/platform/images/darkblue.gif';
+	}
+	function showDocumentLine(id){
+		var lineId = id + "line";
+		document.getElementById(lineId).src='/platform/images/yellow_line.gif';
+	} 
+	function hideDocumentLine(id){
+		var lineId = id + "line";
+		document.getElementById(lineId).src='/platform/images/blue_line.gif';
+	}
+		
+</script>
+</head>
+<body onload="beginTimer('/platform');">
+<div id="TipLayer" style="z-index: 1000; visibility: hidden; position: absolute; top: 0px;"></div>
+<div class="leftPage" style="position:absolute;">
+<!-- $Id: LeftInbox.jsp,v 1.12 2008/03/31 04:11:58 sugimin Exp $ -->
+
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="4">
+	<tr>
+	<td valign="top" >			
+	  	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		  	<tr>					
+				<td width="6"><img src="/platform/images/groupL.gif" width="6" height="16"></td>
+				<td background="/platform/images/groupM.gif" width="*" height="16" class="content"><p class="boxHeader">信息存储</p></td>
+				<td width="6"><img src="/platform/images/groupR.gif" width="6" height="16"></td>					
+			</tr>
+			<tr>												
+				<td class="boxContent" colspan="3" width="*">				
+				
+				
+				
+					<p class="msgStore">上海友谊集团工具五金有限公司(LP)        </p>
+				
+					
+				
+				</td>
+			</tr>				
+		</table>
+		<!-- END of messagestore dropdown -->
+	</td>
+	</tr>			
+	<tr>
+	<td align="left" valign="top">
+		<!-- message boxes -->	
+		<!-- box header: menu -->	
+		
+		
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		  	<tr>					
+				<td width="6"><img src="/platform/images/groupL.gif" width="6" height="16"></td>
+				<td background="/platform/images/groupM.gif" width="*" height="16" class="content"><p class="boxHeader">选择</p></td>
+				<td width="6"><img src="/platform/images/groupR.gif" width="6" height="16"></td>					
+			</tr>
+		</table>
+		<table class="boxContent" border="0" cellpadding="0" cellspacing="0" width="100%">					
+		<tr><td width="20"></td><td></td><td width="*"></td></tr>
+		
+		
+		
+<!-- INBOX  -->	
+		
+		
+			<tr class="menu2item" id="y0" title="收件箱"> 
+				<td width="20"><img id="y0dot" src="/platform/images/activeFolder.gif"></td>
+				<td colspan=2 align="left" class="mnuactive">
+					<a class="content" href="#" onclick="javaScript:openInbox('/platform', true);">
+					
+						<p class="hasUnreadMessages">收件箱 (2)</p>
+						
+					
+					</a>
+				</td>			
+		
+		
+							
+			</tr>
+					
+		
+		<!-- make sure we're not in draft or sent -->
+			<!-- message-type inboxes -->			
+			<tr><td colspan="3">
+			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<!-- loop through all message-types: -->
+																			
+								
+				
+					
+					
+					
+					
+					
+										
+				
+				
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: po -->
+				
+					
+						<tr class="menu2item" id="y1" onMouseOver="javascript:showDocumentLine(this.id)" onMouseOut="javascript:hideDocumentLine(this.id)" title="订单">
+						<td width="60"><img id="y1line" src="/platform/images/blue_line.gif"></td>					
+															
+					<td width="*" class="mnuInActive">
+					<a class="content" href="#" onclick="javaScript:openInboxPO('/platform');">
+						
+						<p class="hasUnreadMessages">PO (2)</p>
+						
+						
+					</a>					
+					</td>
+					</tr>																					
+				
+				
+				<!-- END of html for messagetype: po -->
+																			
+								
+				
+				
+					
+					
+					
+					
+					
+										
+				
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: asn -->
+				
+				
+				<!-- END of html for messagetype: asn -->
+																			
+								
+				
+				
+				
+					
+					
+					
+					
+					
+										
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: invoice -->
+				
+				
+				<!-- END of html for messagetype: invoice -->
+																			
+								
+				
+				
+				
+				
+					
+					
+					
+					
+					
+										
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: creditnote -->
+				
+				
+				<!-- END of html for messagetype: creditnote -->
+																			
+								
+				
+				
+				
+				
+				
+					
+					
+					
+					
+					
+										
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: grn -->
+				
+				
+				<!-- END of html for messagetype: grn -->
+																			
+								
+				
+				
+				
+				
+				
+				
+					
+					
+					
+					
+					
+										
+								
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: ir -->
+				
+				
+				<!-- END of html for messagetype: ir -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+					
+					
+					
+					
+					
+										
+				
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: sr -->
+				
+				
+				<!-- END of html for messagetype: sr -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+				
+					
+					
+					
+					
+					
+										
+						
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: remadv -->
+				
+				
+				<!-- END of html for messagetype: remadv -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+					
+					
+					
+					
+					
+										
+				
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: productlist -->
+				
+				
+				<!-- END of html for messagetype: productlist -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+				
+					
+					
+					
+					
+					
+										
+								
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: top20sku -->
+				
+				
+				<!-- END of html for messagetype: top20sku -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+								
+				
+					
+					
+					
+					
+					
+										
+								
+				
+				
+				
+												
+												
+				<!-- html for messagetype: servicelevel -->
+				
+				
+				<!-- END of html for messagetype: servicelevel -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+					
+					
+					
+					
+					
+										
+				
+				
+				
+												
+												
+				<!-- html for messagetype: category -->
+				
+				
+				<!-- END of html for messagetype: category -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+					
+					
+					
+					
+					
+										
+				
+				
+												
+												
+				<!-- html for messagetype: invoicedetails -->
+				
+				
+				<!-- END of html for messagetype: invoicedetails -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+					
+					
+					
+					
+					
+										
+				
+												
+												
+				<!-- html for messagetype: rtv -->
+				
+				
+				<!-- END of html for messagetype: rtv -->
+																			
+								
+				
+				
+				
+				
+				
+								
+				
+						
+				
+								
+								
+				
+				
+				
+				
+					
+					
+					
+					
+					
+										
+												
+												
+				<!-- html for messagetype: consignorreport -->
+				
+				
+				<!-- END of html for messagetype: consignorreport -->
+			
+			</table>
+			</td></tr>
+			<!-- END of message-type folders -->		
+				
+			
+				
+										
+										
+				
+				
+				
+								
+
+				<tr class="menu2item" id="f16" title="草稿" onMouseOver="javascript:showDocumentDot(this.id)" onMouseOut="javascript:hideDocumentDot(this.id)"> 
+				<td width="20"><img id="f16dot" src="/platform/images/darkblue.gif"></td>		
+				<td width="*" class="mnuInActive" align="left">
+					<a class="content" href="/platform/mailbox/openDraft.htm">
+					
+					
+					<p>草稿</p>
+					
+					</a>
+				</td>
+				<!-- td>&nbsp;</td-->
+				</tr>				
+				
+<!-- END of SENT folders -->				
+<!-- ARCHIVE folders -->
+								
+
+
+							
+			
+				
+				
+										
+										
+				
+				
+								
+
+				<tr class="menu2item" id="f17" title="发送箱" onMouseOver="javascript:showDocumentDot(this.id)" onMouseOut="javascript:hideDocumentDot(this.id)"> 
+				<td width="20"><img id="f17dot" src="/platform/images/darkblue.gif"></td>		
+				<td width="*" class="mnuInActive" align="left">
+					<a class="content" href="/platform/mailbox/openSent.htm">
+					
+					
+					<p>发送箱</p>
+					
+					</a>
+				</td>
+				<!-- td>&nbsp;</td-->
+				</tr>				
+				
+				
+				
+<!-- END of SENT folders -->				
+<!-- ARCHIVE folders -->
+								
+
+
+							
+			
+				
+				
+				
+										
+										
+				
+								
+
+				<tr class="menu2item" id="f18" title="归档" onMouseOver="javascript:showDocumentDot(this.id)" onMouseOut="javascript:hideDocumentDot(this.id)"> 
+				<td width="20"><img id="f18dot" src="/platform/images/darkblue.gif"></td>		
+				<td width="*" class="mnuInActive" align="left">
+					<a class="content" href="/platform/mailbox/openArchive.htm">
+					
+					
+					<p>归档</p>
+					
+					</a>
+				</td>
+				<!-- td>&nbsp;</td-->
+				</tr>				
+				
+<!-- END of SENT folders -->				
+<!-- ARCHIVE folders -->
+				
+				
+								
+
+
+							
+									
+		
+		
+		</table>
+	</td>	 
+	</tr>
+	<tr>	
+   	<td align="center" valign="top">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td width="6"><img src="/platform/images/groupL.gif" width="6" height="16"></td>
+				<td background="/platform/images/groupM.gif" width="*" height="16" class="content"><p class="boxHeader">提示</p></td>
+				<td width="6"><img src="/platform/images/groupR.gif" width="6" height="16"></td>
+			</tr>
+			<tr> 
+				<td align="left" colspan="3" width="*" height="16px" class="boxHints">
+					<!-- div id="TipLayer" style="z-index: 1000; visibility: hidden; position: absolute; top: -50px;"></div -->
+					<a href="#" onMouseOver="stm(Text[17],Style[14])" onmouseout="htm()"><p class="hintLink">文档类型</p></a>
+					<a href="#" onMouseOver="stm(Text[18],Style[14])" onmouseout="htm()"><p class="hintLink">联系我们</p></a>
+				</td>
+			</tr>
+		</table> 
+	</td>
+	</tr>	
+</table>				
+</div>
+<div class="contentPage">
+
+
+
+
+
+
+
+
+
+<form name="mailboxForm" method="post">
+<table width="98%" border="0" cellspacing="0" cellpadding="0">
+	
+	<tr>
+		<td height="20" class="title">
+			<b>收件箱</b>
+		</td>
+	</tr>
+	<tr>
+    		<td height="20">
+	      	<table width="100%" border="0" cellpadding="1" cellspacing="1">
+	        <tr>
+	          <td width="150" height="20" class="fieldlabel">文档编号&nbsp;</td>
+	          <td class="content1"><input type="text" name="searchText" class="content" value="" onKeyDown="submitSearchInbox('/platform');">
+	          </td>
+	        </tr>
+	        <tr>
+	        	<td class="fieldlabel">接收日期</td>
+	        	<td class="content"><input type="text" name="receivedDateFrom" class="content" value="23-01-2015" readonly>
+	        	<img name="calImage1" src="/platform/images/cal.gif" style="border:0px; cursor:hand;" onclick="javascript:displayDatePicker('receivedDateFrom', document.mailboxForm.receivedDateFrom, 'dmy', '-');">
+	        	&nbsp;到&nbsp;<input type="text" name="receivedDateTo" class="content" value="23-01-2015" readonly>
+	        	<img name="calImage1" src="/platform/images/cal.gif" style="border:0px; cursor:hand;" onclick="javascript:displayDatePicker('receivedDateTo', document.mailboxForm.receivedDateTo, 'dmy', '-');">
+	        	</td>
+	        </tr>			
+	        <tr>
+		  <td colspan="2">
+		  	<a href="#" class="defaultbutton" onclick="openInbox('/platform', false);">搜索</a>
+	          	<a href="#" class="defaultbutton" onclick="openInbox('/platform', true);">显示全部</a>
+	          </td>	        	
+	        </tr>
+	      	</table>
+	</td>
+    </tr>    
+	<tr align="right">		
+		<td height="20" class="content">显示21 - 23 总共23记录</td>
+	</tr>
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="1" cellpadding="1" class="tbllist">				
+				<tr align="center" class="fieldlabel">
+					<td width="5%" height="20" align="center">
+					
+				    	<input type="checkbox" name="chkAll" value="checkbox" onClick="toggleCheckboxes(this);">
+				    
+					</td>
+					<td width="15%" height="20" class="fieldlabel">
+					
+						<a href="#" onclick="sortInbox('/platform', '1');" onmouseOver="window.status=''; return true;" class="whitecontent">文档编号</a>
+						
+											
+					</td>
+					<td width="12%" height="20" class="fieldlabel">
+						发送者
+					</td>
+
+					<td width="17%" height="20" class="fieldlabel">
+
+					
+						<a href="#" onclick="sortInbox('/platform', '2');" onmouseOver="window.status=''; return true;" class="whitecontent">门店名称</a>
+						
+					
+					</td>
+
+					<td width="20%" height="20">
+					
+						<a href="#" onclick="sortInbox('/platform', '6');" onmouseOver="window.status=''; return true;" class="whitecontent">接收</a>
+						
+					
+					</td>
+					<td width="25%" height="20">
+					类型 
+					<!--
+					
+						<a href="#" onclick="sortInbox('/platform', '7');" onmouseOver="window.status=''; return true;" class="whitecontent">类型 </a>
+						
+					
+					-->
+					</td>
+					<td width="15%" height="20">
+					状态 
+					<!--
+					
+						<a href="#" onclick="sortInbox('/platform', '8');" onmouseOver="window.status=''; return true;" class="whitecontent">状态 </a>
+						
+					
+					-->
+					</td>
+				</tr>
+				
+				<tr class="
+								
+								
+									
+										eventable
+										
+									
+								
+						   ">
+					<td align="center">
+						<input type="checkbox" name="msgId" value="C4net2--56f631-14b14cc3166-f528764d624db129b32c21fbca0cb8d6" >
+						<input type="hidden" name="iac_C4net2--56f631-14b14cc3166-f528764d624db129b32c21fbca0cb8d6" value="1">
+					</td>
+					<td><a href="#" onclick="viewMessage('/platform', 'C4net2--56f631-14b14cc3166-f528764d624db129b32c21fbca0cb8d6');" class="content">
+						
+							
+							
+								
+									30ZYYM038
+									
+								
+							
+						
+						</a>
+						
+						
+						
+						<!-- add by alex at 2011-11-17 -->
+						
+						
+						
+						
+						
+						
+						
+					<!-- end -->
+					</td>
+
+					<td><a href="#" onclick="viewCompanyProfile('/platform', '1251');" class="content">
+						
+							
+							家乐福
+						</a>
+					</td>
+					<td>家乐福宁波北仑店</td>
+
+					<td>2015 1月 23 11:19:25</td>
+					<td>订单</td>
+					<td>
+						
+							
+							已读
+						
+					</td>				
+				</tr>
+				
+				<tr class="
+								
+								
+									
+										
+										oddtable
+									
+								
+						   ">
+					<td align="center">
+						<input type="checkbox" name="msgId" value="C4net1--56f631-14b14cc2e35-f528764d624db129b32c21fbca0cb8d6" >
+						<input type="hidden" name="iac_C4net1--56f631-14b14cc2e35-f528764d624db129b32c21fbca0cb8d6" value="1">
+					</td>
+					<td><a href="#" onclick="viewMessage('/platform', 'C4net1--56f631-14b14cc2e35-f528764d624db129b32c21fbca0cb8d6');" class="content">
+						
+							
+							
+								
+									30ZYYM011
+									
+								
+							
+						
+						</a>
+						
+						
+						
+						<!-- add by alex at 2011-11-17 -->
+						
+						
+						
+						
+						
+						
+						
+					<!-- end -->
+					</td>
+
+					<td><a href="#" onclick="viewCompanyProfile('/platform', '1251');" class="content">
+						
+							
+							家乐福
+						</a>
+					</td>
+					<td>家乐福温州汤家桥店</td>
+
+					<td>2015 1月 23 11:19:11</td>
+					<td>订单</td>
+					<td>
+						
+							
+							已读
+						
+					</td>				
+				</tr>
+				
+				<tr class="
+								
+								
+									
+										eventable
+										
+									
+								
+						   ">
+					<td align="center">
+						<input type="checkbox" name="msgId" value="C4net3--56f631-14b14a5859d-f528764d624db129b32c21fbca0cb8d6" >
+						<input type="hidden" name="iac_C4net3--56f631-14b14a5859d-f528764d624db129b32c21fbca0cb8d6" value="1">
+					</td>
+					<td><a href="#" onclick="viewMessage('/platform', 'C4net3--56f631-14b14a5859d-f528764d624db129b32c21fbca0cb8d6');" class="content">
+						
+							
+							
+								
+									30ZYYM018
+									
+								
+							
+						
+						</a>
+						
+						
+						
+						<!-- add by alex at 2011-11-17 -->
+						
+						
+						
+						
+						
+						
+						
+					<!-- end -->
+					</td>
+
+					<td><a href="#" onclick="viewCompanyProfile('/platform', '1251');" class="content">
+						
+							
+							家乐福
+						</a>
+					</td>
+					<td>家乐福合肥宝业店</td>
+
+					<td>2015 1月 23 10:37:11</td>
+					<td>订单</td>
+					<td>
+						
+							
+							已读
+						
+					</td>				
+				</tr>
+						
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td height="20" class="content" align="right"><SCRIPT language="javaScript">
+function gotoPage(page) {
+  document.forms[0].action = "/platform/mailbox/navigateInbox.htm?gotoPage="+ page;
+  document.forms[0].submit();
+}
+function gotoPageGroup(page) {
+  document.forms[0].action = "/platform/mailbox/navigateInbox.htm?gotoPageGroup="+ page;
+  document.forms[0].submit();
+}
+</SCRIPT>
+<img class="pagingbutton" src="/platform/images/first3a_inactive.gif" border="0">
+&nbsp;<img class="pagingbutton" src="/platform/images/first1a_inactive.gif" border="0">
+&nbsp;&nbsp;<a class="pageLink" href="javascript:gotoPage('1')">1</a>
+&nbsp;&nbsp;<a class="pageLink" href="javascript:gotoPage('2')">2</a>
+&nbsp;<span class="currentPage"><u>3</u></span>
+&nbsp;<img class="pagingbutton" src="/platform/images/last1a_inactive.gif" border="0">
+&nbsp;<img class="pagingbutton" src="/platform/images/last3a_inactive.gif"  border="0">
+</td>
+	</tr>
+	
+	
+	<tr>
+		<td height="20">
+			
+
+
+			<a href="#" class="defaultbutton" onclick="deleteMessages('/platform');">删除</a>
+
+			<a href="#" class="defaultbutton" onclick="moveMessagesToArchive('/platform');">转移至归档</a>
+			
+		</td>
+	</tr>
+	
+</table>			
+</form>
+
+</div>
+</body>
+</html>

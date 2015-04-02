@@ -18,24 +18,30 @@
 		<shiro.version>1.2.2</shiro.version>
 	</properties>
 	<dependencies>
-		<dependency>
-	<groupId>xom</groupId>
-	<artifactId>xom</artifactId>
-	<version>1.2.5</version>
-</dependency>
+
+		<!-- <dependency> <groupId>xom</groupId> <artifactId>xom</artifactId> <version>1.2.5</version> 
+			</dependency> -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId> 
-			<version>2.6.0</version> </dependency> -->
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.6.0</version>
+		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
-			<version>2.15</version><!-- <exclusions> <exclusion> <groupId>xalan</groupId> 
-				<artifactId>xalan</artifactId> </exclusion> </exclusions> -->
+			<version>2.15</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
@@ -301,7 +307,7 @@
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
-		
+
 	</dependencies>
 	<build>
 		<finalName>ls</finalName>
@@ -325,6 +331,7 @@
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
 </project>

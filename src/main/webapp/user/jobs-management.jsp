@@ -361,6 +361,7 @@
 							});
 							
 						};
+						
 						self.deleteJob = function(item, event) {
 							var result = window.confirm("È·¶¨£ºÒªÉ¾³ý[" + item.dbName + "]?");
 							

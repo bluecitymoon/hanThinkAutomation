@@ -134,51 +134,69 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 				System.out.println(resutString);
 
 				String[] lines = resutString.split("\\n");
-
-				Order order = parseTescoOrdersTemplate(lines);
-				String uuid = UUID.randomUUID().toString();
 				
-				order.setUuid(uuid);
+				List<List<String>> groupLines = new ArrayList<List<String>>();
 				
-				System.out.println(order);
-
-				if (order != null && notExistedOrder(order, authanJob.getId())) {
-
-					ordersNeedSendSOAP.add(order);
-
-					Orders orders = new Orders();
-					Map<String, String> orderTitleMap = new HashMap<String, String>();
-					List<Map<String, String>> ordersItemList = new ArrayList<Map<String, String>>();
-					orders.setOrderTitleMap(orderTitleMap);
-					orders.setOrdersItemList(ordersItemList);
-
-					orderTitleMap.put("orderNumber", order.getOrderNumber());
-					orderTitleMap.put("supplierNumber", order.getSupplierNumber());
-					orderTitleMap.put("estimateTakeOverDate", order.getEstimateTakeOverDate());
-					orderTitleMap.put("storeNumber", order.getStoreNumber());
-					orderTitleMap.put("orderDate", order.getOrderDate());
-					orderTitleMap.put("uuid", uuid);
-
-					List<ProductDetail> productDetails = order.getProductDetails();
-					for (ProductDetail productDetail : productDetails) {
-						productDetail.setOrderNumber(order.getOrderNumber());
-						Map<String, String> detailMap = new HashMap<String, String>();
-
-						ordersItemList.add(detailMap);
-
-						detailMap.put("orderNumber", order.getOrderNumber());
-						detailMap.put("productNumber", productDetail.getProductNumber());
-						detailMap.put("description", productDetail.getDescription());
-						detailMap.put("count", productDetail.getCount());
-						detailMap.put("countInSingleBox", productDetail.getCountInSingleBox());
-						detailMap.put("boxCount", productDetail.getBoxCount());
-						detailMap.put("priceWithoutTax", productDetail.getPriceWithoutTax());
-						detailMap.put("moneyAmountWithoutTax", productDetail.getMoneyAmountWithoutTax());
-						detailMap.put("uuid", uuid);
+				List<String> singleLines = new ArrayList<String>();
+				for (String string : lines) {
+					
+					if (StringUtils.isNotBlank(string) && string.trim().equals("TESCO 乐  购  商  品  订  单")) {
 						
+						singleLines = new ArrayList<String>();
+						groupLines.add(singleLines);
 					}
+					
+					singleLines.add(string);
+				}
 
-					ordersList.add(orders);
+				for (List<String> group : groupLines) {
+					
+					Order order = parseTescoOrdersTemplate(group.toArray(new String[]{}));
+					
+					String uuid = UUID.randomUUID().toString();
+					
+					order.setUuid(uuid);
+					
+					System.out.println(order);
+
+					if (order != null && notExistedOrder(order, authanJob.getId())) {
+
+						ordersNeedSendSOAP.add(order);
+
+						Orders orders = new Orders();
+						Map<String, String> orderTitleMap = new HashMap<String, String>();
+						List<Map<String, String>> ordersItemList = new ArrayList<Map<String, String>>();
+						orders.setOrderTitleMap(orderTitleMap);
+						orders.setOrdersItemList(ordersItemList);
+
+						orderTitleMap.put("orderNumber", order.getOrderNumber());
+						orderTitleMap.put("supplierNumber", order.getSupplierNumber());
+						orderTitleMap.put("estimateTakeOverDate", order.getEstimateTakeOverDate());
+						orderTitleMap.put("storeNumber", order.getStoreNumber());
+						orderTitleMap.put("orderDate", order.getOrderDate());
+						orderTitleMap.put("uuid", uuid);
+
+						List<ProductDetail> productDetails = order.getProductDetails();
+						for (ProductDetail productDetail : productDetails) {
+							productDetail.setOrderNumber(order.getOrderNumber());
+							Map<String, String> detailMap = new HashMap<String, String>();
+
+							ordersItemList.add(detailMap);
+
+							detailMap.put("orderNumber", order.getOrderNumber());
+							detailMap.put("productNumber", productDetail.getProductNumber());
+							detailMap.put("description", productDetail.getDescription());
+							detailMap.put("count", productDetail.getCount());
+							detailMap.put("countInSingleBox", productDetail.getCountInSingleBox());
+							detailMap.put("boxCount", productDetail.getBoxCount());
+							detailMap.put("priceWithoutTax", productDetail.getPriceWithoutTax());
+							detailMap.put("moneyAmountWithoutTax", productDetail.getMoneyAmountWithoutTax());
+							detailMap.put("uuid", uuid);
+							
+						}
+
+						ordersList.add(orders);
+					}
 				}
 			}
 
