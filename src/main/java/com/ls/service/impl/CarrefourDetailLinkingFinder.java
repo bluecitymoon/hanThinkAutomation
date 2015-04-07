@@ -9,12 +9,12 @@ import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.Span;
 import org.htmlparser.visitors.NodeVisitor;
 
-import com.ls.util.HanthinkUtil;
-
 public class CarrefourDetailLinkingFinder extends NodeVisitor {
-
+	
 	private List<String> guidList;
 	private List<Integer> otherPageIndexs = new ArrayList<Integer>();
+	
+	private boolean hasNextPageGroup = false;
 
 	private int currentIndex;
 
@@ -44,6 +44,11 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 
 				}
 				
+				String href = linkTag.getAttribute("href");
+				if (StringUtils.isNotBlank(href) && href.startsWith("javascript:gotoPageGroup(")) {
+					hasNextPageGroup = true;
+				}
+				
 			}
 		}
 
@@ -69,6 +74,10 @@ public class CarrefourDetailLinkingFinder extends NodeVisitor {
 	}
 
 	public boolean hasNextPage() {
+		
+		if (hasNextPageGroup) {
+			return true;
+		}
 		
 		System.out.println("Other page index list --> " + otherPageIndexs.toString());
 		System.out.println("current page index is --> " + currentIndex);
