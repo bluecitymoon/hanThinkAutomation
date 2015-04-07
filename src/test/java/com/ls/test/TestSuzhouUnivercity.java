@@ -29,16 +29,17 @@ public class TestSuzhouUnivercity {
 	public void testGrabOrders() throws Exception {
 
 		AutomaticJob automaticJob = automaticJobRepository.findOne(33);
-		List<Orders> orders = suzhouUnivercityAutomationService.grabOrders("2015-01-23", "2015-01-23", automaticJob);
+		List<Orders> orders = suzhouUnivercityAutomationService.grabOrders("2015-04-04", "2015-04-07", automaticJob);
+		System.out.println(orders);
 
 	}
 
 	@Test
 	public void testWholeProcess() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(5);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(33);
 
-		suzhouUnivercityAutomationService.postDataToWebService("2015-01-15", "2015-01-15", automaticJob);
+		suzhouUnivercityAutomationService.postDataToWebService("2015-04-04", "2015-04-07", automaticJob);
 	}
 
 	@Test

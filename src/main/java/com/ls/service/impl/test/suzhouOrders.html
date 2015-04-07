@@ -1,0 +1,358 @@
+
+ 
+
+
+
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<base href="http://42.244.8.3/logistics/system/business/purchase/cg_jh_dhd_zhquery.jsp">
+<meta http-equiv="Content-Type" content="text/html; charset=GBK">
+<title>采购订单查询</title>
+<link href="null/css/webStyle.css" rel="stylesheet" type="text/css">
+<script language="javascript" type="text/javascript" src="null/js/jquery-1.4.1.js"></script>
+<script language="javascript" type="text/javascript" src="null/js/jquery.validate.js"></script>
+<script language="javascript" type="text/javascript" src="null/js/webStyle.js"></script>
+<script language="javascript" type="text/javascript" src="null/js/common.js"></script>
+<link href="../../../css/webStyle.css" rel="stylesheet" type="text/css">
+</head>
+<script language="javascript" type="text/javascript" src="null/js/calendar.js"></script>
+<script language="javascript" type="text/javascript" >
+	function print()
+	{
+		
+		
+		//var bmmc = $("#bmmc").val();
+		
+	    var url="null/system/business/purchase/cg_planzquery.jsp";
+	    $(document).winOpen(url,"","");
+	}
+</script>
+<body>
+<!-- 分页及传参初始化程序 -->
+
+
+
+
+
+<!-- 分页及传参初始化程序 -->
+
+
+<span class="title">您的位置：采购订单查询</span>
+<form  name="form1"  id="queryzhDhdForm" method="get" action="null/cg_jh_sqd.do">
+<table width="100%" class="bar">
+  <tr>
+    <td nowrap>供应商：
+     
+       <select name="gysdm">
+    	<option value="" selected>全部</option>
+    	  <option value="100002">苏州金记食品有限公司</option><option value="100003">金利油脂(苏州)有限公司</option><option value="100004">吴中万家食品有限公司</option><option value="100005">苏州市军粮供应站</option><option value="100006">益江（张家港）粮油工业有限公司</option><option value="100007">上海艺杏食品有限公司</option><option value="100008">苏州南环桥市场发展股份有限公司</option><option value="100009">常熟市董浜镇里蔬菜专业合作社</option><option value="100010">江苏省苏南盐业有限公司苏州公司</option><option value="100011">鸿澎食品</option><option value="100012">苏州市南环桥市场长江调味品经营部</option><option value="100013">苏州市南环桥市场梁国琴南北货经营部</option><option value="100014">苏州市亚华食品经营部</option><option value="100015">宇满鑫副食品批发部</option><option value="100018">苏州南环桥森林水产批发部</option><option value="100020">苏州胥城食品添加剂有限责任公司</option><option value="100021">金士达公司（一次性用品）</option><option value="100023">鸿光浪花</option><option value="100024">光明乳业苏州分公司</option><option value="100025">苏州市东方洗涤剂厂</option><option value="100026">苏州市鑫裕盛食品有限公司(豆浆)</option><option value="100027">浙江杭州豆制食品有限公司</option><option value="100028">车坊龙翔副食品经营部</option><option value="100029">苏州阳澄农业科技有限公司</option><option value="100030">万华水产</option><option value="100031">东台康兴禽业养殖专业合作社</option><option value="100032">苏州市百家鲜食品有限公司</option><option value="100033">苏州远健绿色芽苗菜食品有限公司</option><option value="100034">张家港保税区顺德龙国际贸易有限公司</option><option value="100035">苏州福美粮油食品贸易有限公司</option><option value="100036">如皋苏合农副产品销售专业合作社联合社</option><option value="100037">鲜丰生态农业有限公司</option><option value="100038">常熟市辛庄大庆生面店</option><option value="100039">射阳县海河缪港农产品购销专业合作社</option><option value="100040">苏州工业园区娄葑镇德银生面店</option><option value="100041">鸿海食品</option><option value="100042">苏州市南环桥市场荀森水产经营部</option><option value="100043">苏州市相城区黄埭埭北商行</option><option value="100044">南京雨润生鲜食品有限公司</option><option value="100045">苏州市相城区元和沈方田生面摊</option><option value="100046">沈阳市伟峰肉鸡加工厂</option><option value="100047">临沂金龙冷藏厂</option><option value="100048">苏州市南环桥市场荀霞水产经营部</option><option value="100049">常熟市柳南田园观光服务有限公司</option><option value="100050">张家港大中元粮油贸易有限公司</option><option value="100051">临沂市罗庄区民康肉食品有限公司</option><option value="100052">盐城市盐都区盐淮米业有限公司</option><option value="100053">江苏省苏盐连锁有限公司苏州城区分公司</option><option value="100054">江苏百汇农业发展有限公司</option><option value="100055">南京卫岗乳业有限公司</option><option value="100056">苏州堃盛贸易有限公司</option><option value="100057">苏州金虹翔食品有限公司</option><option value="100058">苏州市源膳房食品配送有限公司</option><option value="100059">建湖县森林水产专业合作社</option><option value="100060">苏州市南环桥市场沈金芬水产经营部</option>
+      </select>
+    </td>
+      
+    <td nowrap>拼音简码：
+      <input name="pyjm" type="text" id="pyjm" size="5" ></td>
+    <td nowrap>订货日期：  
+      <input type="text" name="dhrq" id="dhrq" size="9"  onClick="c.getCalendar('[yy]-[mon]-[dd]',this.value,'dhrq',this);" />      <u>至</u> <input type="text" name="dhrq2" id="dhrq2" size="9"  onClick="c.getCalendar('[yy]-[mon]-[dd]',this.value,'dhrq2',this);" /></td>
+     <td nowrap>需货日期：  
+      <input type="text" name="xhrq" id="xhrq" size="9" value="2015-04-08" onClick="c.getCalendar('[yy]-[mon]-[dd]',this.value,'xhrq',this);" />      <u>至</u> <input type="text" name="xhrq2" id="xhrq2" size="9" value="2015-04-14" onClick="c.getCalendar('[yy]-[mon]-[dd]',this.value,'xhrq2',this);" /></td>
+    <td align="center" nowrap><label>状态：
+        <select name="workstate" >
+          <option value=''>全部</option>
+          <option value='订货中'>订货中</option>
+          <option value='已订货'>已订货</option>
+          <option value='已注销'>已注销</option>
+        </select>
+    </label></td>
+    <td align="center" nowrap>订货人：
+      <input type="text" name="dhr" id="dhr" size="7" /></td>
+    <td align="center" nowrap><div align="left">
+      <input name="formID" type="hidden" value="queryzhDhdForm">
+      <input name="actionName" type="hidden" value="cg_jh_sqd.do">
+      <input name="operate" type="hidden" value="queryzhDhd">
+      <u>
+        <input type="submit" name="button" id="button" value=" 查 询 ">
+        
+      </u></div></td>
+  </tr>
+</table>
+
+<!-- 分页工具栏初始化程序 -->
+<table border="1" cellpadding="0" width="100%">
+  <tr>
+    <th width="14%" nowrap><p align="center">采购单号</p></th>
+    <th width="12%" nowrap><p align="center">供应商</p></th>
+    <th width="10%" nowrap><p align="center">联系人</p></th>
+    <th width="15%" nowrap><p align="center">联系电话</p></th>
+     <th width="5%" nowrap><p align="center">订货人</p></th>
+    <th width="4%" nowrap><p align="center">订货日期</p></th>
+    <th width="5%" nowrap><p align="center">需货日期</p></th>
+    <th width="5%" nowrap><p align="center">供应商确认时间</p></th>
+    <th width="8%" nowrap><p align="center">商品金额</p></th>
+    <th width="9%" nowrap><p align="center">状态</p></th>
+    <th width="13%" nowrap><p align="center">操作</p></th>
+  </tr>
+   
+   
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504060015</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-06 10:27:56</td>
+      <td nowrap>2015-04-07 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;1637.6</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504060015&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-07 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504060015','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504060015','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504060004</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-06 10:27:39</td>
+      <td nowrap>2015-04-07 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;181.5</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504060004&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-07 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504060004','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504060004','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504050007</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-05 10:30:43</td>
+      <td nowrap>2015-04-06 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;408.9</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504050007&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-06 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504050007','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504050007','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504040024</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-04 13:30:05</td>
+      <td nowrap>2015-04-06 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;58.6</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504040024&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-06 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504040024','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504040024','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504040015</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-04 10:28:19</td>
+      <td nowrap>2015-04-05 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;215.4</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504040015&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-05 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504040015','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504040015','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504040005</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-04 10:28:11</td>
+      <td nowrap>2015-04-05 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;202.8</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504040005&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-05 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504040005','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504040005','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504030021</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-03 10:31:14</td>
+      <td nowrap>2015-04-04 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;579.5</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504030021&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-04 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504030021','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504030021','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+    <tr align="center" valign="middle"  class="tr_list">
+      <td nowrap>&nbsp;201504030009</td>
+      <td nowrap>&nbsp;上海艺杏食品有限公司</td>
+      <td nowrap>&nbsp;黄萍</td>
+       <td nowrap>&nbsp;13328008266</td>
+       <td nowrap>&nbsp;管理员</td>
+      <td nowrap>&nbsp;2015-04-03 10:31:07</td>
+      <td nowrap>2015-04-04 06:00:00</td>
+      <td nowrap></td>
+     
+      <td nowrap>&nbsp;139.5</td>
+      <td nowrap>&nbsp;已订货</td>
+      
+      <td nowrap>
+           
+        <a href="javascript:;" onClick="$(document).winOpen('null/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=201504030009&gysdm=100007&gysmc=上海艺杏食品有限公司&xhrq=2015-04-04 06:00:00','','','querySpmxqueryshs')">明细</a>
+        
+        	
+        
+        
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/rkdform/printindex.jsp?sqdh=201504030009','','','dayindhdzh')">打印</a>
+       <a href="javascript:;" onClick="$(document).winOpen('null/system/business/print/cgdform2/printindex.jsp?sqdh=201504030009','','','dayindhdzh2')">汇总打印</a>  
+       	
+            </td>
+      </tr>
+    
+ 
+</table>
+</form>
+
+
+<!-- 2010-12-30 龚文友增加,供应商登录后的数据屏蔽 -->
+<script type="text/javascript"> 
+	var flag="null";
+	if(flag!="" && flag!="null"){
+		$("#queryzhDhdForm select[name='gysdm']").val("null");
+		$("#queryzhDhdForm input[name='dhr']").val("");
+		
+		$("#queryzhDhdForm select[name='gysdm']").parent().hide();
+		$("#queryzhDhdForm input[name='pyjm']").parent().hide();
+		$("#queryzhDhdForm input[name='dhr']").parent().hide();
+	}
+</script>
+<!-- 2010-12-30 龚文友增加,供应商登录后的数据屏蔽 -->
+
+
+
+
+<script language="Javascript">
+function gotoPage(pageNo){  
+document.getElementById( "currentPage").value = pageNo;  
+document.getElementById( "pageForm").submit(); 
+return true; }</script>  
+<div class='pages_btns' align='center' style='padding-left: 25px'> 
+<form id='pageForm' name='pageForm' method='get' action='cg_jh_sqd.do'style="padding:0px;margin:0px;">当前第(1)页,每页(20)条记录,共(1)页,共(8)条&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:gotoPage(1)' class='next' ><strong>[首页]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:gotoPage(1)'><span class='currentPage'>1</span></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:gotoPage(1)'><strong>[末页]</strong></a>&nbsp;&nbsp;<strong>跳至</strong><input type='text' id='pnum' name='pnum' size='8' onkeydown="if(event.keyCode== 13){var v = parseInt(this.value,10);if((isNaN(v))||(v<=0)||(v>2147483647)||(v>1)){alert('您输入的页码不正确。');document.getElementById('pnum').focus();return false;} else {gotoPage(document.getElementById('pnum').value);}}"/><strong>页</strong>&nbsp;&nbsp;<input type='button' id='pageSubmit' name='pageSubmit' value='GO' onclick="javascript:var v=parseInt(document.getElementById( 'pnum').value, 10);if((isNaN(v))||(v<=0)||(v>2147483647)||(v>1)){alert('您输入的页码不正确。');document.getElementById('pnum').focus();return false;} else {gotoPage(document.getElementById('pnum').value);}"><input type='hidden' id='currentPage' name='currentPage' value='1'>
+ <input type="hidden" name="xhrq" value="2015-04-04"/> 
+ <input type="hidden" name="dhrq" value=""/> 
+ <input type="hidden" name="button" value=" 查 询 "/> 
+ <input type="hidden" name="dhrq2" value=""/> 
+ <input type="hidden" name="operate" value="queryzhDhd"/> 
+ <input type="hidden" name="formID" value="queryzhDhdForm"/> 
+ <input type="hidden" name="actionName" value="cg_jh_sqd.do"/> 
+ <input type="hidden" name="dhr" value=""/> 
+ <input type="hidden" name="xhrq2" value="2015-04-07"/> 
+ <input type="hidden" name="pyjm" value=""/> 
+ <input type="hidden" name="gysdm" value="100007"/> 
+ <input type="hidden" name="workstate" value=""/> 
+ </form></div> 
+<script language="javascript" type="text/javascript">$("#pageForm").attr("action","null/cg_jh_sqd.do");</script>
+<script language="javascript" type="text/javascript">document.getElementById("queryzhDhdForm").xhrq.value="2015-04-04";document.getElementById("queryzhDhdForm").dhrq.value="";document.getElementById("queryzhDhdForm").button.value=" 查 询 ";document.getElementById("queryzhDhdForm").dhrq2.value="";document.getElementById("queryzhDhdForm").operate.value="queryzhDhd";document.getElementById("queryzhDhdForm").formID.value="queryzhDhdForm";document.getElementById("queryzhDhdForm").actionName.value="cg_jh_sqd.do";document.getElementById("queryzhDhdForm").dhr.value="";document.getElementById("queryzhDhdForm").xhrq2.value="2015-04-07";document.getElementById("queryzhDhdForm").pyjm.value="";document.getElementById("queryzhDhdForm").gysdm.value="100007";document.getElementById("queryzhDhdForm").workstate.value="";</script>
+
+
+<!-- 分页工具栏初始化程序 -->
+</body>
+</html>

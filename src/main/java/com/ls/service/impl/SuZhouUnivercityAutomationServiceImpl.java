@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -30,9 +31,9 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
@@ -50,6 +51,8 @@ import com.ls.grab.GrapImgUtil;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
+import com.ls.service.impl.vistor.SuZhouUnivercityOrdersDetailFinder;
+import com.ls.service.impl.vistor.SuZhouUnivercityOrdersFinder;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -77,16 +80,15 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 
 		Map<String, String> titleMap = order.getOrderTitleMap();
 		String orderNumber = titleMap.get("orderNumber");
-		String storeNumberEnglish = titleMap.get("storeNumberEnglish");
 
-		Order existedOrder = orderRepository.findByOrderNumberAndJobIdAndStoreNumberEnglish(orderNumber, jobId, storeNumberEnglish);
+		List<Order> existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
 
-		return existedOrder == null;
+		return existedOrder == null || existedOrder.isEmpty();
 	}
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
-		List<Orders> ordersList = null;
+		List<Orders> ordersList = new ArrayList<Orders>();
 
 		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
@@ -103,108 +105,45 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 
 		tryToLogin(webClient, authanJob);
 
-		HtmlPage page = webClient.getPage("http://42.244.8.3/logistics/system/gys/");
-		
-		System.out.println(page.getWebResponse().getContentAsString());
+		String dataUrl = "http://42.244.8.3/logistics/cg_jh_sqd.do?pnum=&currentPage=1&xhrq= " + start + "&dhrq2=&actionName=cg_jh_sqd.do&gysdm= " + authanJob.getUsername() + "&workstate=&dhrq=&pnum=&button=+%B2%E9+%D1%AF+&formID=queryzhDhdForm&operate=queryzhDhd&dhr=&xhrq2=" + end + "&pyjm=";
 
-//		List<String> orderIds = getAllOrderFileIds(webClient, start, end);
-//
-//		print(orderIds);
-//
-//		ordersList = parseDetails(orderIds, webClient, authanJob.getId());
-//		
-//		fillUniqueIdentityForOrdersList(ordersList);
-		
-		return ordersList;
-	}
+		HtmlPage page = webClient.getPage(dataUrl);
 
-	private List<Orders> parseDetails(List<String> orderIds, WebClient webClient, Integer jobId) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+		Parser htmlParser = new Parser();
 
-		List<Orders> ordersList = Lists.newArrayList();
-
-		if (orderIds == null || orderIds.isEmpty()) {
-			return ordersList;
-		}
-
-		for (String guid : orderIds) {
-
-			try {
-				String detailUrl = "https://platform.powere2e.com/platform/mailbox/performDocAction.htm?guid=" + guid + "&actionId=1";
-				HtmlPage singleDetailPage = webClient.getPage(detailUrl);
-
-				String singleDetailPageHtml = singleDetailPage.getWebResponse().getContentAsString();
-
-				Parser htmlParser = new Parser();
-				htmlParser.setInputHTML(singleDetailPageHtml);
-
-				CarrefourDetailFinder carrefourDetailFinder = new CarrefourDetailFinder();
-				htmlParser.visitAllNodesWith(carrefourDetailFinder);
-
-				Orders order = carrefourDetailFinder.getOrder();
-
-				if (order != null && checkIfOrderNotGrabed(order, jobId)) {
-					ordersList.add(order);
-				}
-
-			} catch (ParserException e) {
-
-			}
-
-		}
-
-		return ordersList;
-	}
-
-	private List<String> getAllOrderFileIds(WebClient webClient, String start, String end) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-
-		List<String> allGuidList = new ArrayList<String>();
 		try {
-			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
-			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(end);
-			
-			webClient.getPage("https://platform.powere2e.com/platform/mailbox/openInbox.htm?showAll");
-			
-			int page = 1;
+			SuZhouUnivercityOrdersFinder suZhouUnivercityOrdersFinder = new SuZhouUnivercityOrdersFinder();
+			SuZhouUnivercityOrdersDetailFinder suZhouUnivercityOrdersDetailFinder = new SuZhouUnivercityOrdersDetailFinder();
+			htmlParser.setInputHTML(page.getWebResponse().getContentAsString());
+			htmlParser.visitAllNodesWith(suZhouUnivercityOrdersFinder);
 
-			boolean hasNextPage = true;
-			while (hasNextPage) {
-				
-				String archivePageUrl = "https://platform.powere2e.com/platform/mailbox/navigateInbox.htm?&receivedDateFrom=" + carrefourStart + "&receivedDateTo=" + carrefourEnd + "&searchText=&gotoPage=" + page;
+			List<Orders> orders = suZhouUnivercityOrdersFinder.getOrders();
 
-				print("Visiting page " + page + "--> " + archivePageUrl);
+			for (Orders order : orders) {
 
-				HtmlPage archivePage = webClient.getPage(archivePageUrl);
-				String archivePageContent = archivePage.getWebResponse().getContentAsString();
+				String orderNumber = order.getOrderTitleMap().get("orderNumber");
+				suZhouUnivercityOrdersDetailFinder.setUuid(order.getOrderTitleMap().get("uuid"));
+				if (checkIfOrderNotGrabed(order, authanJob.getId())) {
 
-				Parser htmlParser = new Parser();
-				htmlParser.setInputHTML(archivePageContent);
+					String detailUrl = "http://42.244.8.3/logistics/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=" + orderNumber;
+					htmlParser.setInputHTML(webClient.getPage(detailUrl).getWebResponse().getContentAsString());
 
-				CarrefourDetailLinkingFinder carrefourDetailLinkingFinder = new CarrefourDetailLinkingFinder();
-				htmlParser.visitAllNodesWith(carrefourDetailLinkingFinder);
+					htmlParser.visitAllNodesWith(suZhouUnivercityOrdersDetailFinder);
 
-				List<String> singlePageList = carrefourDetailLinkingFinder.getGuidList();
-				
-				if (null == singlePageList) {
-					break;
+					order.setOrdersItemList(suZhouUnivercityOrdersDetailFinder.getOrdersItemList());
+					
+					ordersList.add(order);
+				} else {
+					System.out.println(orderNumber + " has been grabed.");
 				}
-				allGuidList.addAll(singlePageList);
 
-				hasNextPage = carrefourDetailLinkingFinder.hasNextPage();
-
-				page++;
-				
-				if (page > 10000) {
-					break;
-				}
 			}
 
-		} catch (ParseException e) {
-			throw new RuntimeException("非标准的日期格式");
 		} catch (ParserException e) {
-
+			e.printStackTrace();
 		}
 
-		return allGuidList;
+		return ordersList;
 	}
 
 	private String toEmpty(String input) {
@@ -228,11 +167,11 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		System.out.println("Trying to login......");
-		
+
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		URL url = new URL(SUZHOU_UNIVERCITY_ROOT_URL);
-		
+
 		final HtmlPage loginPage = webClient.getPage(url);
 
 		HtmlForm form = loginPage.getFormByName("loginForm");
@@ -269,17 +208,27 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 		process.waitFor();
 
 		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
-		
+
 		System.out.println(code);
 
 		Thread.sleep(1000);
 
 		validateCodeTextInput.setValueAttribute(code);
-		
-		webClient.getCookieManager().addCookie(new Cookie("42.244.8.3", "loginTypeCookie", "gys"));
+
+		com.gargoylesoftware.htmlunit.CookieManager cookieManager = webClient.getCookieManager();
+
+		Cookie loginTypeCookie = cookieManager.getCookie("loginTypeCookie");
+
+		if (loginTypeCookie != null) {
+			cookieManager.removeCookie(loginTypeCookie);
+		}
+
+		cookieManager.addCookie(new Cookie("42.244.8.3", "loginTypeCookie", "gys"));
+
+		Set<Cookie> cookies = webClient.getCookieManager().getCookies();
+		System.out.println(cookies);
 
 		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
-	
 
 		try {
 			loginResultPage.getFormByName("loginForm");
@@ -296,35 +245,9 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 		return null;
 	}
 
-	public String generateNewValidationCode(String cookies, WebClient webClient) throws FailingHttpStatusCodeException, IOException, InterruptedException {
-
-		String getNewValidationCodeURL = "http://v30.sosgps.net.cn/platform-1.0/systemadmin/validateCode.do?timestamp=" + System.currentTimeMillis();
-
-		String fileName = GrapImgUtil.grabImgWithSrc(getNewValidationCodeURL, cookies);
-		Thread.sleep(1000);
-		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
-		String command = ocrInstallPath + "tesseract.exe " + ocrInstallPath + fileName + ".jpg " + ocrInstallPath + fileName;
-
-		Process process = Runtime.getRuntime().exec(command);
-		process.waitFor();
-
-		String code = Files.readFirstLine(new File(ocrInstallPath + fileName + ".txt"), Charset.defaultCharset());
-		if (StringUtils.isNotBlank(code)) {
-			code = code.replace(" ", "");
-		}
-		boolean isValidCode = (StringUtils.isNotBlank(code) && code.length() == 4 && StringUtils.isNumeric(code));
-
-		if (isValidCode) {
-			return code;
-		} else {
-			return generateNewValidationCode(cookies, webClient);
-		}
-
-	}
-
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("carrefour-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("suzhou-univercity-request-soap.ftl");
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -415,7 +338,7 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 			responseVo.setMessage("封装模板时发生了错误：" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
-		} 
+		}
 
 		return responseVo;
 	}
@@ -433,8 +356,6 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
 			String orderNumber = titleMap.get("orderNumber");
 			String supplierNumber = titleMap.get("supplierNumber");
-			String storeNumber = titleMap.get("storeNumber");
-			String storeNumberEnglish = titleMap.get("storeNumberEnglish");
 
 			String estimateTakeOverDate = titleMap.get("estimateTakeOverDate");
 			String orderDate = titleMap.get("orderDate");
@@ -447,8 +368,6 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 			order.setCreateDate(HanthinkUtil.getNow());
 			order.setJobId(job.getId());
 			order.setJobName(job.getName());
-			order.setStoreNumber(storeNumber);
-			order.setStoreNumberEnglish(storeNumberEnglish);
 			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
@@ -466,10 +385,7 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 				String description = toEmpty(singleDetailMap.get("description"));
 				String count = toEmpty(singleDetailMap.get("count"));
 				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
-				String giftCount = toEmpty(singleDetailMap.get("giftCount"));
-				String barCode = toEmpty(singleDetailMap.get("barCode"));
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
-				String countInSingleBox = toEmpty(singleDetailMap.get("countInSingleBox"));
 				String priceWithoutTax = toEmpty(singleDetailMap.get("priceWithoutTax"));
 
 				ProductDetail productDetail = new ProductDetail();
@@ -478,10 +394,7 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 				productDetail.setDescription(description);
 				productDetail.setCount(count);
 				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
-				productDetail.setGiftCount(giftCount);
-				productDetail.setBarCode(barCode);
 				productDetail.setProductNumber(productNumber);
-				productDetail.setCountInSingleBox(countInSingleBox);
 				productDetail.setPriceWithoutTax(priceWithoutTax);
 
 				try {

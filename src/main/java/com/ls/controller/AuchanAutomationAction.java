@@ -81,12 +81,15 @@ public class AuchanAutomationAction extends BaseAction {
 
 	@Resource(name = "sosoAutomationService")
 	private AuthanAutomationService sosoAutomationService;
-	
+
 	@Resource(name = "carrefourAutomationService")
 	private AuthanAutomationService carrefourAutomationService;
-	
+
 	@Resource(name = "lianHuaAutomationService")
 	private AuthanAutomationService lianHuaAutomationService;
+
+	@Resource(name = "suzhouUnivercityAutomationService")
+	private AuthanAutomationService suzhouUnivercityAutomationService;
 
 	@Autowired
 	private OrderRepository orderRepository;
@@ -139,13 +142,18 @@ public class AuchanAutomationAction extends BaseAction {
 
 				response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
 
-			} else if(storeDatasourceIdentity.equals("CARREFOUR")) {
-				
+			} else if (storeDatasourceIdentity.equals("CARREFOUR")) {
+
 				response = carrefourAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
-				
-			} else if(storeDatasourceIdentity.equals("LIANHUA")) {
-				
+
+			} else if (storeDatasourceIdentity.equals("LIANHUA")) {
+
 				response = lianHuaAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+
+			} else if (storeDatasourceIdentity.equals("SUZHOU_DAXUE")) {
+
+				response = suzhouUnivercityAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+
 			} else {
 
 				response = ResponseVo.newFailMessage("尚未开发的功能。");
@@ -315,7 +323,7 @@ public class AuchanAutomationAction extends BaseAction {
 		jobDataMap.put("lianHuaAutomationService", lianHuaAutomationService);
 		jobDataMap.put("jobWillRun", jobInDb);
 		jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
-
+		jobDataMap.put("suzhouUnivercityAutomationService", suzhouUnivercityAutomationService);
 		try {
 
 			String startHourAndMin = jobInDb.getStart();
