@@ -50,6 +50,7 @@
 		<zengpinbianma></zengpinbianma>
 		<zengpinmiaoshu></zengpinmiaoshu>
 		<zengpinshuliang></zengpinshuliang>
+		<zibiaomendian>${product['storeNumber']}</zibiaomendian>
 	</xsdingdanzibiao>
 	</#list>
 	</#if>
