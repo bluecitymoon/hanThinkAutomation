@@ -387,6 +387,7 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
 				String priceWithoutTax = toEmpty(singleDetailMap.get("priceWithoutTax"));
+				String storeNumber = toEmpty(singleDetailMap.get("storeNumber"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
@@ -396,6 +397,7 @@ public class SuZhouUnivercityAutomationServiceImpl extends AbstractAuthanAutomat
 				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
 				productDetail.setProductNumber(productNumber);
 				productDetail.setPriceWithoutTax(priceWithoutTax);
+				productDetail.setStoreNumber(storeNumber);
 
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);

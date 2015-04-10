@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.custom.i18n.resources" value="i18n.engine,i18n.static,ApplicationMessages" />
+	<constant name="struts.action.extension" value="ls" />
+	<constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+	
+	<package name="data" namespace="/data" extends="struts-default">
+		
+		<result-types>
+			 <result-type name="json" class="org.apache.struts2.json.JSONResult" />
+			 <result-type name="redirect" class="org.apache.struts2.dispatcher.ServletRedirectResult"/> 
+		</result-types>
+		
+		<action name="loadDataCenter">
+			<result>data-center.jsp</result>
+		</action>
+		
+		<action name="getAllGrabData" class="consoleAction" method="getAllGrabData">
+			<result name="success" type="json">
+				<param name="root">orders</param>
+			</result>
+		</action>
+		<action name="showProductDetailsByOrderId" class="consoleAction" method="showProductDetailsByOrderId">
+			<result name="success" type="json">
+				<param name="root">productDetails</param>
+			</result>
+		</action>
+		<action name="removeOrders" class="consoleAction" method="removeOrders">
+			<result name="success" type="json">
+				<param name="root">response</param>
+			</result>
+		</action>
+		
+	</package>	
+</struts>

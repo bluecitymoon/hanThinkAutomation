@@ -70,6 +70,10 @@ public class SuZhouUnivercityOrdersDetailFinder extends NodeVisitor {
 
 					detailMap.put("moneyAmountWithoutTax", node.getFirstChild().getText().replace("&nbsp;", ""));
 					break;
+				case 14:
+					
+					detailMap.put("storeNumber", node.getFirstChild().getText().replace("&nbsp;", ""));
+					break;
 				default:
 					break;
 			}

@@ -110,6 +110,7 @@
 							<th>赠品名称</th>
 							<th>赠品数量</th>
 							<th>赠品编码</th>
+							<th>店号</th>
 						</tr>
 					</thead>
 					<tbody data-bind="foreach : loadedProductDetailList">
@@ -128,6 +129,7 @@
 							<td style="text-align: center" data-bind="text : giftName"></td>
 							<td style="text-align: center" data-bind="text : giftCount"></td>
 							<td style="text-align: center" data-bind="text : giftCode"></td>
+							<td style="text-align: center" data-bind="text : storeNumber"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -175,6 +177,7 @@
 				self.priceWithTax = '';
 				self.taxRate = '';
 				self.moneyAmountWithTax = '';
+				self.storeNumber = '';
 			};
 
 			var DataCenterModel = function() {

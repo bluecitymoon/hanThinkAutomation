@@ -36,6 +36,7 @@ public class ProductDetail implements Serializable {
 	protected String giftName;
 	protected String giftCount;
 	protected String giftCode;
+	protected String storeNumber;
 	
 	public String getMoneyAmountWithTax() {
 	
@@ -206,6 +207,18 @@ public class ProductDetail implements Serializable {
 	public void setPriceWithoutTax(String priceWithoutTax) {
 	
 		this.priceWithoutTax = priceWithoutTax;
+	}
+
+	
+	public String getStoreNumber() {
+	
+		return storeNumber;
+	}
+
+	
+	public void setStoreNumber(String storeNumber) {
+	
+		this.storeNumber = storeNumber;
 	}
 
 	@Override

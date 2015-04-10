@@ -3,7 +3,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="eight columns">
-				<p>Copyright &copy; 2009 - 2013 HanThink Technology. All rights reserved.</p>
+				<p>Copyright &copy; 2009 - 2015 HanThink Technology. All rights reserved.</p>
 			</div>
 			<div class="four columns"></div>
 		</div>

@@ -21,9 +21,7 @@
 		<action name="userResourceAssign">
 			<result>user-resource-assign.jsp</result>
 		</action>
-		<action name="loadDataCenter">
-			<result>data-center.jsp</result>
-		</action>
+		
 		<action name="ajaxFindUser" class="userAction" method="ajaxFindUser">
 			<result name="success" type="json">
 				<param name="root">users</param>
@@ -73,22 +71,6 @@
 		</action>
 		
 		<action name="updateUserStore" class="resourceAction" method="updateUserStore">
-			<result name="success" type="json">
-				<param name="root">response</param>
-			</result>
-		</action>
-		
-		<action name="getAllGrabData" class="consoleAction" method="getAllGrabData">
-			<result name="success" type="json">
-				<param name="root">orders</param>
-			</result>
-		</action>
-		<action name="showProductDetailsByOrderId" class="consoleAction" method="showProductDetailsByOrderId">
-			<result name="success" type="json">
-				<param name="root">productDetails</param>
-			</result>
-		</action>
-		<action name="removeOrders" class="consoleAction" method="removeOrders">
 			<result name="success" type="json">
 				<param name="root">response</param>
 			</result>

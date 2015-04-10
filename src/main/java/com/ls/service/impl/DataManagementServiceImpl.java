@@ -17,11 +17,17 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.ls.entity.AutomaticJob;
 import com.ls.entity.Order;
 import com.ls.entity.ProductDetail;
+import com.ls.entity.User;
+import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
+import com.ls.repository.UserRepository;
 import com.ls.service.DataManagementService;
+import com.ls.util.HanthinkUtil;
 
 @Service("dataManagementService")
 public class DataManagementServiceImpl implements DataManagementService {
@@ -31,6 +37,12 @@ public class DataManagementServiceImpl implements DataManagementService {
 	
 	@Autowired
 	ProductDetailRepository productDetailRepository;
+	
+	@Autowired
+	UserRepository userRepository;
+	
+	@Autowired
+	AutomaticJobRepository automaticJobRepository;
 
 	public Page<Order> loadOrderInPage(Integer jobId, Pageable pageable) {
 		
@@ -52,6 +64,28 @@ public class DataManagementServiceImpl implements DataManagementService {
 				
 				if (jobId != null) {
 					predicate.getExpressions().add(criteriaBuilder.equal(root.get("jobId"), jobId));
+				} else {
+					User currentUser = userRepository.findByUsername(HanthinkUtil.getCurrentUserName());
+					boolean isAdmin = HanthinkUtil.checkIfUserIsAdmin(currentUser);
+					
+					if (!isAdmin) {
+						
+						//normal user only show his own data
+						List<AutomaticJob> jobList = automaticJobRepository.findByOwnerId(currentUser.getId());
+						
+						System.out.println(jobList);
+						
+						List<Integer> idList = Lists.newArrayList();
+						for (AutomaticJob job : jobList) {
+							idList.add(job.getId());
+						}
+						
+						if (idList.isEmpty()) {
+							throw new RuntimeException("没有数据");
+						}
+						
+						predicate.getExpressions().add(root.get("jobId").in(idList));
+					}
 				}
 
 				List<javax.persistence.criteria.Order> orders = ImmutableList.of(createDateOrder/*, starOrder*/);
