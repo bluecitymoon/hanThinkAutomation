@@ -15,8 +15,10 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.collect.Lists;
 import com.ls.entity.Role;
 import com.ls.entity.User;
+import com.ls.vo.JobSchedule;
 import com.ls.vo.ResponseVo;
 
 public class HanthinkUtil {
@@ -163,6 +165,15 @@ public class HanthinkUtil {
 			return matcher.group(0);
 		}
 		return null;
+	}
+	
+	public static List<JobSchedule> getScheduleList(int startHour, int startMinute, int endHour, int endMinute, int interval) {
+		List<JobSchedule> jobSchedules = Lists.newArrayList();
+		
+		Date now = new Date();
+		
+		return jobSchedules;
+		
 	}
 	
 	public static void main(String[] args) {
