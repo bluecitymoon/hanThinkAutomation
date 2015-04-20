@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -168,9 +167,22 @@ public class HanthinkUtil {
 	}
 	
 	public static List<JobSchedule> getScheduleList(int startHour, int startMinute, int endHour, int endMinute, int interval) {
+		
+		if (startHour > endHour) {
+			throw new RuntimeException("起始时间配置错误");
+		}
 		List<JobSchedule> jobSchedules = Lists.newArrayList();
 		
-		Date now = new Date();
+		Date startDate = new Date();
+		startDate.setHours(startHour);
+		startDate.setMinutes(startMinute);
+		
+		Date endDate = new Date();
+		endDate.setHours(endHour);
+		endDate.setMinutes(endMinute);
+		
+		long seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+		System.out.println(seconds);
 		
 		return jobSchedules;
 		
@@ -178,10 +190,6 @@ public class HanthinkUtil {
 	
 	public static void main(String[] args) {
 
-		String test = "1003(asdf)";
-	//	System.out.println(getNumbersInString(test));
-		for (int i = 0; i < 100; i++) {
-			System.out.println(UUID.randomUUID()); 
-		}
+		getScheduleList(17, 20, 17, 21, 60) ;
 	}
 }
