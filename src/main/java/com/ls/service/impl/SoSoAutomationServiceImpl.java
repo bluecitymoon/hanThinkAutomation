@@ -23,6 +23,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.htmlparser.Parser;
+import org.htmlparser.Tag;
+import org.htmlparser.tags.LinkTag;
+import org.htmlparser.util.ParserException;
+import org.htmlparser.visitors.NodeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
@@ -55,6 +62,7 @@ import com.ls.grab.GrapImgUtil;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
+import com.ls.service.impl.vistor.SoSoReportCenterLinkerVistor;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -264,7 +272,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		return baseUrl;
 	}
 
-	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+	public void tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		URL url = new URL("http://v30.sosgps.net.cn/platform-1.0/systemindex.do");
 
@@ -307,21 +315,38 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 		validateCodeTextInput.setValueAttribute(validationCode);
 
-		Page responsePage = logInput.click();
+		HtmlPage responsePage = logInput.click(); 
 
 		String nextUrl = responsePage.getUrl().toString();
 
 		if (nextUrl.contains("loginAlone.do")) {
-			String parameters = nextUrl.split("\\?")[1];
-			String reportCenterBase = "http://report.sosgps.net.cn/report-1.0/loginAlone.do?";
 
-			Page reportBasePage = webClient.getPage(reportCenterBase + parameters);
-
-			return reportBasePage.getUrl().toString();
+			String responseHtml = responsePage.getWebResponse().getContentAsString();
+			Parser parser = new Parser();
+			try {
+				parser.setInputHTML(responseHtml);
+				
+				SoSoReportCenterLinkerVistor soReportCenterLinkerVistor = new SoSoReportCenterLinkerVistor();
+				parser.visitAllNodesWith(soReportCenterLinkerVistor);
+				
+				String parameters = soReportCenterLinkerVistor.getParameters();
+				String neededParameters = parameters.substring(0, parameters.lastIndexOf("&"));
+				
+				String urlToGo = "http://report.sosgps.net.cn/report-1.0/loginAlone.do?" + neededParameters;
+				
+				System.out.println(urlToGo);
+				
+				HtmlPage reportPage = webClient.getPage(urlToGo);
+				
+				System.out.println(reportPage.getUrl().toString());
+				
+			} catch (ParserException e) {
+				e.printStackTrace();
+			}
 
 		} else {
 
-			return tryToLogin(webClient, automaticJob);
+			 tryToLogin(webClient, automaticJob);
 		}
 	}
 
@@ -368,7 +393,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 
-		ResponseVo responseVo = ResponseVo.newResponse();
+		ResponseVo responseVo = ResponseVo.newSuccessMessage("数据成功采集");
 
 		List<Orders> orders;
 		try {
@@ -382,8 +407,6 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
-
-			System.out.println(data);
 
 			String url = job.getClientIp() + job.getClientEnd();
 
@@ -444,7 +467,7 @@ public class SoSoAutomationServiceImpl extends AbstractAuthanAutomationService {
 		} catch (TemplateException e) {
 
 			responseVo.setType(ResponseVo.MessageType.FAIL.name());
-			responseVo.setMessage("封装模板时发生了错误：" + e.getMessage());
+			responseVo.setMessage("FreeMarker Template Error" + e.getMessage());
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		} catch (Exception e) {

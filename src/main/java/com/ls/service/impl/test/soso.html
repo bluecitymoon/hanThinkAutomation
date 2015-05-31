@@ -1,0 +1,486 @@
+
+POST loginAlone.do
+	
+200 OK
+	
+v30.hecom.cn
+	
+5.9 KB
+	
+101.226.255.74:80
+	
+ 
+130ms
+HeadersPostResponseHTMLCacheCookies
+
+
+
+
+
+
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+    <title></title> 
+	<!-- 设置区域 -->
+	<link rel="stylesheet" type="text/css" href="b_areaalarm/areaalarm.css" />
+    <link rel="stylesheet" type="text/css" href="ext-3.1.1/resources/css/ext-all.css" />
+	<link rel="stylesheet" type="text/css" href="ext-3.1.1/examples/simple-widgets/progress-bar.css" />
+
+	<link rel="stylesheet" type="text/css" href="ext-3.1.1/examples/ux/css/LockingGridView.css"/>
+	<link rel="stylesheet" type="text/css" href="b_track/track.css" />
+	<link rel="stylesheet" type="text/css" href="b_main/index.css" />
+	<link rel="stylesheet" type="text/css" href="css/buttons.css"/>
+	<link rel="stylesheet" type="text/css" href="js/ui/GroupHeaderPlugin.css"/>
+	<style type="text/css">
+　　< !--
+　　　.tnt {Writing-mode:tb-rl;Text-align:left;font-size:9pt}
+	#header_message_right {
+		    float: right;
+		    font-size: 12px;
+		    margin: 10px 2px 0px 0px;
+		    color: #FFF;
+		    position: relative;
+		    cursor:pointer;
+		}
+	.triangle {
+		position: absolute ;
+		top:4px;
+	    height:0;
+	    width:0;
+	    overflow: hidden;
+	    font-size: 0;
+	    line-height: 0;
+	    border-color:transparent #FF7300  transparent transparent;
+	    border-style:dashed solid  dashed dashed;
+	    border-width:4px;
+	}
+	#mapmescnt{
+		position: relative ;
+		margin-left:8px;
+	    padding: 0px 4px 0px 4px;
+	    background-color: #FF7300;
+	    color: #FFF;
+	}
+　　-- >
+	</style>
+	<script type="text/javascript">
+		var deptEmplAmountMap = {"851084311":14,"851084345":5,"851101422":3,"853121097":4,"855095929":1,"shcmmy"
+:14};
+		var scrollheight=document.documentElement.scrollHeight;
+	    var scrollwidth=document.documentElement.scrollWidth;
+//		var endTime='服务到期时间：';
+//		var entname = '图搜天下';
+		var edition = 'zh_cn';
+		var labelWidth = 450 / 1366 * screen.width;
+
+	</script>
+	<script type="text/javascript" src="js/mapbard31.3.js"></script>
+	<script src="../js/jquery-1.8.2.min.js" type="text/javascript"></script>
+	<script src="../b_map_base/amap-javascript-base.js" type="text/javascript"></script>
+	<script src="b_map/sosgps.common.map.js" type="text/javascript"></script>
+    <script type="text/javascript" src="ext-3.1.1/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="ext-3.1.1/ext-all.js"></script>
+    <script type="text/javascript" src="ext-3.1.1/examples/ux/LockingGridView.js"></script>
+    <!--Grid多列头组件 -->
+    <script type="text/javascript" src="js/ui/GroupHeaderPlugin.js"></script>
+    <script type="text/javascript" src="jstool/provincescities.js"></script>
+    <script type="text/javascript" src="internation/zh_cn/lang.js"></script>
+    <script type="text/javascript" src="internation/zh_cn/ext-lang-zh_CN.js"></script>
+    <!-- 根据日期获取星期几 -->
+    <script type="text/javascript" src="js/dateToWeekCal.js"></script>
+    <script type="text/javascript" src="js/comboxInitData.js"></script>
+	<!-- 设置区域 -->
+	<script type="text/javascript" src="b_areaalarm/areaalarm.js"></script>
+	<script type="text/javascript" src="b_areaalarm/areaalarmfun.js"></script>
+	<!-- 设置标注点 -->
+	<script type="text/javascript" src="b_poi/poi.js"></script>
+	<script type="text/javascript" src="b_poi/poifun.js"></script>
+	<!-- 轨迹回放 -->
+	<script type="text/javascript" src="b_track/TrackParam.js"></script>
+	<script type="text/javascript" src="b_track/TrackFunction.js"></script>
+	<script type="text/javascript" src="b_track/UITrackSearchPanel.js"></script>
+	<script type="text/javascript" src="b_track/UITrackControlPanel.js"></script>
+	<script type="text/javascript" src="b_track/UITrackWindow.js"></script>
+	<script type="text/javascript" src="b_main/alarmcenter.js"></script>
+	<script type="text/javascript" src="b_main/controlcenter.js"></script>
+	<script type="text/javascript" src="b_main/reportBtnClick.js"></script>
+	<script type="text/javascript" src="b_main/setMapCenterWin.js"></script>
+	<script type="text/javascript" src="js/DateTool.js"></script>
+	<script type="text/javascript">
+	
+	
+	var path='/mapsearch3.0-1.0';
+    var excelpath = 'http://220.181.105.84';
+    var endTime='服务到期时间:2016年01月29日';
+    var entname='admin';
+    var entCode='shcmmy';
+    var empCode64 = encodeURI('c2hjbW15');
+    var password64 = encodeURI('YWRtaW4=');
+    var account64 = encodeURI('YWRtaW4=');
+    /*var area_alarm_report = '<!%=area_alarm_report%>';
+    var speed_alarm_report = '<!%=speed_alarm_report%>';
+    var active_alarm_report = '<!%=active_alarm_report%>';
+    var licheng_report = '<!%=licheng_report%>';
+    var vehicle_loc_report ='<!%=vehicle_loc_report%>';
+    var vehicle_msg_stat_report ='<!%=vehicle_msg_stat_report%>';
+    var diary_report ='<!%=diary_report%>';
+    var totalDistanceStat_report ='<!%=totalDistanceStat_report%>';
+    var door_report ='<!%=door_report%>';
+    var timeDistance_report ='<!%=timeDistance_report%>';
+    var structions_report = '<!%=structions_report%>';
+	var visit_stat_report = '<!%=visit_stat_report%>';
+	var cusvisit_stat_report = '<!%=cusvisit_stat_report%>';
+	var attendance_report = '<!%=attendance_report%>';
+	var sms_center = '<!%=sms_center%>';
+	var platformURL='<!%=platformURL%>';*/
+	
+    var tmpdate = (new Date()).pattern("yyyy-M-d");
+	var yesterday = new Date();
+	yesterday.setDate(yesterday.getDate()-1);
+	var tmpdateyesterday = (yesterday).pattern("yyyy-M-d");
+	Ext.chart.Chart.CHART_URL = 'ext-3.1.1/resources/charts.swf';
+	Ext.form.Field.prototype.msgTarget = 'under';
+	/*function storeLoad(store, start, limit, deviceIds, searchValue, startTime, endTime, duration, expExcel
+, deviceId, poiId, week, workStartTime, workEndTime){
+		store.load({params:{start: start, limit: limit, deviceIds: deviceIds ,searchValue: encodeURI(searchValue
+) ,startTime: startTime, endTime: endTime, duration: duration, expExcel: expExcel, deviceId: deviceId
+, poiId: poiId, week: week, workStartTime: workStartTime, workEndTime: workEndTime}});
+	}*/
+	function header_right_over(thiz) {
+		thiz.style.display = 'none';
+		document.getElementById('header_right_show').style.display = '';
+	}
+	
+	function header_right_show_out(thiz) {
+		thiz.style.display = 'none';
+		document.getElementById('header_right').style.display = '';
+	}
+	
+	function modifyPassWord_click() {
+		modifyPassWord();
+	}
+	
+	function menu() {
+		var menuJson = "{moduleCode:[{'code':'salereport','name':'报表中心','parentCode':'-1','url':'#','level'
+:'0' },{'code':'map','name':'营销管理','parentCode':'-1','url':'#','level':'0' },{'code':'information_collection'
+,'name':'待办业务','parentCode':'-1','url':'#','level':'0' },{'code':'mdm','name':'基础数据','parentCode':'-1'
+,'url':'#','level':'0' },{'code':'support_feedback','name':'问题反馈','parentCode':'-1','url':'#','level'
+:'0' }],menus:[{'code':'salereport','name':'报表中心','parentCode':'-1','url':'#','level':'0' },{'code':'map'
+,'name':'营销管理','parentCode':'-1','url':'#','level':'0' },{'code':'information_collection','name':'待办
+业务','parentCode':'-1','url':'#','level':'0' },{'code':'mdm','name':'基础数据','parentCode':'-1','url':'#'
+,'level':'0' },{'code':'support_feedback','name':'问题反馈','parentCode':'-1','url':'#','level':'0' },{'code'
+:'shcmmy_kqxxgl','name':'考勤信息管理','parentCode':'information_collection','url':'#','level':'1' },{'code'
+:'shcmmy_bfxxgl','name':'拜访信息管理','parentCode':'information_collection','url':'#','level':'1' },{'code'
+:'visitRouteManage','name':'拜访路线管理','parentCode':'information_collection','url':'#','level':'1' },{'code'
+:'shcmmy_ddgl','name':'订单管理','parentCode':'information_collection','url':'#','level':'1' },{'code':'tzgg1'
+,'name':'通知公告','parentCode':'information_collection','url':'#','level':'1' },{'code':'pos_platform','name'
+:'定位平台','parentCode':'map','url':'#','level':'1' },{'code':'baseInfoManage','name':'基础信息管理','parentCode'
+:'mdm','url':'#','level':'1' },{'code':'business_info_manage','name':'业务信息管理','parentCode':'mdm','url'
+:'#','level':'1' },{'code':'system_info_manage','name':'系统信息管理','parentCode':'mdm','url':'#','level'
+:'1' },{'code':'assign_customer','name':'已分配客户','parentCode':'pos_platform','url':'#','level':'1' },
+{'code':'report_kernel','name':'报表中心','parentCode':'pos_platform','url':'#','level':'1' },{'code':'track'
+,'name':'轨迹查询','parentCode':'pos_platform','url':'#','level':'1' },{'code':'loc','name':'随时定位','parentCode'
+:'pos_platform','url':'#','level':'1' },{'code':'todo_business','name':'待办业务','parentCode':'pos_platform'
+,'url':'#','level':'1' },{'code':'sale_visit_manage','name':'拜访管理','parentCode':'salereport','url':'
+#','level':'1' },{'code':'sale_report','name':'精准营销','parentCode':'salereport','url':'#','level':'1'
+ },{'code':'sale_kq_manage','name':'考勤管理','parentCode':'salereport','url':'#','level':'1' },{'code':'sale_mobile_info_manage'
+,'name':'详细日志管理','parentCode':'salereport','url':'#','level':'1' },{'code':'questionReply','name':'问
+题反馈','parentCode':'support_feedback','url':'#','level':'1' },{'code':'cust_base_info','name':'客户基本信息'
+,'parentCode':'baseInfoManage','url':'#','level':'2' },{'code':'emp_base_info','name':'人员基本信息','parentCode'
+:'baseInfoManage','url':'#','level':'2' },{'code':'product_base_info','name':'产品基本信息','parentCode':'baseInfoManage'
+,'url':'#','level':'2' },{'code':'distributor_base_info','name':'经销商基本信息','parentCode':'baseInfoManage'
+,'url':'#','level':'2' },{'code':'pss_base_info','name':'配送商基本信息','parentCode':'baseInfoManage','url'
+:'#','level':'2' },{'code':'mobile_terminal_manage','name':'移动终端管理','parentCode':'baseInfoManage','url'
+:'#','level':'2' },{'code':'targetManager','name':'指标管理','parentCode':'business_info_manage','url':'
+#','level':'2' },{'code':'layer_manage','name':'图层管理','parentCode':'business_info_manage','url':'#','level'
+:'2' },{'code':'map_op','name':'地图操作','parentCode':'pos_platform','url':'#','level':'2' },{'code':'feedback_add'
+,'name':'提交新问题','parentCode':'questionReply','url':'feedBack/initFdAddView.do','level':'2' },{'code'
+:'feedback_list','name':'问题列表','parentCode':'questionReply','url':'feedBack/initListView.do','level'
+:'2' },{'code':'sale_kq_manage_emp_Attend_stat_report','name':'人员考勤汇总表','parentCode':'sale_kq_manage'
+,'url':'r/clockingIn.do','level':'2' },{'code':'sale_kq_manage_com_Attend_stat_report','name':'公司考勤汇
+总表','parentCode':'sale_kq_manage','url':'r/companyClockingIn.do','level':'2' },{'code':'sale_kq_manage_travelcost_stat_report'
+,'name':'差旅明细表','parentCode':'sale_kq_manage','url':'amdt/getDynamicPageView.do','level':'2' },{'code'
+:'sale_kq_manage_kqtj','name':'考勤明细表','parentCode':'sale_kq_manage','url':'common/page/clockingInDetail
+.do','level':'2' },{'code':'sale_mobile_info_manage_detail_log_report','name':'详细日志报表','parentCode':'sale_mobile_info_manage'
+,'url':'/r1/page/locationRecordReport.do','level':'2' },{'code':'order_summary','name':'订单汇总表','parentCode'
+:'sale_report','url':'r/order.do','level':'2' },{'code':'sale_order_list','name':'订单明细表','parentCode'
+:'sale_report','url':'order/getDynamicPageView.do','level':'2' },{'code':'promotion_list','name':'促销
+明细表','parentCode':'sale_report','url':'r/promotion.do','level':'2' },{'code':'xd_info_report','name'
+:'巡店明细表','parentCode':'sale_report','url':'visitShop/getDynamicPageView.do','level':'2' },{'code':'jxc_info_report'
+,'name':'进销存明细表','parentCode':'sale_report','url':'jxc/getDynamicPageView.do','level':'2' },{'code':'empl_visit_report_new'
+,'name':'业务员拜访汇总表','parentCode':'sale_visit_manage','url':'r1/page/employeeVisitNew.do','level':'2' 
+},{'code':'customer_visit_new','name':'客户被拜访汇总表','parentCode':'sale_visit_manage','url':'r1/page/customer_visit
+.do','level':'2' },{'code':'shcmmy_xdxxsh','name':'巡店审核','parentCode':'shcmmy_bfxxgl','url':'bizdatamgr
+/getDynamicPageView.do?code=xdxxsh','level':'2' },{'code':'shcmmy_jxcxxsh','name':'进销存审核','parentCode'
+:'shcmmy_bfxxgl','url':'bizdatamgr/getDynamicPageView.do?code=jxcxxsh','level':'2' },{'code':'shcmmy_ddlb'
+,'name':'订单审核','parentCode':'shcmmy_ddgl','url':'bizdatamgr/getDynamicPageView.do?code=ddlb','level'
+:'2' },{'code':'shcmmy_clxxsh','name':'差旅审核','parentCode':'shcmmy_kqxxgl','url':'bizdatamgr/getDynamicPageView
+.do?code=clxxsh','level':'2' },{'code':'sys_info_param_manage_other_param','name':'其它参数配置','parentCode'
+:'sys_info_param_manage','url':'web/mdm/jsp/other_param_config.jsp','level':'2' },{'code':'sys_info_acc_manage'
+,'name':'账户管理','parentCode':'system_info_manage','url':'mdm/account/account_manage.do','level':'2' }
+,{'code':'system_info_role_manage','name':'角色管理','parentCode':'system_info_manage','url':'mdm/role/role_manage
+.do','level':'2' },{'code':'sys_info_param_manage','name':'参数配置管理','parentCode':'system_info_manage'
+,'url':'#','level':'2' },{'code':'log_manage','name':'日志管理','parentCode':'system_info_manage','url':'
+#','level':'2' },{'code':'dataDictionary_info_manage','name':'数据字典信息','parentCode':'system_info_manage'
+,'url':'#','level':'2' },{'code':'push_tzgg','name':'通知公告','parentCode':'tzgg1','url':'pushNotice/pushNoticeManage
+.do','level':'2' },{'code':'work_daily','name':'工作日报','parentCode':'tzgg1','url':'jobreport/jobreport_list
+.do','level':'2' },{'code':'visitRouteList','name':'路线配置','parentCode':'visitRouteManage','url':'listVisitRoute
+.do','level':'2' },{'code':'visitPlanList','name':'拜访计划','parentCode':'visitRouteManage','url':'listVisitPlan
+.do','level':'2' },{'code':'cust_manage','name':'客户管理','parentCode':'cust_base_info','url':'customer
+/customer_manage.do','level':'3' },{'code':'cust_list','name':'客户列表','parentCode':'cust_base_info','url'
+:'customer/customer_list.do','level':'3' },{'code':'dataDictionary_manage','name':'数据字典','parentCode'
+:'dataDictionary_info_manage','url':'dictionary/dataDictionary_manage.do','level':'3' },{'code':'distributor_list'
+,'name':'经销商列表','parentCode':'distributor_base_info','url':'distributor/distributor_list.do','level'
+:'3' },{'code':'distributor_manage','name':'经销商管理','parentCode':'distributor_base_info','url':'distributor
+/distributor_manage.do','level':'3' },{'code':'orgztion_manage','name':'组织架构','parentCode':'emp_base_info'
+,'url':'organization/orgztion_manage.do','level':'3' },{'code':'employee_list','name':'人员列表','parentCode'
+:'emp_base_info','url':'employee/employee_list.do','level':'3' },{'code':'orgztion_employee_manage','name'
+:'部门分配','parentCode':'emp_base_info','url':'organization/orgztion_employee_manage.do','level':'3' },
+{'code':'employee_customer_manage','name':'人员客户表','parentCode':'emp_base_info','url':'employeeCustomer
+/employee_customer_manage.do','level':'3' },{'code':'employee_product_manage','name':'人员产品表','parentCode'
+:'emp_base_info','url':'zlmy/employee_product/employee_product_manage.do','level':'3' },{'code':'layer_add'
+,'name':'图层添加','parentCode':'layer_manage','url':'web/mdm/jsp/layermanage/layer_add.jsp','level':'3'
+ },{'code':'layer_modify','name':'图层修改','parentCode':'layer_manage','url':'web/mdm/jsp/layermanage/layer_modify
+.jsp','level':'3' },{'code':'layer_del','name':'图层删除','parentCode':'layer_manage','url':'web/mdm/jsp
+/layermanage/layer_del.jsp','level':'3' },{'code':'log_login','name':'登录日志统计','parentCode':'log_manage'
+,'url':'listLoginLogByPage.do','level':'3' },{'code':'tmc','name':'实时路况','parentCode':'map_op','url'
+:'#','level':'3' },{'code':'poi','name':'标注','parentCode':'map_op','url':'#','level':'3' },{'code':'layer'
+,'name':'图层','parentCode':'map_op','url':'#','level':'3' },{'code':'mapset','name':'地图视野设置','parentCode'
+:'map_op','url':'#','level':'3' },{'code':'zoomin','name':'放大','parentCode':'map_op','url':'#','level'
+:'3' },{'code':'areaalarm','name':'电子围栏','parentCode':'map_op','url':'#','level':'3' },{'code':'print'
+,'name':'打印','parentCode':'map_op','url':'#','level':'3' },{'code':'clear','name':'清除','parentCode':'map_op'
+,'url':'#','level':'3' },{'code':'ceju','name':'测距','parentCode':'map_op','url':'#','level':'3' },{'code'
+:'zoomout','name':'缩小','parentCode':'map_op','url':'#','level':'3' },{'code':'realtime_track','name'
+:'实时追踪','parentCode':'map_op','url':'#','level':'3' },{'code':'ce_area','name':'测面积','parentCode':'map_op'
+,'url':'#','level':'3' },{'code':'search_customer','name':'搜索客户','parentCode':'map_op','url':'#','level'
+:'3' },{'code':'cellphoneTerminalList','name':'手机终端','parentCode':'mobile_terminal_manage','url':'web
+/mdm/jsp/cellphoneTerminalList.jsp','level':'3' },{'code':'carTerminalList','name':'车辆终端','parentCode'
+:'mobile_terminal_manage','url':'web/mdm/jsp/carTerminalList.jsp','level':'3' },{'code':'product_manage'
+,'name':'产品管理','parentCode':'product_base_info','url':'product/product_manage.do','level':'3' },{'code'
+:'product_list','name':'产品列表','parentCode':'product_base_info','url':'product/product_list.do','level'
+:'3' },{'code':'cxwl_list','name':'促销物料列表','parentCode':'product_base_info','url':'supplies/supplies_list
+.do','level':'3' },{'code':'pss_list','name':'配送商列表','parentCode':'pss_base_info','url':'deliveryMan
+/deliveryMan_list.do','level':'3' },{'code':'pic_config','name':'拍照类型配置','parentCode':'sys_info_param_manage'
+,'url':'picture/picture_config.do','level':'3' },{'code':'zbdr_gs','name':'公司指标导入','parentCode':'targetManager'
+,'url':'web/systemadmin/jsp/target/target_ent_import.jsp','level':'3' },{'code':'zbxg_gs','name':'公司
+指标修改','parentCode':'targetManager','url':'web/systemadmin/jsp/target/target_ent_update.jsp','level':'3'
+ },{'code':'target_import','name':'个人指标导入','parentCode':'targetManager','url':'web/systemadmin/jsp/target
+/target_import.jsp','level':'3' },{'code':'target_update','name':'个人指标修改','parentCode':'targetManager'
+,'url':'web/systemadmin/jsp/target/target_update.jsp','level':'3' },{'code':'target_month_visit_freq'
+,'name':'月拜访频次','parentCode':'targetManager','url':'customerVisitFreq/custVisitFreqManage.do','level'
+:'3' }]}";
+		var mapsearchLeft = 10, platformIdLeft = 10, platformIdtLeft = 10,platformIdsLeft = 10,platformIdmLeft
+ = 10;
+		
+		/*if (-1 != menuJson.indexOf("报表中心")) {
+			document.getElementById('reportId').style.left = "10px";
+			document.getElementById('reportId').style.display = "block";
+			mapsearchLeft += 120;
+			platformIdLeft += 120;
+			platformIdtLeft += 120;
+			platformIdsLeft += 120;
+			platformIdmLeft += 120;
+		}*/
+		
+		if (-1 != menuJson.indexOf("营销管理")) {
+			document.getElementById('mapsearchId').style.left = mapsearchLeft + "px";
+			document.getElementById('mapsearchId').style.display = "block";
+			platformIdLeft += 120;
+			platformIdtLeft += 120;
+			platformIdsLeft +=120;
+			platformIdmLeft += 120;
+		}
+		
+		/*if (-1 != menuJson.indexOf("业务管理")) {
+			document.getElementById('platformId').style.left = platformIdLeft + "px";
+			document.getElementById('platformId').style.display = "block";
+			platformIdtLeft += 120;
+			platformIdsLeft += 120;
+			platformIdmLeft += 120;
+		}*/
+		
+		if (-1 != menuJson.indexOf("基础数据")) {
+			document.getElementById('platformIdt').style.left = platformIdtLeft + "px";
+			document.getElementById('platformIdt').style.display = "block";
+			platformIdsLeft += 120;
+			platformIdmLeft += 120;
+		}
+		
+		if (-1 != menuJson.indexOf("问题反馈")) {
+			document.getElementById('platformIds').style.left = platformIdsLeft + "px";
+			document.getElementById('platformIds').style.display = "block";
+			platformIdmLeft += 120;
+		}
+		
+		if (-1 != menuJson.indexOf("短信平台")) {
+			document.getElementById('platformIdm').style.left = platformIdmLeft + "px";
+			document.getElementById('platformIdm').style.display = "block";
+		}
+	}
+	</script>
+	
+	<!-- 
+    <script type="text/javascript" src="b_main/visitStatGrid.js"></script>
+    <script type="text/javascript" src="b_main/cusVisitStatGrid.js"></script>
+    <script type="text/javascript" src="b_main/attendanceReportGrid.js"></script>
+    <script type="text/javascript" src="b_main/areaAlarmGrid.js"></script>
+    <script type="text/javascript" src="b_main/speedAlarmGrid.js"></script>
+    <script type="text/javascript" src="b_main/holdAlarmGrid.js"></script>
+    <script type="text/javascript" src="b_main/distanceStatGrid.js"></script>
+    <script type="text/javascript" src="b_main/totalDistanceStatGrid.js"></script>
+    <script type="text/javascript" src="b_main/vehicleGPSInfoGrid.js"></script>
+    <script type="text/javascript" src="b_main/doorReportGrid.js"></script>
+    <script type="text/javascript" src="b_main/vehicleMsgStatGrid.js"></script>
+    <script type="text/javascript" src="b_main/timeDistanceStatGrid.js"></script>
+    <script type="text/javascript" src="b_main/structionsGrid.js"></script>
+    <script type="text/javascript" src="b_main/diaryReportGrid.js"></script>
+     -->
+     
+	<script type="text/javascript" src="b_main/smsBtnClick.js"></script>
+	<script type="text/javascript" src="b_main/showBtnClick.js"></script>
+	<script type="text/javascript" src="b_main/trackImgClick.js"></script>
+	<script type="text/javascript" src="b_main/assignCustomerImgClick.js"></script>
+	<script type="text/javascript" src="b_main/showBtnClick_qd.js"></script>
+	<script type="text/javascript" src="b_main/alarmImgClick.js"></script>
+	<script type="text/javascript" src="b_main/controlBtnClick.js"></script>
+	<script type="text/javascript" src="b_main/realtimeTrackImgClick.js"></script>
+	<script type="text/javascript" src="b_main/organization/organization_data.js" charset="utf-8"></script
+>
+	<script type="text/javascript" src="b_main/organization/terminal_status_btns.js" charset="utf-8"></script
+>
+	<!-- 主界面布局 -->
+	<script type="text/javascript" src="b_main/main-organization-tree.js" ></script>
+	<script type="text/javascript" src="b_main/main-west-panel.js" ></script>
+	<script type="text/javascript" src="b_main/main-north-panel.js" ></script>
+	<script type="text/javascript" src="b_main/main-center-panel.js" ></script>
+	<!-- <script type="text/javascript" src="b_main/main-east-panel.js" ></script> -->
+	<script type="text/javascript" src="b_main/index.js" ></script>
+	
+	<script type="text/javascript" src="b_main/layercontrol.js"></script>
+	<script type="text/javascript" src="b_main/modifyPassWord.js"></script>
+	
+	
+	
+	
+</head>
+<body scroll="no" onResize="resize()" onload="menu()">
+	<div nowrap class="area_poi_icons" id="area_poi_div" style="display:">
+	 <img id="poi_img" onclick="poi_img_click()" onMouseOut="MM_swapImgRestore(this,'u11.gif')" onMouseOver
+="MM_swapImgRestore(this,'b11.gif')" title="新增标注" src="internation/zh_cn/map/u11.gif"  style="cursor
+:hand" />
+
+	</div>
+  <div id="loading-mask" style=""></div>
+  <div id="loading">
+     <div class="loading-indicator"><img src="images/blue-loading.gif" width="32" height="32" style="margin-right
+:8px;" align="absmiddle"/>Loading...</div>
+  </div>
+  <div id="header" style="">
+  	
+  <img src="images/logo.png" style="position:absolute;top:10px;left:30px;"/>
+  <span class="header_name" style="position:absolute;left:130px;">移动营销平台</span>
+  <!-- <img src="images/index_head_logo2.gif" style="position:absolute;top:0px;right:10px;"/> -->
+	
+  </div>
+
+  <div id="header_logout_right">
+  <span class="logout" onclick="exitSystem();"><a href="javascript: void(0);"><img src="images/logout
+.png" />退出登录</a></span>
+  </div>
+ 
+  <div id="header_right" onclick="modifyPassWord_click()">
+  
+  <span class="welcom"><em>欢迎您：admin</em>
+		<ul>
+			<li><a href="#">修改密码</a></li>
+		</ul>
+  </span>
+  </div>
+
+
+
+  <div id="header_bottom">
+  
+  
+  <img src="images/bar/03_1.png" id="mapsearchId" style="position:absolute;top:58px;left:130px;CURSOR
+:hand;display:none;" onMouseOver="changeHeadBar('03_1.png',this);" onMouseOut="changeHeadBar('03_1.png'
+,this);" />
+  
+  <a href='http://v30.hecom.cn/loginAlone.do?&empCode=c2hjbW15&userAccount=YWRtaW4=&password=YWRtaW4
+=&sessionId=0BCF7B076D07DE2284AA448C4CAA2753.tomcat6&sso_sys_module=mdm'><img src="images/bar/05.png"
+ id="platformIdt" style="position:absolute;top:58px;left:370px;CURSOR:hand;display:none;" onMouseOver
+="changeHeadBar('05_1.png',this);" onMouseOut="changeHeadBar('05.png',this);"/></a>
+  <a href='http://v30.hecom.cn/loginAlone.do?&empCode=c2hjbW15&userAccount=YWRtaW4=&password=YWRtaW4
+=&sessionId=0BCF7B076D07DE2284AA448C4CAA2753.tomcat6&sso_sys_module=support_feedback'><img src="images
+/bar/06.jpg" id="platformIds" style="position:absolute;top:58px;left:370px;CURSOR:hand;display:none;"
+ onMouseOver="changeHeadBar('06_1.jpg',this);" onMouseOut="changeHeadBar('06.jpg',this);"/></a>
+  <a href='http://v30.hecom.cn/loginAlone.do?&empCode=c2hjbW15&userAccount=YWRtaW4=&password=YWRtaW4
+=&sessionId=0BCF7B076D07DE2284AA448C4CAA2753.tomcat6&sso_sys_module=sms_platform'><img src="images/bar
+/07.jpg" id="platformIdm" style="position:absolute;top:58px;left:370px;CURSOR:hand;display:none;" onMouseOver
+="changeHeadBar('07_1.jpg',this);" onMouseOut="changeHeadBar('07.jpg',this);"/></a>
+  </div>
+  <div id="hello-win_qd"></div>
+  <div id="hello-win"></div>
+  <div id="tracklocate-div"></div>
+  <div id="control-win"><div id="control-win1"></div></div>
+  <div id="queryAreaByDeviceId-win"></div>
+  <div id="realtime-track-win"></div>
+  <div id="dr"></div>
+<!-- 六大功能 -->
+<div id="function" >
+  <table width="2%" border="0">
+  	<tr>
+<td align="center" bgcolor="#F67609"><div class="tnt"><font color="#FFFFFF"></font></div> <img src="internation
+/zh_cn/images/1.png" style="cursor:pointer" id="show-btn" onclick="show_btn_click()"/></td>
+</tr>
+<tr>
+<td align="center"><img src="internation/zh_cn/images/2.png" style="cursor:pointer" id="track-img" onclick
+="track_img_click()"/></td>
+</tr>
+<tr>
+<td align="center"><img src="internation/zh_cn/images/12.png" style="cursor:pointer" id="track-img" onclick
+="assign_customer_img_click()"/></td>
+</tr>
+<tr>
+<td align="center"> <img src="internation/zh_cn/images/13.png" style="cursor:pointer"  id="report_kernel-btn"
+ onclick="report_kernel_btn_click()"/></td>
+</tr>
+<tr>
+<td align="center"> <img src="internation/zh_cn/images/14.png" style="cursor:pointer"  id="report_kernel-btn"
+ onclick="ayuan()"/></td>
+</tr>
+
+</table>
+</div>
+<form name="quitSystemform"  method="post" action="" target="_self"></form>
+<form name="excelform" id="excelform" method="post" action="" target="_self"></form>
+
+</body>
+</html>
+<script type="text/javascript">
+function exitSystem(){
+	if(confirm('您确定要退出吗？')){
+		Ext.Ajax.request({
+			url :'b_main/logout.jsp',
+			params : {},
+			success:function(){
+				document.location = "http://v30.hecom.cn/logout.do";
+			}
+		});
+	}
+}
+//报表中心
+function report_kernel_btn_click(){
+	window.location.href='http://report.sosgps.net.cn/report-1.0/loginAlone.do?&empCode=c2hjbW15&userAccount
+=YWRtaW4=&password=YWRtaW4=&sessionId=0BCF7B076D07DE2284AA448C4CAA2753.tomcat6';
+}
+//代办业务
+function ayuan(){
+	window.location.href='http://v30.hecom.cn/loginAlone.do?&empCode=c2hjbW15&userAccount=YWRtaW4=&password
+=YWRtaW4=&sessionId=0BCF7B076D07DE2284AA448C4CAA2753.tomcat6&sso_sys_module=information_collection';
+
+}
+</script>

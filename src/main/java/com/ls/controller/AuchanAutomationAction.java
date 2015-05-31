@@ -391,6 +391,8 @@ public class AuchanAutomationAction extends BaseAction {
 
 		return SUCCESS;
 	}
+	
+	
 
 	public String shutDownJob() {
 
