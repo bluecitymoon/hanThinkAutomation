@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -30,13 +29,12 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.constants.HanthinkProperties;
@@ -160,28 +158,35 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return baseUrl;
 	}
 
-	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+	public void tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		System.out.println("Trying to login......");
 
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-
+		webClient.getOptions().setUseInsecureSSL(true);
+		
 		URL url = new URL(RTMARKET_ROOT_URL);
 
 		final HtmlPage loginPage = webClient.getPage(url);
-
-		HtmlForm form = loginPage.getFormByName("loginForm");
+		HtmlTextInput usernameHtmlTextInput = loginPage.getElementByName("userid");
+		HtmlPasswordInput passwordHtmlTextInput = loginPage.getElementByName("passwd");
+		HtmlPasswordInput checkstrHtmlPasswordInput = loginPage.getElementByName("checkstr");
 
 		HtmlImage validationCodeImage = null;
 
-		List<HtmlImage> images = form.getHtmlElementsByTagName("img");
+		List<DomElement> images = loginPage.getElementsByTagName("img");
 
-		for (HtmlImage htmlImage : images) {
-
-			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("image.jsp")) {
-				validationCodeImage = htmlImage;
-				break;
+		for (DomElement htmlImage : images) {
+			
+			if(htmlImage instanceof HtmlImage) {
+				
+				HtmlImage image = (HtmlImage) htmlImage;
+				if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("checkstr.php")) {
+					validationCodeImage = image;
+					break;
+				}
 			}
+			
 		}
 
 		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
@@ -189,13 +194,8 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		Thread.sleep(1000);
 
-		final HtmlTextInput usernameTextInput = form.getInputByName("auID");
-		final HtmlPasswordInput passwordField = form.getInputByName("auPassword");
-		final HtmlTextInput validateCodeTextInput = form.getInputByName("rand");
-		final HtmlSubmitInput loginButton = form.getInputByValue("登 录");
-
-		usernameTextInput.setValueAttribute(automaticJob.getUsername());
-		passwordField.setValueAttribute(automaticJob.getPassword());
+		usernameHtmlTextInput.setValueAttribute(automaticJob.getUsername());
+		passwordHtmlTextInput.setValueAttribute(automaticJob.getPassword());
 
 		String ocrInstallPath = HanthinkProperties.getString("tessertOcrInstallPath");
 		String command = ocrInstallPath + "tesseract.exe " + fileName + " " + fileName;
@@ -209,36 +209,23 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		Thread.sleep(1000);
 
-		validateCodeTextInput.setValueAttribute(code);
+		checkstrHtmlPasswordInput.setValueAttribute(code);
 
-		com.gargoylesoftware.htmlunit.CookieManager cookieManager = webClient.getCookieManager();
-
-		Cookie loginTypeCookie = cookieManager.getCookie("loginTypeCookie");
-
-		if (loginTypeCookie != null) {
-			cookieManager.removeCookie(loginTypeCookie);
-		}
-
-		cookieManager.addCookie(new Cookie("42.244.8.3", "loginTypeCookie", "gys"));
-
-		Set<Cookie> cookies = webClient.getCookieManager().getCookies();
-		System.out.println(cookies);
-
-		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+		HtmlImageInput loginButton = loginPage.getElementByName("image");
+		HtmlPage loginResultPage = (HtmlPage) loginButton.click();
 
 		try {
 			loginResultPage.getFormByName("loginForm");
-		} catch (ElementNotFoundException e) {
-
+			
+			System.out.println("Log in good.");
+			
 			cleanUpValidationCodeFiles();
-			System.out.println("Log in successfully.");
-
-			return null;
+			
+			return;
+		} catch (ElementNotFoundException e) {
+			
+			tryToLogin(webClient, automaticJob);
 		}
-
-		tryToLogin(webClient, automaticJob);
-
-		return null;
 	}
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {

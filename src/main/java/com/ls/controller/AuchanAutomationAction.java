@@ -90,6 +90,9 @@ public class AuchanAutomationAction extends BaseAction {
 
 	@Resource(name = "suzhouUnivercityAutomationService")
 	private AuthanAutomationService suzhouUnivercityAutomationService;
+	
+	@Resource(name = "RTMarketAutomationService")
+	private AuthanAutomationService rtMarketAutomationService;
 
 	@Autowired
 	private OrderRepository orderRepository;
@@ -153,6 +156,10 @@ public class AuchanAutomationAction extends BaseAction {
 			} else if (storeDatasourceIdentity.equals("SUZHOU_DAXUE")) {
 
 				response = suzhouUnivercityAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+
+			} else if (storeDatasourceIdentity.equals("RTMARKET")) {
+
+				response = rtMarketAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
 
 			} else {
 
