@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -30,10 +31,16 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
@@ -70,10 +77,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 
-	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
-
-		Map<String, String> titleMap = order.getOrderTitleMap();
-		String orderNumber = titleMap.get("orderNumber");
+	private boolean checkIfOrderNotGrabed(String orderNumber, Integer jobId) {
 
 		List<Order> existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
 
@@ -99,45 +103,101 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		tryToLogin(webClient, authanJob);
 
-		String dataUrl = "http://42.244.8.3/logistics/cg_jh_sqd.do?pnum=&currentPage=1&xhrq= " + start + "&dhrq2=&actionName=cg_jh_sqd.do&gysdm= " + authanJob.getUsername() + "&workstate=&dhrq=&pnum=&button=+%B2%E9+%D1%AF+&formID=queryzhDhdForm&operate=queryzhDhd&dhr=&xhrq2=" + end + "&pyjm=";
+		String dataUrl = "https://supplier.rt-mart.com.cn/php/scm_basic.php?status=0";
 
-		HtmlPage page = webClient.getPage(dataUrl);
-
-		Parser htmlParser = new Parser();
-
-		try {
-			SuZhouUnivercityOrdersFinder suZhouUnivercityOrdersFinder = new SuZhouUnivercityOrdersFinder();
-			SuZhouUnivercityOrdersDetailFinder suZhouUnivercityOrdersDetailFinder = new SuZhouUnivercityOrdersDetailFinder();
-			htmlParser.setInputHTML(page.getWebResponse().getContentAsString());
-			htmlParser.visitAllNodesWith(suZhouUnivercityOrdersFinder);
-
-			List<Orders> orders = suZhouUnivercityOrdersFinder.getOrders();
-
-			for (Orders order : orders) {
-
-				String orderNumber = order.getOrderTitleMap().get("orderNumber");
-				suZhouUnivercityOrdersDetailFinder.setUuid(order.getOrderTitleMap().get("uuid"));
-				if (checkIfOrderNotGrabed(order, authanJob.getId())) {
-
-					String detailUrl = "http://42.244.8.3/logistics/cg_jh_sqd.do?operate=queryzhDhdspmx&cgdh=" + orderNumber;
-					htmlParser.setInputHTML(webClient.getPage(detailUrl).getWebResponse().getContentAsString());
-
-					htmlParser.visitAllNodesWith(suZhouUnivercityOrdersDetailFinder);
-
-					order.setOrdersItemList(suZhouUnivercityOrdersDetailFinder.getOrdersItemList());
+		HtmlPage dataPage = webClient.getPage(dataUrl);
+		
+		List<HtmlAnchor> anchors = dataPage.getAnchors();
+		for (HtmlAnchor htmlAnchor : anchors) {
+			
+			String href = htmlAnchor.getHrefAttribute();
+			
+			if (StringUtils.isNotBlank(href) && href.startsWith("scm_basic_form.php") && checkIfOrderNotGrabed(href, authanJob.getId())) {
+				
+				Orders orders = new Orders();
+				
+				ordersList.add(orders);
+				
+				Map<String, String> titleHashMap = new HashMap<String, String>();
+				titleHashMap.put("orderNumber", htmlAnchor.getTextContent());
+				titleHashMap.put("uuid", UUID.randomUUID().toString());
+				
+				orders.setOrderTitleMap(titleHashMap);
+				
+				String detailUrl = "https://supplier.rt-mart.com.cn/php/" + href;
+				HtmlPage singleDetailPage = webClient.getPage(detailUrl);
+				List<?> tablesList = singleDetailPage.getByXPath("/html/body/table[4]/tbody/tr/td[1]/table");
+				
+				if (!tablesList.isEmpty()) {
 					
-					ordersList.add(order);
-				} else {
-					System.out.println(orderNumber + " has been grabed.");
+					Object firstElementInTable = tablesList.get(0);
+					
+					if (firstElementInTable instanceof HtmlTable) {
+						
+						HtmlTable singleTable = (HtmlTable) firstElementInTable;
+						
+						extractProductNumberAndCount(singleTable, orders);
+					}
 				}
-
+				
+				List<?> orderDate = singleDetailPage.getByXPath("//*[@id=\"waterMark\"]/table/tbody/tr/td/table/tbody/tr[3]/td[2]");
+				if (!orderDate.isEmpty()) {
+					Object firstOrderDate = orderDate.get(0);
+					if (firstOrderDate instanceof HtmlTableCell) {
+						
+						HtmlTableCell singleOrderDateCell = (HtmlTableCell)firstOrderDate;
+						titleHashMap.put("orderDate", singleOrderDateCell.asText());
+					}
+				}
+				
+				List<?> estimateTakeOverDate = singleDetailPage.getByXPath("//*[@id=\"waterMark\"]/table/tbody/tr/td/table/tbody/tr[4]/td[2]");
+				if (!estimateTakeOverDate.isEmpty()) {
+					Object firstestimateTakeOverDate = estimateTakeOverDate.get(0);
+					if (firstestimateTakeOverDate instanceof HtmlTableCell) {
+						
+						HtmlTableCell firstestimateTakeOverDateHtmlTableCell = (HtmlTableCell) firstestimateTakeOverDate;
+						titleHashMap.put("estimateTakeOverDate", firstestimateTakeOverDateHtmlTableCell.asText());
+					}
+				}
 			}
-
-		} catch (ParserException e) {
-			e.printStackTrace();
 		}
-
+		
+		System.out.println(ordersList);
+		
 		return ordersList;
+	}
+
+	private void extractProductNumberAndCount(HtmlTable singleTable, Orders orders) {
+
+		 List<HtmlTableRow> rows = singleTable.getRows();
+		 
+		 for (int i = 2; i < rows.size(); i++) {
+			 
+			 List<HtmlTableCell> cells = rows.get(i).getCells();
+			 Map<String, String> singleMap = new HashMap<String, String>();
+			 orders.getOrdersItemList().add(singleMap);
+			 
+			 for (int j = 0; j < cells.size(); j++) {
+				
+				 HtmlTableCell currentCell = cells.get(j);
+				 switch (j) {
+					case 1:
+						singleMap.put("productNumber", currentCell.asText());
+						break;
+					case 5:
+						
+						String text =  currentCell.asText();
+						if (text.contains(",")) {
+							text = text.replace(",", "");
+						}
+						singleMap.put("count", text);
+						
+						break;
+					default:
+						break;
+				}
+			}
+		}
 	}
 
 	private String toEmpty(String input) {
@@ -164,7 +224,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		webClient.getOptions().setUseInsecureSSL(true);
-		
+
 		URL url = new URL(RTMARKET_ROOT_URL);
 
 		final HtmlPage loginPage = webClient.getPage(url);
@@ -174,19 +234,17 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		HtmlImage validationCodeImage = null;
 
-		List<DomElement> images = loginPage.getElementsByTagName("img");
+		@SuppressWarnings("unchecked")
+		List<HtmlImage> images = (List<HtmlImage>)loginPage.getByXPath("//img");
 
-		for (DomElement htmlImage : images) {
-			
-			if(htmlImage instanceof HtmlImage) {
-				
-				HtmlImage image = (HtmlImage) htmlImage;
-				if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("checkstr.php")) {
-					validationCodeImage = image;
-					break;
-				}
+		for (HtmlImage htmlImage : images) {
+
+			HtmlImage image = (HtmlImage)htmlImage;
+			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("checkstr.php")) {
+				validationCodeImage = image;
+				break;
 			}
-			
+
 		}
 
 		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
@@ -212,18 +270,14 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		checkstrHtmlPasswordInput.setValueAttribute(code);
 
 		HtmlImageInput loginButton = loginPage.getElementByName("image");
-		HtmlPage loginResultPage = (HtmlPage) loginButton.click();
+		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
 
-		try {
-			loginResultPage.getFormByName("loginForm");
-			
-			System.out.println("Log in good.");
-			
+		String callbackUrl = loginResultPage.getUrl().toString();
+		
+		if (callbackUrl.equals("https://supplier.rt-mart.com.cn/php/scm_main.php")) {
 			cleanUpValidationCodeFiles();
-			
 			return;
-		} catch (ElementNotFoundException e) {
-			
+		} else {
 			tryToLogin(webClient, automaticJob);
 		}
 	}
@@ -338,14 +392,14 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
 			String orderNumber = titleMap.get("orderNumber");
-			String supplierNumber = titleMap.get("supplierNumber");
+			//String supplierNumber = titleMap.get("supplierNumber");
 
 			String estimateTakeOverDate = titleMap.get("estimateTakeOverDate");
 			String orderDate = titleMap.get("orderDate");
 
 			Order order = new Order();
 			order.setOrderNumber(orderNumber);
-			order.setSupplierNumber(supplierNumber);
+			//order.setSupplierNumber(supplierNumber);
 			order.setEstimateTakeOverDate(estimateTakeOverDate);
 			order.setOrderDate(orderDate);
 			order.setCreateDate(HanthinkUtil.getNow());

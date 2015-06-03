@@ -173,16 +173,8 @@ public class HanthinkUtil {
 		}
 		List<JobSchedule> jobSchedules = Lists.newArrayList();
 		
-		Date startDate = new Date();
-		startDate.setHours(startHour);
-		startDate.setMinutes(startMinute);
+		int totallMinutes = (endHour - startHour) * 60 + (endMinute - startMinute);
 		
-		Date endDate = new Date();
-		endDate.setHours(endHour);
-		endDate.setMinutes(endMinute);
-		
-		long seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-		System.out.println(seconds);
 		
 		return jobSchedules;
 		
@@ -190,6 +182,6 @@ public class HanthinkUtil {
 	
 	public static void main(String[] args) {
 
-		getScheduleList(17, 20, 17, 21, 60) ;
+		getScheduleList(07, 20, 17, 19, 60) ;
 	}
 }

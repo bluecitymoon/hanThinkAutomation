@@ -1,0 +1,438 @@
+
+<HTML>
+  <HEAD>
+    <STYLE>
+      TH		{font-size:11pt; font-family:arial; font-weight:normal}
+      TD		{font-size:9pt; font-family:arial}
+      P			{font-size:8pt; font-family:arial}
+      H4		{font-size:12pt; font-family: arial}
+      FONT		{font-size:9pt; font-family:arial}
+      A:link 		{color:808080}
+      A.class1:link	{color:blue}
+      A:visited 	{color:808080}
+      A.class1:visited	{color:blue}
+      A:hover 		{color: red}
+      A.class1:hover	{color: red}
+    </STYLE>
+    <SCRIPT language="javascript">
+      var link = "scm_temp_print.php?";
+      link += "URL=scm_basic_print.php&";
+      link += "sup_no=63639&store_no=999&ord_no=151534956";
+      function printall(){ 
+        subwin = window.open(unescape(link),'scm_basic_print'); 
+      }
+    </SCRIPT>
+
+<SCRIPT Language="JavaScript">
+  var TimeStamp,TimeStamp1;
+  var str = "您已经闲置10分钟,为了您的资讯安全,本系统已将您自动登出,请重新登入!";
+
+  function setupTimeOut(){		  // 开始计时
+    // 跳出alert视窗时间  (1秒 = 1000)
+    TimeStamp2 = setTimeout("showalert();",600000);
+
+    // 若时间已到而使用者未有反应,则关闭视窗
+    TimeStamp1 = setTimeout("alert(str);",900000);
+
+    // 登出
+    TimeStamp = setTimeout("location.href='../index.php';",900005);
+  }
+
+  // pop out alert screen
+  function showalert(){
+    subwin = window.open("../include/alert.php","subwin","width=240,height=160,left=50,top=50");
+  }
+
+  // 解除计时器
+  function release(){
+    // 取消关闭视窗
+    clearTimeout(TimeStamp2);
+    clearTimeout(TimeStamp1);
+    clearTimeout(TimeStamp);
+  }
+
+  window.onload = setupTimeOut; 
+// -->
+</script>
+  </HEAD>
+  <TITLE>下载订单</TITLE>
+  <BODY topmargin="2" bgcolor=FFFDFF>
+           <TABLE width="100%" cellpadding="0" cellspacing="0">
+      <TR>
+        <TD width=30%>
+          <IMG src="./gif/blank.gif" height="55" width="150" vspace="0" hspace="0">
+        </TD>
+        <TD align=center></TD>
+        <TD width="30%">
+          <TABLE width="100%" align="right" border="0" cellpadding="1" cellspacing="0">
+            <TR>
+              <TD height=5 align="right" STYLE="color:808080">
+                &diams; <A href="https://supplier.rt-mart.com.cn/index.php">关於本公司</A>
+                &diams; <A href="../php/privacy.php">隐私权声明</A>
+                &diams; <A href="https://supplier.rt-mart.com.cn/index.php">回首页</A>
+              </TD>
+            </TR>
+            <TR height="1" bgcolor="#CCCCCC">
+              <TD></TD>
+            </TR>
+            <TR>
+              <TD align="right" STYLE="color:808080">
+                <FORM method="post" name="Language">
+                  Language
+<SELECT onChange="location.href='e_scm_basic_form.php?ord_no=151534956&store_no=999'">                    <OPTION value="1">简体中文
+                    <OPTION value="2">English
+                  </SELECT>
+                </FORM>
+              </TD>
+            </TR>
+          </TABLE>
+        </TD>
+      </TR>
+    </TABLE>
+    <TABLE cellpadding=0 cellspacing=0 align=right>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+         bordercolordark=white border=1>
+          <TD bgcolor=FF99CC>
+            <A HREF='./scm_main.php' STYLE='text-decoration:none'>
+              <FONT color=black>&nbsp;资料维护&nbsp;</FONT>
+            </A>
+          </TD>
+        </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+         bordercolordark=white border=1>
+          <TD bgcolor=FF99CC>
+            <A HREF='./scm_items_stat_main.php' STYLE='text-decoration:none'>
+              <FONT color=black>&nbsp;商品查询&nbsp;</FONT>
+            </A>
+          </TD>
+        </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+         bordercolordark=white border=1>
+          <TD bgcolor=FF99CC>
+            <A HREF='./scm_orders_form.php' STYLE='text-decoration:none'>
+              <FONT color=black>&nbsp;订单查询&nbsp;</FONT>
+            </A>
+          </TD>
+        </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+         bordercolordark=white border=1>
+          <TD bgcolor=FF99CC>
+            <A HREF='./scm_check_sheet_form.php' STYLE='text-decoration:none'>
+              <FONT color=black>&nbsp;对帐查询&nbsp;</FONT>
+            </A>
+          </TD>
+        </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=white cellspacing=0 cellpadding=0
+         bordercolordark=black border=1>
+          <TD bgcolor=DF79AC>
+            <A HREF='./scm_basic.php?status=0' STYLE='text-decoration:none'>
+              <FONT color=white>&nbsp;订单下传&nbsp;</FONT>
+            </A>
+          </TD>
+        </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_classify_form_1.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;款色码会员&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_concession_basic.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;专柜查询&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE>      </TD>
+<TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+bordercolordark=white border=1>
+<TD bgcolor=FF99CC>
+<A HREF='./scm_dc_fee_basic.php' STYLE='text-decoration:none'>
+<FONT color=black>&nbsp;DC費用查询&nbsp;</FONT>
+          </A>
+        </TD>
+      </TABLE>     </TD>
+	  <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_service_level_main.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;服务水准&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_sales_top_main.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;排名占比&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE></TD>
+<TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+  bordercolordark=white border=1>
+  <TD bgcolor=FF99CC>
+  <A HREF='./scm_ord_sheet_main.php' STYLE='text-decoration:none'>
+  <FONT color=black>&nbsp;付款通知&nbsp;</FONT>
+  </A>
+  </TD>
+  </TABLE></TD>
+<TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+   bordercolordark=white border=1>
+   <TD bgcolor=FF99CC>
+   <A HREF='./scm_prom_sup_main.php' STYLE='text-decoration:none'>
+   <FONT color=black>&nbsp;促销确认&nbsp;</FONT>
+   </A>
+   </TD>
+   </TABLE></TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_license_main.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;证照查询&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE></TD>
+<TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+  bordercolordark=white border=1>
+  <TD bgcolor=FF99CC>
+  <A HREF='./scm_license_upload_main.php' STYLE='text-decoration:none'>
+  <FONT color=black>&nbsp;证照上传&nbsp;</FONT>
+  </A>
+  </TD>
+  </TABLE></TD>
+<TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_guiname.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;所属门店&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='./scm_explain.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;系统说明&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE>      </TD>
+      <TD>
+<TABLE bordercolorlight=black cellspacing=0 cellpadding=0
+        bordercolordark=white border=1>
+         <TD bgcolor=FF99CC>
+           <A HREF='../index.php' STYLE='text-decoration:none'>
+             <FONT color=black>&nbsp;登出&nbsp;</FONT>
+           </A>
+         </TD>
+       </TABLE>      </TD>
+    </TABLE>
+    <HR>
+    <BR>
+
+    <TABLE width="100%" CELLSPACING=0 CELLPADDING=0>
+      <TR bgcolor="#FFFFCC">
+        
+    <TD> <a href="javascript:printall()"> <IMG src="./gif/print.gif" border=0>定单打印</a>&nbsp; 
+      <a href="javascript:window.print()"> 
+      <a href='./scm_basic_download.php?sup_no=63639&ord_no=151534956'>      <!-- <IMG src="./gif/download.gif" border=0>档案下载 </a> -->
+	  <a href="javascript:window.print()"><IMG src="./gif/print.gif" border=0>本页打印</a>&nbsp; 
+      <a href="./scm_basic.php?status=0"><font color=blue> ▲回上一页</a> </TD>
+<td width='8%'>&nbsp;</td><td width='8%'>&nbsp;</td><TD width='8%'><font color=green>目前页数:<BR> 1 之 <FONT color=red>1<FONT color=green> 页</font></td><td width='9%'>&nbsp;</td><td width='9%'>&nbsp;</td>        <!-- </FONT>-->
+      </TR>
+    </TABLE>
+    <BR>
+    <TABLE width="100%" cellpadding="0" cellspacing="0">
+      <TD width="81%" height=120 valign=top>
+        <TABLE width="100%" border="1" CELLPADDING="0" CELLSPACING="0" bordercolorlight=white bordercolordark=silver 
+         FRAME=below RULES=rows>
+        <TR align="center" height=20>
+            <TD width="11%" align=center>
+              <FONT color=black style="font-weight:normal;font-size:10pt">条 码</FONT>
+            </TD>
+            <TD width="15%">
+              <FONT color=black style="font-weight:normal;font-size:10pt">货 号</FONT>
+            </TD>
+            <TD width="16%">
+              <FONT color=black style="font-weight:normal;font-size:10pt">收货号码</FONT>
+            </TD>
+            
+          <TD width="2%"> <FONT color=black style="font-weight:normal;font-size:10pt">&nbsp; 
+            </FONT> </TD>
+          <TD width="21%"> <FONT color=black style="font-weight:normal;font-size:10pt">订购单位</FONT> </TD>
+          <TD width="18%"> <FONT color=black style="font-weight:normal;font-size:10pt">订购量</FONT> </TD>
+            
+          <TD width="17%"> <FONT color=black style="font-weight:normal;font-size:10pt">实送数量</FONT></TD>
+          </TR>
+          <TR>
+            <TD colspan=7></TD>
+          </TR>
+<tr align='center' height=20><td width='11%'></td><td align='center' width='15%'>1439378</td><td align='center' width='16%'>0</td><td align='left'width='2%'>&nbsp;&nbsp;                  </td><td width='21%'>包</td><td width='18%'>520</td><td width='17%'>0</td></tr><tr align='center' height=20><td width='11%'></td><td align='center' width='15%'>1439399</td><td align='center' width='16%'>0</td><td align='left'width='2%'>&nbsp;&nbsp;                  </td><td width='21%'>包</td><td width='18%'>440</td><td width='17%'>0</td></tr><tr align='center' height=20><td width='11%'></td><td align='center' width='15%'>1521511</td><td align='center' width='16%'>0</td><td align='left'width='2%'>&nbsp;&nbsp;                  </td><td width='21%'>卷</td><td width='18%'>21,200</td><td width='17%'>0</td></tr>      
+        </TABLE>
+      </TD>
+      <TD width=19%>
+        <DIV id="waterMark" style='position:absolute left: 820px; top: 40px; width: 65px; height: 85px'>
+          
+        <TABLE width=98% bordercolor=CC3399 border=3 align=center>
+          <TD>
+              <TABLE width=100% height="190" CELLPADDING=0 CELLSPACING=0>
+                <TR height=20> 
+                  <TD align=right>订单编号: </TD>
+                  <TD width="62%" align=right>999.151534956</TD>
+                </TR>
+                <TR height=20>
+                  <TD align=right>状态: </TD>
+                  <TD align=right><font color=red>
+待收                  </TD>
+                </TR>
+                <TR height=20>
+                  <TD align=right>订货日期:</TD>
+                  <TD align=right>2015-06-02</TD>
+                </TR>
+                <TR height=20>
+                  <TD width=38% align=right>预交货日: </TD>
+                  <TD align=right>2015-06-08</TD>
+                </TR>
+                <TR>
+                  <TD width=38% align=right>收货日期: </TD>
+                  <TD align=right> 
+                    尚未收货</TD>
+                </TR>
+                <TR>
+                  <TD width=38% align=right>促销档期: </TD>
+                  <TD align=right>0</TD>
+                </TR> 
+                <TR>
+                  <TD width=38% align=right>订购金额: </TD>
+                  <TD align=right>15404.1400000</TD>
+                </TR>
+                <TR>
+                  <TD width=38% align=right>实际金额: </TD>
+                  <TD align=right>0.0000000</TD>
+                </TR> 
+                <TR>
+                  <TD width=38% align=right>折扣金额: </TD>
+                  <TD align=right></TD>
+                </TR>
+                <TR>
+                  <TD width=38% align=right>开票金额: </TD>
+                  <TD align=right></TD>
+                </TR>
+              </TABLE>
+            </TD>
+          </TABLE>
+        </DIV>
+      </TD>
+    </TABLE>
+    <script language="JavaScript1.2">
+    <!--
+    // Watermark script by Paul Anderson, CNET Builder.com. All rights reserved.
+
+    markW = 200;       // 图档的宽
+    markH = 15;       // 图档的长
+    markX = 100;      // percent right
+    markY = 32;      // percent down
+    markRefresh = 20; // milliseconds
+
+    // set common object reference
+    if (!document.all) document.all = document;
+    if (!document.all.waterMark.style) document.all.waterMark.style = 
+    document.all.waterMark;
+
+    wMark = document.all.waterMark.style;
+    wMark.width = markW;
+    wMark.height = markH;
+    navDOM = window.innerHeight; // Nav DOM flag
+ 
+    function setVals() {
+      barW = 0; // scrollbar compensation for PC Nav
+      barH = 0;
+      if (navDOM) {
+        if (document.height > innerHeight) barW = 20;
+        if (document.width > innerWidth) barH = 20;
+      } else {
+        innerWidth = document.body.clientWidth;
+        innerHeight = document.body.clientHeight;
+      }
+      posX = ((innerWidth - markW)-barW) * (markX/100);
+      posY = ((innerHeight - markH)-barH) * (markY/100);
+    }
+
+    function wRefresh() {
+      wMark.left = posX + (navDOM?pageXOffset:document.body.scrollLeft);
+      wMark.top = posY + (navDOM?pageYOffset:document.body.scrollTop);
+    }
+
+    function markMe() {
+      setVals();
+      window.onresize=setVals;
+      markID = setInterval ("wRefresh()",markRefresh);
+    }
+
+    window.onload=markMe; // safety for Mac IE4.5
+    //-->
+    </script>
+<BR>
+    <TABLE width="100%" CELLSPACING=0 CELLPADDING=0>
+      <TR bgcolor="#FFFFCC">
+        
+    <TD> <a href="javascript:printall()"> <IMG src="./gif/print.gif" border=0>定单打印</a>&nbsp; 
+      <a href="javascript:window.print()"> 
+      <a href='./scm_basic_download.php?sup_no=63639&ord_no=151534956'>      <!-- <IMG src="./gif/download.gif" border=0>档案下载 </a>&nbsp;--> 
+	  <a href="javascript:window.print()"><IMG src="./gif/print.gif" border=0>本页打印</a>&nbsp;
+	  
+<td width='8%'>&nbsp;</td><td width='8%'>&nbsp;</td><TD width='8%'><font color=green>目前页数:<BR> 1 之 <FONT color=red>1<FONT color=green> 页</font></td><td width='9%'>&nbsp;</td><td width='9%'>&nbsp;</td>        <!-- </FONT> -->
+      </TR>
+    </TABLE>
+    <HR>
+    <TABLE width="100%">
+
+      <TR>
+        <TD width="100%">
+	  <marquee direction='left' scrollamount=10 onmousemove="this.stop()" onmouseout="this.start()"> 
+           
+	   <!-- <a style="text-decoration:none;" href="/doc/2014090401.html"><font style="color:red; font-size:15px">喜讯:大润发携手腾讯,为您提供网上贷款服务.利率低!审核快!操作便捷!(一期服务仅面向：华东地区供应商)</font></a> --> 
+
+
+     <a style="text-decoration:none;" href="/doc/tx/2015052202.htm"><font style="color:red; font-size:15px">大润发腾讯互联网贷款业务正式上线！利率低，操作便捷！详情点击查看。（一期面向华东地区供应商）</font></a>
+
+
+ 
+
+	  </marquee> 
+        </TD>
+      </TR>
+
+      <TR>
+        <TD width="50%">
+          <P STYLE="color:808080">强烈建议使用 IE 5.0以上版本或IE6,以IE7或IE8将会导致不正常現象<BR>
+           请将屏幕设定成 800X600 解析度，以达最佳浏览效果</P>
+        </TD>
+        <TD width="50%" align="right">
+          <P STYLE="color:808080"><BR>
+          2004 &copy;<BR>
+          All rights reserved.<BR>
+         <font color=white>by rt-mart </font></P>
+        </TD>
+      </TR>
+    </TABLE>
+  </BODY>
+</HTML>
+
