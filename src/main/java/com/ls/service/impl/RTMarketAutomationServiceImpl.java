@@ -17,8 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.htmlparser.Parser;
-import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -52,8 +46,6 @@ import com.ls.exception.ConfigurationException;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
-import com.ls.service.impl.vistor.SuZhouUnivercityOrdersDetailFinder;
-import com.ls.service.impl.vistor.SuZhouUnivercityOrdersFinder;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -106,95 +98,98 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		String dataUrl = "https://supplier.rt-mart.com.cn/php/scm_basic.php?status=0";
 
 		HtmlPage dataPage = webClient.getPage(dataUrl);
-		
+
 		List<HtmlAnchor> anchors = dataPage.getAnchors();
 		for (HtmlAnchor htmlAnchor : anchors) {
-			
+
 			String href = htmlAnchor.getHrefAttribute();
-			
-			if (StringUtils.isNotBlank(href) && href.startsWith("scm_basic_form.php") && checkIfOrderNotGrabed(href, authanJob.getId())) {
-				
+
+			if (StringUtils.isNotBlank(href) && href.startsWith("scm_basic_form.php") && checkIfOrderNotGrabed(htmlAnchor.getTextContent(), authanJob.getId())) {
+
 				Orders orders = new Orders();
-				
+
 				ordersList.add(orders);
-				
+
 				Map<String, String> titleHashMap = new HashMap<String, String>();
 				titleHashMap.put("orderNumber", htmlAnchor.getTextContent());
 				titleHashMap.put("uuid", UUID.randomUUID().toString());
-				
+
 				orders.setOrderTitleMap(titleHashMap);
-				
+
 				String detailUrl = "https://supplier.rt-mart.com.cn/php/" + href;
 				HtmlPage singleDetailPage = webClient.getPage(detailUrl);
-				List<?> tablesList = singleDetailPage.getByXPath("/html/body/table[4]/tbody/tr/td[1]/table");
-				
-				if (!tablesList.isEmpty()) {
-					
-					Object firstElementInTable = tablesList.get(0);
-					
-					if (firstElementInTable instanceof HtmlTable) {
-						
-						HtmlTable singleTable = (HtmlTable) firstElementInTable;
-						
-						extractProductNumberAndCount(singleTable, orders);
-					}
-				}
-				
+
 				List<?> orderDate = singleDetailPage.getByXPath("//*[@id=\"waterMark\"]/table/tbody/tr/td/table/tbody/tr[3]/td[2]");
 				if (!orderDate.isEmpty()) {
 					Object firstOrderDate = orderDate.get(0);
 					if (firstOrderDate instanceof HtmlTableCell) {
-						
-						HtmlTableCell singleOrderDateCell = (HtmlTableCell)firstOrderDate;
+
+						HtmlTableCell singleOrderDateCell = (HtmlTableCell) firstOrderDate;
 						titleHashMap.put("orderDate", singleOrderDateCell.asText());
 					}
 				}
-				
+
 				List<?> estimateTakeOverDate = singleDetailPage.getByXPath("//*[@id=\"waterMark\"]/table/tbody/tr/td/table/tbody/tr[4]/td[2]");
 				if (!estimateTakeOverDate.isEmpty()) {
 					Object firstestimateTakeOverDate = estimateTakeOverDate.get(0);
 					if (firstestimateTakeOverDate instanceof HtmlTableCell) {
-						
+
 						HtmlTableCell firstestimateTakeOverDateHtmlTableCell = (HtmlTableCell) firstestimateTakeOverDate;
 						titleHashMap.put("estimateTakeOverDate", firstestimateTakeOverDateHtmlTableCell.asText());
 					}
 				}
+
+				List<?> tablesList = singleDetailPage.getByXPath("/html/body/table[4]/tbody/tr/td[1]/table");
+
+				if (!tablesList.isEmpty()) {
+
+					Object firstElementInTable = tablesList.get(0);
+
+					if (firstElementInTable instanceof HtmlTable) {
+
+						HtmlTable singleTable = (HtmlTable) firstElementInTable;
+
+						extractProductNumberAndCount(singleTable, orders);
+					}
+				}
 			}
 		}
-		
+
 		System.out.println(ordersList);
-		
+
 		return ordersList;
 	}
 
 	private void extractProductNumberAndCount(HtmlTable singleTable, Orders orders) {
 
-		 List<HtmlTableRow> rows = singleTable.getRows();
-		 
-		 for (int i = 2; i < rows.size(); i++) {
-			 
-			 List<HtmlTableCell> cells = rows.get(i).getCells();
-			 Map<String, String> singleMap = new HashMap<String, String>();
-			 orders.getOrdersItemList().add(singleMap);
-			 
-			 for (int j = 0; j < cells.size(); j++) {
-				
-				 HtmlTableCell currentCell = cells.get(j);
-				 switch (j) {
-					case 1:
-						singleMap.put("productNumber", currentCell.asText());
-						break;
-					case 5:
-						
-						String text =  currentCell.asText();
-						if (text.contains(",")) {
-							text = text.replace(",", "");
-						}
-						singleMap.put("count", text);
-						
-						break;
-					default:
-						break;
+		List<HtmlTableRow> rows = singleTable.getRows();
+
+		for (int i = 2; i < rows.size(); i++) {
+
+			List<HtmlTableCell> cells = rows.get(i).getCells();
+			Map<String, String> singleMap = new HashMap<String, String>();
+			orders.getOrdersItemList().add(singleMap);
+			
+			singleMap.put("uuid", orders.getOrderTitleMap().get("uuid"));
+			
+			for (int j = 0; j < cells.size(); j++) {
+
+				HtmlTableCell currentCell = cells.get(j);
+				switch (j) {
+				case 1:
+					singleMap.put("productNumber", currentCell.asText());
+					break;
+				case 5:
+
+					String text = currentCell.asText();
+					if (text.contains(",")) {
+						text = text.replace(",", "");
+					}
+					singleMap.put("count", text);
+
+					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -235,11 +230,11 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		HtmlImage validationCodeImage = null;
 
 		@SuppressWarnings("unchecked")
-		List<HtmlImage> images = (List<HtmlImage>)loginPage.getByXPath("//img");
+		List<HtmlImage> images = (List<HtmlImage>) loginPage.getByXPath("//img");
 
 		for (HtmlImage htmlImage : images) {
 
-			HtmlImage image = (HtmlImage)htmlImage;
+			HtmlImage image = (HtmlImage) htmlImage;
 			if (StringUtils.isNotBlank(htmlImage.getAttribute("src")) && htmlImage.getAttribute("src").equals("checkstr.php")) {
 				validationCodeImage = image;
 				break;
@@ -270,10 +265,10 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		checkstrHtmlPasswordInput.setValueAttribute(code);
 
 		HtmlImageInput loginButton = loginPage.getElementByName("image");
-		HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+		HtmlPage loginResultPage = (HtmlPage) loginButton.click();
 
 		String callbackUrl = loginResultPage.getUrl().toString();
-		
+
 		if (callbackUrl.equals("https://supplier.rt-mart.com.cn/php/scm_main.php")) {
 			cleanUpValidationCodeFiles();
 			return;
@@ -284,7 +279,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("suzhou-univercity-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("rt-market-request-soap.ftl");
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -392,14 +387,14 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
 			String orderNumber = titleMap.get("orderNumber");
-			//String supplierNumber = titleMap.get("supplierNumber");
+			// String supplierNumber = titleMap.get("supplierNumber");
 
 			String estimateTakeOverDate = titleMap.get("estimateTakeOverDate");
 			String orderDate = titleMap.get("orderDate");
 
 			Order order = new Order();
 			order.setOrderNumber(orderNumber);
-			//order.setSupplierNumber(supplierNumber);
+			// order.setSupplierNumber(supplierNumber);
 			order.setEstimateTakeOverDate(estimateTakeOverDate);
 			order.setOrderDate(orderDate);
 			order.setCreateDate(HanthinkUtil.getNow());
@@ -421,20 +416,23 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 				String description = toEmpty(singleDetailMap.get("description"));
 				String count = toEmpty(singleDetailMap.get("count"));
-				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
+				// String moneyAmountWithoutTax =
+				// toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
-				String priceWithoutTax = toEmpty(singleDetailMap.get("priceWithoutTax"));
-				String storeNumber = toEmpty(singleDetailMap.get("storeNumber"));
+				// String priceWithoutTax =
+				// toEmpty(singleDetailMap.get("priceWithoutTax"));
+				// String storeNumber =
+				// toEmpty(singleDetailMap.get("storeNumber"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
 				productDetail.setDescription(description);
 				productDetail.setCount(count);
-				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
+				// productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
 				productDetail.setProductNumber(productNumber);
-				productDetail.setPriceWithoutTax(priceWithoutTax);
-				productDetail.setStoreNumber(storeNumber);
+				// productDetail.setPriceWithoutTax(priceWithoutTax);
+				// productDetail.setStoreNumber(storeNumber);
 
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);

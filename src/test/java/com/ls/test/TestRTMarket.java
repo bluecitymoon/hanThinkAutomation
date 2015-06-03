@@ -26,16 +26,17 @@ public class TestRTMarket {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(34);
-
+		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(23);
 		rtmarketAutomationService.grabOrders("2015-01-01", "2015-01-13", automaticJob);
 	}
 
 	@Test
 	public void testWholeProcess() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(34);
+		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
 
+		AutomaticJob automaticJob = automaticJobRepository.findOne(23);
 		ResponseVo responseVo = rtmarketAutomationService.postDataToWebService("2015-01-01", "2015-01-13", automaticJob);
 
 		System.out.println(responseVo.toString());
