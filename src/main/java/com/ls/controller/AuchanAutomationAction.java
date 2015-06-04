@@ -261,12 +261,18 @@ public class AuchanAutomationAction extends BaseAction {
 		} else {
 
 			AutomaticJob automaticJob = (AutomaticJob)JSONObject.toBean(JSONObject.fromObject(jobJason), AutomaticJob.class);
-
+			
 			if (automaticJob.getId() == null) {
 				automaticJob.setClientEnd("/hanthinkserver/service1.asmx");
 				automaticJob.setStatus("新创建");
 				automaticJob.setDbUsernname("Admin");
 				automaticJob.setDbPassword("E1CCjc7z+m3nmqvYlGnc+LcM8t4=");
+				
+				Integer storeId = automaticJob.getStoreId();
+				Store store = storeRepository.findOne(storeId);
+
+				automaticJob.setType(store.getIdentity());
+				
 			}
 
 			try {
@@ -331,6 +337,8 @@ public class AuchanAutomationAction extends BaseAction {
 		jobDataMap.put("jobWillRun", jobInDb);
 		jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 		jobDataMap.put("suzhouUnivercityAutomationService", suzhouUnivercityAutomationService);
+		jobDataMap.put("rtMarketAutomationService", rtMarketAutomationService);
+		
 		try {
 
 			String startHourAndMin = jobInDb.getStart();
@@ -357,7 +365,6 @@ public class AuchanAutomationAction extends BaseAction {
 						break;
 					}
 				}
-
 				String jobIdentityKey = jobInDb.getName() + jobInDb.getDbName() + "-" + jobStartHour + ":" + startMin;
 
 				String uniqueGroupName = getUniqueGroupName(jobInDb);

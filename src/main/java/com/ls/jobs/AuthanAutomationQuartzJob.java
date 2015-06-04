@@ -2,8 +2,6 @@ package com.ls.jobs;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -27,6 +25,8 @@ public class AuthanAutomationQuartzJob implements Job {
 	private AuthanAutomationService carrefourAutomationService;
 
 	private AuthanAutomationService lianHuaAutomationService;
+	
+	private AuthanAutomationService rtMarketAutomationService;
 
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
 
@@ -44,6 +44,8 @@ public class AuthanAutomationQuartzJob implements Job {
 
 		lianHuaAutomationService = (AuthanAutomationService)context.getJobDetail().getJobDataMap().get("carrefourAutomationService");
 
+		rtMarketAutomationService = (AuthanAutomationService)context.getJobDetail().getJobDataMap().get("rtMarketAutomationService");
+		
 		Date today = new Date();
 		AutomaticJob authanJob = (AutomaticJob)context.getJobDetail().getJobDataMap().get("jobWillRun");
 		System.out.println("Job -- >" + authanJob.toString());
@@ -102,6 +104,10 @@ public class AuthanAutomationQuartzJob implements Job {
 			} else if (storeDatasourceIdentity.equals("SUZHOU_DAXUE")) {
 
 				responseVo = ((AuthanAutomationService)context.getJobDetail().getJobDataMap().get("suzhouUnivercityAutomationService")).postDataToWebService(lastRunDate, now, authanJob);
+				
+			} else if (storeDatasourceIdentity.equals("RTMARKET")){
+				
+				responseVo = rtMarketAutomationService.postDataToWebService(lastRunDate, now, authanJob);
 				
 			} else {
 

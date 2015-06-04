@@ -109,12 +109,11 @@
 										<select data-bind="options: $root.jobList,
                       										optionsText: 'name',
                        									    value: $root.selectedTaskId,
-                       									    optionsValue : 'id',
                        									    selectedOption : $root.selectedTaskId,
                        									    optionsCaption: '请选择...'">
                        					</select>
 									</div>
-									<div class="four columns">
+									<div class="four columns" data-bind="visible : showOrHideDateInputs">
 										<label>开始日期</label>
 										<div class="row collapse">
 											<div class="ten columns">
@@ -126,7 +125,7 @@
 										</div>
 
 									</div>
-									<div class="four columns">
+									<div class="four columns" data-bind="visible : showOrHideDateInputs">
 										<label>结束日期</label>
 										<div class="row collapse">
 											<div class="ten columns">
@@ -291,13 +290,29 @@
 						self.allStores = ko.observableArray([]);
 						self.allUsers = ko.observableArray([]);
 						self.selectedStoreId = ko.observable('');
+						
 						self.selectedUserId = ko.observable('');
 						
-						self.selectedStoreId.subscribe(function() {
+						self.selectedStoreId.subscribe(function(item) {
 							self.reloadJobList();
 						});
 						self.selectedUserId.subscribe(function() {
 							self.reloadJobList();
+						});
+						
+						self.showOrHideDateInputs = ko.observable(true);
+						
+						self.selectedTaskId.subscribe(function(item) {
+							
+							if(item) {
+								
+								if (item.type == 'RTMARKET') {
+									self.showOrHideDateInputs(false);
+								} else {
+									self.showOrHideDateInputs(true);
+								}
+							}
+							
 						});
 						self.loadAllUsers = function() {
 							//load all
@@ -512,12 +527,12 @@
 						};
 
 						self.startManually = function() {
-							if ($('#grabForm').valid()) {
+							if (self.selectedTaskId().type == 'RTMARKET' || $('#grabForm').valid()) {
 								$.ajax({
 									data : {
 										manuallyStart : self.manuallyStart(),
 										manuallyStop : self.manuallyStop(),
-										manuallyDbName : self.selectedTaskId()
+										manuallyDbName : self.selectedTaskId().id
 									},
 									url : 'startManually.action',
 									success : function(data) {

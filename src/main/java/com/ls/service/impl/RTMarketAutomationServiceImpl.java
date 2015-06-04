@@ -206,13 +206,6 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return inputString;
 	}
 
-	public String getQueryParameters(String start, String end) {
-
-		String baseUrl = "?_search=false&endTime=" + end + "&rows=10&sord=asc&startTime=" + start;
-
-		return baseUrl;
-	}
-
 	public void tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		System.out.println("Trying to login......");
