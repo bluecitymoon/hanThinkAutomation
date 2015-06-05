@@ -26,8 +26,8 @@ public class TestRTMarket {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
-		AutomaticJob automaticJob = automaticJobRepository.findOne(23);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(34);
+		//AutomaticJob automaticJob = automaticJobRepository.findOne(23);
 		rtmarketAutomationService.grabOrders("2015-01-01", "2015-01-13", automaticJob);
 	}
 

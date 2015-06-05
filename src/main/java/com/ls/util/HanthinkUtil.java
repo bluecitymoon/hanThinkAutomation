@@ -156,6 +156,23 @@ public class HanthinkUtil {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T getElementAtIndexByXPath(HtmlPage htmlPage, String xPath, int index) {
+
+		try {
+			List<?> nodes = htmlPage.getByXPath(xPath);
+			if (null != nodes && !nodes.isEmpty()) {
+
+				return (T)nodes.get(index);
+			}
+		} catch (Exception e) {
+
+		}
+
+		return null;
+	}
+
+	
 	public static String getNumbersInString(String content) {
 
 		Pattern pattern = Pattern.compile("\\d+");
