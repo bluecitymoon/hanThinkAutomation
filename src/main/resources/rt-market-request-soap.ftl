@@ -37,8 +37,8 @@
 	<xsdingdanzibiao>
 		<zhubiaoid>${product['uuid']}</zhubiaoid>
 		<huohao>${product['productNumber']}</huohao>
-		<tiaoxingma></tiaoxingma>
-		<shangpinmiaoshu></shangpinmiaoshu>
+		<tiaoxingma>${product['barCode']}</tiaoxingma>
+		<shangpinmiaoshu>${product['description']}</shangpinmiaoshu>
 		<shuliang>${product['count']}</shuliang>
 		<huansuanlv1></huansuanlv1>
 		<xiangshu></xiangshu>

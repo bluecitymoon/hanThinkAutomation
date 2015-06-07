@@ -10,7 +10,8 @@ import org.htmlparser.visitors.NodeVisitor;
 
 public class RTMarketDetailParser extends NodeVisitor {
 
-	private List<org.htmlparser.tags.TableColumn> productList = new ArrayList<org.htmlparser.tags.TableColumn>();
+	private List<String> productList = new ArrayList<String>();
+	int count = 0;
 
 	@Override
 	public void visitTag(Tag tag) {
@@ -20,13 +21,16 @@ public class RTMarketDetailParser extends NodeVisitor {
 
 			String bgcolor = tag.getAttribute("bgcolor");
 			if (StringUtils.isNotBlank(bgcolor) && bgcolor.equals("silver")) {
-				productList.add((TableColumn)tag);
+				if (count > 6) {
+					TableColumn column = (TableColumn) tag;
+					productList.add(column.toPlainTextString().replace("&nbsp;", ""));
+				}
+				count++;
 			}
 		}
 	}
 
-	public List<org.htmlparser.tags.TableColumn> getProductList() {
-
+	public List<String> getProductList() {
 		return productList;
 	}
 }

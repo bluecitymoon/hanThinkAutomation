@@ -16,7 +16,10 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
+import org.htmlparser.Parser;
+import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,6 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlBold;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
@@ -36,7 +38,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.io.Files;
@@ -49,6 +50,7 @@ import com.ls.exception.ConfigurationException;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
+import com.ls.service.impl.vistor.RTMarketDetailParser;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
@@ -177,21 +179,18 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 						
 						titleHashMap.put("supplierNumber", supplierNumber);
 						
-						HtmlTableDataCell detailTableParentCell = HanthinkUtil.getElementAtIndexByXPath(printPreviewPage, "/html/body/table[3]/tbody/tr/td", 1);
-						if (detailTableParentCell != null) {
-							
-							DomElement detailTable = detailTableParentCell.getLastElementChild();
-							if (detailTable instanceof HtmlTable) {
-								
-								List<HtmlTableRow> detailRows = ((HtmlTable)detailTable).getRows();
-								for (int i = 0; i < detailRows.size(); i++) {
-									
-									if (i % 2 == 1) {
-										System.out.println(detailRows.get(i).asText());
-									}
-								}
-							}
-							
+						Parser detailpParser = new Parser();
+						try {
+							detailpParser.setInputHTML(printPreviewPage.getWebResponse().getContentAsString());
+							RTMarketDetailParser suZhouUnivercityOrdersDetailFinder = new RTMarketDetailParser();
+							detailpParser.visitAllNodesWith(suZhouUnivercityOrdersDetailFinder);
+
+							List<String> columns = suZhouUnivercityOrdersDetailFinder.getProductList();
+
+							mergeBarCodeAndProductName(orders, columns);
+
+						} catch (ParserException e) {
+							e.printStackTrace();
 						}
 						
 						break;
@@ -203,6 +202,22 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		System.out.println(ordersList);
 
 		return ordersList;
+	}
+
+	private void mergeBarCodeAndProductName(Orders orders, List<String> columns) {
+		
+		List<Map<String, String>> detailMapList = orders.getOrdersItemList();
+		for (Map<String, String> detailMap : detailMapList) {
+			String productNumber = detailMap.get("productNumber");
+			if (StringUtils.isNotBlank(productNumber)) {
+				for(int i=0; i < columns.size(); i++) {
+					if(productNumber.equals(columns.get(i))) {
+						detailMap.put("barCode", columns.get(i - 1));
+						detailMap.put("description",  columns.get(i + 1));
+					}
+				}
+			}
+		}
 	}
 
 	private void extractProductNumberAndCount(HtmlTable singleTable, Orders orders) {
@@ -351,30 +366,38 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			System.out.println(data);
 
-			String url = job.getClientIp() + job.getClientEnd();
+			try {
+				
+				String url = job.getClientIp() + job.getClientEnd();
 
-			// send ws
-			HttpResponse response = postWebService(url, data);
+				// send ws
+				HttpResponse response = postWebService(url, data);
 
-			HttpEntity httpEntity = response.getEntity();
-			String responseText = null;
-			if (httpEntity != null) {
-				responseText = EntityUtils.toString(httpEntity);
+				HttpEntity httpEntity = response.getEntity();
+				String responseText = null;
+				if (httpEntity != null) {
+					responseText = EntityUtils.toString(httpEntity);
 
-				responseVo = handleResponse(responseText);
+					responseVo = handleResponse(responseText);
 
-				if (responseVo.getType().equals("FAIL")) {
+					if (responseVo.getType().equals("FAIL")) {
 
-					return responseVo;
+						return responseVo;
+					}
 				}
-			}
 
-			System.out.println(responseText);
+				System.out.println(responseText);
 
-			if (response.getStatusLine().getStatusCode() >= 200) {
-				saveOrders(orders, job);
-			} else {
-				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
+				if (response.getStatusLine().getStatusCode() >= 200) {
+					saveOrders(orders, job);
+				} else {
+					return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
+				}
+				
+			} catch (ParseException e) {
+				
+				responseVo.setType(ResponseVo.MessageType.FAIL.name());
+				responseVo.setMessage("调用web service失败。" + e.getMessage());
 			}
 
 		} catch (ConfigurationException e) {
@@ -466,7 +489,8 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 				// toEmpty(singleDetailMap.get("priceWithoutTax"));
 				// String storeNumber =
 				// toEmpty(singleDetailMap.get("storeNumber"));
-
+				String barCode = toEmpty(singleDetailMap.get("barCode"));
+				
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
@@ -474,6 +498,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 				productDetail.setCount(count);
 				// productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
 				productDetail.setProductNumber(productNumber);
+				productDetail.setBarCode(barCode);
 				// productDetail.setPriceWithoutTax(priceWithoutTax);
 				// productDetail.setStoreNumber(storeNumber);
 
