@@ -166,6 +166,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 						}
 						
 						titleHashMap.put("address", address);
+						titleHashMap.put("storeNumber", address); //strange requirement 
 						
 						//supplier number
 						String supplierNumber = "";
@@ -466,6 +467,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 			order.setJobName(job.getName());
 			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			order.setAddress(address);
+			order.setStoreNumber(address);
 			
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
@@ -487,8 +489,8 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
 				// String priceWithoutTax =
 				// toEmpty(singleDetailMap.get("priceWithoutTax"));
-				// String storeNumber =
-				// toEmpty(singleDetailMap.get("storeNumber"));
+				 String storeNumber =
+				 toEmpty(singleDetailMap.get("storeNumber"));
 				String barCode = toEmpty(singleDetailMap.get("barCode"));
 				
 				ProductDetail productDetail = new ProductDetail();
@@ -500,7 +502,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 				productDetail.setProductNumber(productNumber);
 				productDetail.setBarCode(barCode);
 				// productDetail.setPriceWithoutTax(priceWithoutTax);
-				// productDetail.setStoreNumber(storeNumber);
+				productDetail.setStoreNumber(storeNumber);
 
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);
