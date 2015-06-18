@@ -1,11 +1,17 @@
 package com.ls.util;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
 
 import net.sf.json.JSONObject;
 
@@ -32,7 +38,7 @@ public class HanthinkUtil {
 	public static <T> T getJavaObjectFromJsonString(String jsonString, Class<T> classType) {
 
 		@SuppressWarnings("unchecked")
-		T javaObject = (T)JSONObject.toBean(JSONObject.fromObject(jsonString), classType);
+		T javaObject = (T) JSONObject.toBean(JSONObject.fromObject(jsonString), classType);
 
 		return javaObject;
 	}
@@ -147,7 +153,7 @@ public class HanthinkUtil {
 			List<?> nodes = htmlPage.getByXPath(xPath);
 			if (null != nodes && !nodes.isEmpty()) {
 
-				return (T)nodes.get(0);
+				return (T) nodes.get(0);
 			}
 		} catch (Exception e) {
 
@@ -163,7 +169,7 @@ public class HanthinkUtil {
 			List<?> nodes = htmlPage.getByXPath(xPath);
 			if (null != nodes && !nodes.isEmpty()) {
 
-				return (T)nodes.get(index);
+				return (T) nodes.get(index);
 			}
 		} catch (Exception e) {
 
@@ -172,7 +178,6 @@ public class HanthinkUtil {
 		return null;
 	}
 
-	
 	public static String getNumbersInString(String content) {
 
 		Pattern pattern = Pattern.compile("\\d+");
@@ -182,23 +187,50 @@ public class HanthinkUtil {
 		}
 		return null;
 	}
-	
+
 	public static List<JobSchedule> getScheduleList(int startHour, int startMinute, int endHour, int endMinute, int interval) {
-		
+
 		if (startHour > endHour) {
 			throw new RuntimeException("起始时间配置错误");
 		}
 		List<JobSchedule> jobSchedules = Lists.newArrayList();
-		
+
 		int totallMinutes = (endHour - startHour) * 60 + (endMinute - startMinute);
-		
-		
+
 		return jobSchedules;
-		
+
 	}
-	
+
+	public static void changeImageToBlackAndWhite(String filePath) {
+		File file = new File(filePath);
+
+		try {
+			BufferedImage bufImg = ImageIO.read(file);
+			int height = bufImg.getHeight();
+			int width = bufImg.getWidth();
+			for (int i = 0; i < width; i++) {
+				for (int j = 0; j < height; j++) {
+
+					int rgb = bufImg.getRGB(i, j) & 0xFFFFFF;
+					Color color = new Color(rgb);
+					int red = color.getRed(), green = color.getGreen(), black = color.getBlue();
+
+					if (red > 90 && green > 90 && black > 90) {
+						bufImg.setRGB(i, j, Color.WHITE.getRGB());
+					} else {
+						bufImg.setRGB(i, j, Color.BLACK.getRGB());
+					}
+				}
+			}
+			ImageIO.write(bufImg, "jpg", file);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
 
-		getScheduleList(07, 20, 17, 19, 60) ;
+		getScheduleList(07, 20, 17, 19, 60);
 	}
 }

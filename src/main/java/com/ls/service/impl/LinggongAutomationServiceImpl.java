@@ -187,6 +187,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
 		validationCodeImage.saveAs(new File(fileName));
+		
+		HanthinkUtil.changeImageToBlackAndWhite(fileName);
+		
 		Thread.sleep(1000);
 		usernameHtmlTextInput.setValueAttribute(automaticJob.getUsername());
 		passwordHtmlTextInput.setValueAttribute(automaticJob.getPassword());
