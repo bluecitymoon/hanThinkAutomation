@@ -29,6 +29,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlBold;
@@ -36,12 +37,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
+import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.constants.HanthinkProperties;
@@ -54,6 +57,7 @@ import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
 import com.ls.service.impl.vistor.RTMarketDetailParser;
 import com.ls.util.HanthinkUtil;
+import com.ls.util.XinXinConstants;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 
@@ -102,23 +106,66 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		tryToLogin(webClient, authanJob);
 
+		String baseDataPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList";
 		
-
-		System.out.println(ordersList);
+		HtmlPage baseDataPage = webClient.getPage(baseDataPageUrl);
+		
+		HtmlTextInput startDateTextInput = HanthinkUtil.getFirstElementByXPath(baseDataPage, "//*[@id=\"startTime\"]");
+		HtmlTextInput endDateTextInput = HanthinkUtil.getFirstElementByXPath(baseDataPage, "//*[@id=\"endTime\"]");
+		startDateTextInput.setValueAttribute(start.replace("-", ""));
+		endDateTextInput.setValueAttribute(end.replace("-", ""));
+		
+		HtmlButtonInput queryButtonInput = HanthinkUtil.getFirstElementByXPath(baseDataPage, "//*[@id=\"btn-chaxun\"]");
+		HtmlPage queryResultPage = queryButtonInput.click();
+		
+		HtmlLabel totalPageLabel = HanthinkUtil.getFirstElementByXPath(queryResultPage, "//*[@id=\"pagetotalpage\"]");
+		String totalNumberString = HanthinkUtil.getNumbersInString(totalPageLabel.asText());
+		
+		int currentPage = 1;
+		if (StringUtils.isNotBlank(totalNumberString)) {
+			Integer totalNumber = Integer.valueOf(totalNumberString);
+			
+			printlnTable(queryResultPage);
+			
+			while(currentPage < totalNumber) {
+				
+				currentPage ++;
+				ScriptResult result = queryResultPage.executeJavaScript("javascript:trun(" + currentPage + ")");
+				queryResultPage = (HtmlPage)result.getNewPage();
+				
+				JavaScriptJobManager javaScriptJobManager = queryResultPage.getEnclosingWindow().getJobManager();
+				while (javaScriptJobManager.getJobCount() > 0) {
+					System.out.println("still loading next page -> " + currentPage);
+					Thread.sleep(1000);
+				}
+				printlnTable(queryResultPage);
+			}
+		}
+		
 
 		return ordersList;
 	}
 
-	private void mergeBarCodeAndProductName(Orders orders, List<String> columns) {
+	private void printlnTable(HtmlPage queryResultPage) {
 		
+		HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(queryResultPage, "//*[@id=\"tablist\"]");
+		
+		List<HtmlTableRow> rows = dataTable.getRows();
+		for (HtmlTableRow htmlTableRow : rows) {
+			System.out.println(htmlTableRow.asText());
+		}
+	}
+	
+	private void mergeBarCodeAndProductName(Orders orders, List<String> columns) {
+
 		List<Map<String, String>> detailMapList = orders.getOrdersItemList();
 		for (Map<String, String> detailMap : detailMapList) {
 			String productNumber = detailMap.get("productNumber");
 			if (StringUtils.isNotBlank(productNumber)) {
-				for(int i=0; i < columns.size(); i++) {
-					if(productNumber.equals(columns.get(i))) {
+				for (int i = 0; i < columns.size(); i++) {
+					if (productNumber.equals(columns.get(i))) {
 						detailMap.put("barCode", columns.get(i - 1));
-						detailMap.put("description",  columns.get(i + 1));
+						detailMap.put("description", columns.get(i + 1));
 					}
 				}
 			}
@@ -134,27 +181,27 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			List<HtmlTableCell> cells = rows.get(i).getCells();
 			Map<String, String> singleMap = new HashMap<String, String>();
 			orders.getOrdersItemList().add(singleMap);
-			
+
 			singleMap.put("uuid", orders.getOrderTitleMap().get("uuid"));
-			
+
 			for (int j = 0; j < cells.size(); j++) {
 
 				HtmlTableCell currentCell = cells.get(j);
 				switch (j) {
-				case 1:
-					singleMap.put("productNumber", currentCell.asText());
-					break;
-				case 5:
+					case 1:
+						singleMap.put("productNumber", currentCell.asText());
+						break;
+					case 5:
 
-					String text = currentCell.asText();
-					if (text.contains(",")) {
-						text = text.replace(",", "");
-					}
-					singleMap.put("count", text);
+						String text = currentCell.asText();
+						if (text.contains(",")) {
+							text = text.replace(",", "");
+						}
+						singleMap.put("count", text);
 
-					break;
-				default:
-					break;
+						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -176,6 +223,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		System.out.println("Trying to login......");
 
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+
 		URL url = new URL(LINGGONG_ROOT_URL);
 
 		final HtmlPage loginPage = webClient.getPage(url);
@@ -183,13 +231,14 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		HtmlPasswordInput passwordHtmlTextInput = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"loginPwd\"]");
 		HtmlTextInput checkstrHtmlPasswordInput = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"random\"]");
 
-		HtmlImage validationCodeImage = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"codeId\"]");;
+		HtmlImage validationCodeImage = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"codeId\"]");
+		;
 
 		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
 		validationCodeImage.saveAs(new File(fileName));
-		
+
 		HanthinkUtil.changeImageToBlackAndWhite(fileName);
-		
+
 		Thread.sleep(1000);
 		usernameHtmlTextInput.setValueAttribute(automaticJob.getUsername());
 		passwordHtmlTextInput.setValueAttribute(automaticJob.getPassword());
@@ -202,31 +251,36 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		Thread.sleep(1000);
 		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
 
-		System.out.println(code);
+		System.out.println("Using Code -> " + code);
 
 		if (code != null) {
-			
+			code = code.replace(" ", "");
 			checkstrHtmlPasswordInput.setValueAttribute(code);
 
 			HtmlButtonInput loginButton = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"denglu\"]");
-			HtmlPage loginResultPage = (HtmlPage) loginButton.click();
+			HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+			JavaScriptJobManager javaScriptJobManager = loginResultPage.getEnclosingWindow().getJobManager();
+			while (javaScriptJobManager.getJobCount() > 0) {
+				System.out.println("Waiting to login");
+				Thread.sleep(1000);
+			}
 
-			String callbackUrl = loginResultPage.getUrl().toString();
+			String testDataUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_toSuplist";
+			HtmlPage testPage = webClient.getPage(testDataUrl);
+			String resultURL = testPage.getUrl().toString();
 
-			System.out.println(callbackUrl);
-			if (callbackUrl.equals("https://supplier.rt-mart.com.cn/php/scm_main.php")) {
-				
-				System.out.println("RT-Market login successfully!");
+			if (resultURL.equals(testDataUrl)) {
+
+				System.out.println("LingGong login successfully!");
+
 				cleanUpValidationCodeFiles();
-				return;
+
 			} else {
 				tryToLogin(webClient, automaticJob);
 			}
-			
 		} else {
 			tryToLogin(webClient, automaticJob);
 		}
-		
 	}
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
@@ -264,7 +318,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			System.out.println(data);
 
 			try {
-				
+
 				String url = job.getClientIp() + job.getClientEnd();
 
 				// send ws
@@ -290,9 +344,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				} else {
 					return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 				}
-				
+
 			} catch (ParseException e) {
-				
+
 				responseVo.setType(ResponseVo.MessageType.FAIL.name());
 				responseVo.setMessage("调用web service失败。" + e.getMessage());
 			}
@@ -364,7 +418,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			order.setAddress(address);
 			order.setStoreNumber(address);
-			
+
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
 			try {
@@ -385,10 +439,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
 				// String priceWithoutTax =
 				// toEmpty(singleDetailMap.get("priceWithoutTax"));
-				 String storeNumber =
-				 toEmpty(singleDetailMap.get("storeNumber"));
+				String storeNumber = toEmpty(singleDetailMap.get("storeNumber"));
 				String barCode = toEmpty(singleDetailMap.get("barCode"));
-				
+
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);

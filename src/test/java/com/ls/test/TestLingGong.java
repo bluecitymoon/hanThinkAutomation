@@ -27,8 +27,8 @@ public class TestLingGong {
 	public void testGrabOrders() throws Exception {
 
 		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
-		AutomaticJob automaticJob = automaticJobRepository.findOne(24);
-		rtmarketAutomationService.grabOrders("2015-01-01", "2015-01-13", automaticJob);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(35);
+		rtmarketAutomationService.grabOrders("2015-06-17", "2015-06-19", automaticJob);
 	}
 
 	@Test
