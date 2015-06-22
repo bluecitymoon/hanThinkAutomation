@@ -2,14 +2,25 @@ package com.ls.util;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
@@ -20,11 +31,16 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.ls.entity.Role;
 import com.ls.entity.User;
 import com.ls.vo.JobSchedule;
+import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
+import com.ls.vo.StorageDetail;
+import com.ls.vo.StorageGroup;
 
 public class HanthinkUtil {
 
@@ -229,8 +245,116 @@ public class HanthinkUtil {
 		}
 	}
 
+	public static void unzipLingduZipFile(String zipFileName, String extractedFileName) {
+		
+		try {
+			ZipFile fileToUnzip = new ZipFile(zipFileName);
+			
+			Enumeration<? extends ZipEntry> enumeration = fileToUnzip.entries();
+			
+			while(enumeration.hasMoreElements()) {
+				
+				ZipEntry zipEntry = enumeration.nextElement();
+				
+				InputStream bis = fileToUnzip.getInputStream(zipEntry);
+				
+				FileOutputStream fos = new FileOutputStream(new File(extractedFileName));
+				OutputStream bos = new BufferedOutputStream(fos, 4096);           
+                
+                int count;
+                byte data[] = new byte[4096];
+                while ((count = bis.read(data, 0, 4096)) != -1)
+                {
+                    bos.write(data, 0, count);
+                }
+                bos.flush();
+                bos.close();
+                bis.close();
+                
+			}
+			
+			fileToUnzip.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public static void postStorageInformation() {
+		
+		HanthinkUtil.unzipLingduZipFile("C:\\Users\\Administrator\\Downloads\\stream.zip", "C:\\Users\\Administrator\\Downloads\\stream.csv");
+		
+		File dataFile = new File("C:\\Users\\Administrator\\Downloads\\stream.csv");
+		
+		try {
+			List<String> lines = Files.readLines(dataFile, Charset.defaultCharset());
+			
+			parseDataFromCsvFile(lines);
+			
+		} catch (IOException e) {
+		}
+		
+	}
+	
+	public static List<Orders> parseDataFromCsvFile(List<String> lines) {
+		
+		Map<String, List<StorageDetail>> storeGroups = new HashMap<String,List<StorageDetail>>();
+		for (String singleLine : lines) {
+			
+			StorageDetail storageDetail = new StorageDetail();
+			
+			String deptNumber = "";
+			String[] elements = singleLine.split(",");
+			for (int i = 0; i < elements.length; i++) {
+				
+				String element = elements[i];
+				switch (i) {
+				case 1:
+					storageDetail.setProductNumber(element);
+					break;
+				case 2:
+					storageDetail.setDescription(element);
+					break;
+				case 6:
+					deptNumber = element;
+					break;
+				case 13:
+					storageDetail.setDayBalanceInDb(element);
+					break;
+				case 10:
+					storageDetail.setCount(element);
+					break;
+				case 11:
+					storageDetail.setMoneyAmount(element);
+					break;
+					
+				default:
+					break;
+				}
+			}
+			
+			if(storeGroups.containsKey(deptNumber)) {
+				storeGroups.get(deptNumber).add(storageDetail);
+				
+			} else {
+				
+				List<StorageDetail> details = new ArrayList<StorageDetail>();
+				details.add(storageDetail);
+				storeGroups.put(deptNumber, details);
+				
+			}
+		}
+		
+		System.out.println(storeGroups);
+		System.out.println(storeGroups.size());
+		
+		return null;
+	}
+	
 	public static void main(String[] args) {
 
-		getScheduleList(07, 20, 17, 19, 60);
+		//getScheduleList(07, 20, 17, 19, 60);
+		
+		postStorageInformation();
 	}
 }

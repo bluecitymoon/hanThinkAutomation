@@ -93,6 +93,9 @@ public class AuchanAutomationAction extends BaseAction {
 	
 	@Resource(name = "RTMarketAutomationService")
 	private AuthanAutomationService rtMarketAutomationService;
+	
+	@Resource(name = "LinggongAutomationService")
+	private AuthanAutomationService linggongAutomationService;
 
 	@Autowired
 	private OrderRepository orderRepository;
@@ -114,15 +117,15 @@ public class AuchanAutomationAction extends BaseAction {
 		}
 		try {
 
-			AutomaticJob job = automaticJobRepository.findOne(Integer.valueOf(dbName));
+			AutomaticJob automaticJob = automaticJobRepository.findOne(Integer.valueOf(dbName));
 
-			if (job == null) {
+			if (automaticJob == null) {
 				response = ResponseVo.newFailMessage("不存在帐套[" + dbName + "]");
 
 				return SUCCESS;
 			}
 
-			Integer storeId = job.getStoreId();
+			Integer storeId = automaticJob.getStoreId();
 
 			if (storeId == null) {
 				response = ResponseVo.newFailMessage("未知的数据源，检查这个任务是否配置了数据源。");
@@ -135,31 +138,41 @@ public class AuchanAutomationAction extends BaseAction {
 
 			if (storeDatasourceIdentity.equals("SOSO")) {
 
-				response = sosoAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = sosoAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 
 			} else if (storeDatasourceIdentity.equals("TESCO")) {
 
-				response = tescoAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = tescoAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 
 			} else if (storeDatasourceIdentity.equals("AUTHAN")) {
 
-				response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 
 			} else if (storeDatasourceIdentity.equals("CARREFOUR")) {
 
-				response = carrefourAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = carrefourAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 
 			} else if (storeDatasourceIdentity.equals("LIANHUA")) {
 
-				response = lianHuaAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = lianHuaAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 
 			} else if (storeDatasourceIdentity.equals("SUZHOU_DAXUE")) {
 
-				response = suzhouUnivercityAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = suzhouUnivercityAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 
 			} else if (storeDatasourceIdentity.equals("RTMARKET")) {
 
-				response = rtMarketAutomationService.postDataToWebService(manuallyStart, manuallyStop, job);
+				response = rtMarketAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
+
+			} else if (storeDatasourceIdentity.equals("LG")) {
+
+				String componentType = automaticJob.getComponentType();
+				
+				if (StringUtils.isNotBlank(componentType) && componentType.equals("storage")) {
+					response = linggongAutomationService.grabStorageInformation(manuallyStart, manuallyStop, automaticJob);
+				} else {
+					response = linggongAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
+				}
 
 			} else {
 
@@ -180,7 +193,7 @@ public class AuchanAutomationAction extends BaseAction {
 
 		return SUCCESS;
 	}
-
+	
 	public String loadJobNames() {
 
 		String blurryName = getParameter("blurryName");
@@ -338,6 +351,7 @@ public class AuchanAutomationAction extends BaseAction {
 		jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
 		jobDataMap.put("suzhouUnivercityAutomationService", suzhouUnivercityAutomationService);
 		jobDataMap.put("rtMarketAutomationService", rtMarketAutomationService);
+		jobDataMap.put("linggongAutomationService", linggongAutomationService);
 		
 		try {
 

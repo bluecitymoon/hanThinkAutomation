@@ -27,17 +27,25 @@ public class TestLingGong {
 	public void testGrabOrders() throws Exception {
 
 		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
-		AutomaticJob automaticJob = automaticJobRepository.findOne(35);
-		rtmarketAutomationService.grabOrders("2015-06-17", "2015-06-19", automaticJob);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(24);
+		rtmarketAutomationService.grabOrders("2015-06-18", "2015-06-20", automaticJob);
 	}
 
+	
+	@Test
+	public void testGrabStorageInformation() throws Exception {
+
+		AutomaticJob automaticJob = automaticJobRepository.findOne(24);
+		rtmarketAutomationService.grabStorageInformation("2015-06-01", "2015-06-20", automaticJob);
+	}
+	
 	@Test
 	public void testWholeProcess() throws Exception {
 
 		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(23);
-		ResponseVo responseVo = rtmarketAutomationService.postDataToWebService("2015-01-01", "2015-01-13", automaticJob);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(24);
+		ResponseVo responseVo = rtmarketAutomationService.postDataToWebService("2015-06-18", "2015-06-20", automaticJob);
 
 		System.out.println(responseVo.toString());
 	}

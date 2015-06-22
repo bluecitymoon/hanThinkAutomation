@@ -27,6 +27,8 @@ public class AuthanAutomationQuartzJob implements Job {
 	private AuthanAutomationService lianHuaAutomationService;
 	
 	private AuthanAutomationService rtMarketAutomationService;
+	
+	private AuthanAutomationService linggongAutomationService;
 
 	private Logger logger = LoggerFactory.getLogger(AuthanAutomationQuartzJob.class);
 
@@ -45,6 +47,8 @@ public class AuthanAutomationQuartzJob implements Job {
 		lianHuaAutomationService = (AuthanAutomationService)context.getJobDetail().getJobDataMap().get("carrefourAutomationService");
 
 		rtMarketAutomationService = (AuthanAutomationService)context.getJobDetail().getJobDataMap().get("rtMarketAutomationService");
+		
+		linggongAutomationService = (AuthanAutomationService)context.getJobDetail().getJobDataMap().get("linggongAutomationService");
 		
 		Date today = new Date();
 		AutomaticJob authanJob = (AutomaticJob)context.getJobDetail().getJobDataMap().get("jobWillRun");
@@ -108,6 +112,10 @@ public class AuthanAutomationQuartzJob implements Job {
 			} else if (storeDatasourceIdentity.equals("RTMARKET")){
 				
 				responseVo = rtMarketAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+				
+			} else if (storeDatasourceIdentity.equals("LG")){
+				
+				responseVo = linggongAutomationService.postDataToWebService(lastRunDate, now, authanJob);
 				
 			} else {
 

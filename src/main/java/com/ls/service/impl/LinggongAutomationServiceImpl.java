@@ -1,7 +1,13 @@
 package com.ls.service.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -18,8 +24,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
-import org.htmlparser.Parser;
-import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +33,13 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.ScriptResult;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.attachment.Attachment;
+import com.gargoylesoftware.htmlunit.attachment.CollectingAttachmentHandler;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlBold;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
@@ -55,9 +58,7 @@ import com.ls.exception.ConfigurationException;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
-import com.ls.service.impl.vistor.RTMarketDetailParser;
 import com.ls.util.HanthinkUtil;
-import com.ls.util.XinXinConstants;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 
@@ -80,11 +81,107 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 	@Autowired
 	ProductDetailRepository productDetailRepository;
 
-	private boolean checkIfOrderNotGrabed(String orderNumber, Integer jobId) {
+	private boolean checkIfOrderNotGrabed(String orderNumber, String address, Integer jobId) {
 
-		List<Order> existedOrder = orderRepository.findByOrderNumberAndJobId(orderNumber, jobId);
+		Order existedOrder = orderRepository.findByOrderNumberAndStoreNumberAndJobId(orderNumber, address, jobId);
 
-		return existedOrder == null || existedOrder.isEmpty();
+		return existedOrder == null;
+	}
+
+	@Override
+	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
+
+		if (null == automaticJob) {
+
+			return ResponseVo.newFailMessage("未知的任务配置.");
+		}
+
+		final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+		webClient.getOptions().setCssEnabled(false);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+		try {
+
+			tryToLogin(webClient, automaticJob);
+
+		} catch (FailingHttpStatusCodeException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，错误的http code FailingHttpStatusCodeException : " + e.getMessage());
+		} catch (MalformedURLException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，MalformedURLException " + e.getMessage());
+		} catch (IOException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，IOException " + e.getMessage());
+		} catch (URISyntaxException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，URISyntaxException " + e.getMessage());
+		} catch (InterruptedException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，InterruptedException " + e.getMessage());
+		}
+
+		final List<Attachment> attachments = new ArrayList<Attachment>();
+		webClient.setAttachmentHandler(new CollectingAttachmentHandler(attachments));
+		String queryPageUrl = "http://scm.sgcs.com.cn/manager/sambillSelect/sambillSelect_findXcDayInfo.action?__multiselect_xcMonthBean.qryState=&xcMonthBean.qryBeginTime=20150619&xcMonthBean.qryEndTime=20150621&xcMonthBean.qryState=0009";
+		try {
+			HtmlPage listPage = webClient.getPage(queryPageUrl);
+			
+			List<HtmlAnchor> links = (List<HtmlAnchor>) listPage.getByXPath("//a");
+			for (HtmlAnchor htmlAnchor : links) {
+				if (htmlAnchor.getHrefAttribute().contains("downFile")) {
+					System.out.println(htmlAnchor.asText());
+
+					Page page = htmlAnchor.click();
+
+					JavaScriptJobManager javaScriptJobManager = listPage.getEnclosingWindow().getJobManager();
+					while (javaScriptJobManager.getJobCount() > 0) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
+
+						System.out.println("waiting in download....");
+					}
+
+					Attachment attachment = attachments.get(0);
+
+					if (attachment != null) {
+						Page conentPage = attachment.getPage();
+
+						try {
+							InputStream is = conentPage.getWebResponse().getContentAsStream();
+							
+							File file = new File( HanthinkProperties.getString("dataFileBase") + System.currentTimeMillis() + "-downloadData.csv");
+							if (!file.exists()) {
+								file.createNewFile();
+							}
+							FileOutputStream fileout = new FileOutputStream(file);
+
+							byte[] buffer = new byte[2048];
+							int ch = 0;
+							while ((ch = is.read(buffer)) != -1) {
+								fileout.write(buffer, 0, ch);
+							}
+							is.close();
+							fileout.flush();
+							fileout.close();
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					} else {
+						System.out.println("No attachement found.");
+					}
+
+				}
+			}
+
+		} catch (FailingHttpStatusCodeException e) {
+			return ResponseVo.newFailMessage("获取销存页面失败，错误的http code FailingHttpStatusCodeException : " + e.getMessage());
+		} catch (MalformedURLException e) {
+			return ResponseVo.newFailMessage("获取销存页面失败，MalformedURLException : " + e.getMessage());
+		} catch (IOException e) {
+			return ResponseVo.newFailMessage("获取销存页面失败，IOException : " + e.getMessage());
+		}
+
+		return null;
 	}
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
@@ -106,105 +203,168 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		tryToLogin(webClient, authanJob);
 
-		String baseDataPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList";
-		
-		HtmlPage baseDataPage = webClient.getPage(baseDataPageUrl);
-		
-		HtmlTextInput startDateTextInput = HanthinkUtil.getFirstElementByXPath(baseDataPage, "//*[@id=\"startTime\"]");
-		HtmlTextInput endDateTextInput = HanthinkUtil.getFirstElementByXPath(baseDataPage, "//*[@id=\"endTime\"]");
-		startDateTextInput.setValueAttribute(start.replace("-", ""));
-		endDateTextInput.setValueAttribute(end.replace("-", ""));
-		
-		HtmlButtonInput queryButtonInput = HanthinkUtil.getFirstElementByXPath(baseDataPage, "//*[@id=\"btn-chaxun\"]");
-		HtmlPage queryResultPage = queryButtonInput.click();
-		
-		HtmlLabel totalPageLabel = HanthinkUtil.getFirstElementByXPath(queryResultPage, "//*[@id=\"pagetotalpage\"]");
+		String firstPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
+				+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=1&page.offset=10";
+
+		HtmlPage firstHtmlPage = webClient.getPage(firstPageUrl);
+
+		retrieveData(firstHtmlPage, ordersList, webClient, authanJob.getName(), authanJob.getId());
+
+		HtmlLabel totalPageLabel = HanthinkUtil.getFirstElementByXPath(firstHtmlPage, "//*[@id=\"pagetotalpage\"]");
 		String totalNumberString = HanthinkUtil.getNumbersInString(totalPageLabel.asText());
-		
-		int currentPage = 1;
 		if (StringUtils.isNotBlank(totalNumberString)) {
 			Integer totalNumber = Integer.valueOf(totalNumberString);
-			
-			printlnTable(queryResultPage);
-			
-			while(currentPage < totalNumber) {
-				
-				currentPage ++;
-				ScriptResult result = queryResultPage.executeJavaScript("javascript:trun(" + currentPage + ")");
-				queryResultPage = (HtmlPage)result.getNewPage();
-				
-				JavaScriptJobManager javaScriptJobManager = queryResultPage.getEnclosingWindow().getJobManager();
-				while (javaScriptJobManager.getJobCount() > 0) {
-					System.out.println("still loading next page -> " + currentPage);
-					Thread.sleep(1000);
+
+			if (totalNumber > 1) {
+				for (int i = 2; i <= totalNumber; i++) {
+					String nextPage = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
+							+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=" + i + "&page.offset=10";
+					HtmlPage nextHtmlPage = webClient.getPage(nextPage);
+
+					retrieveData(nextHtmlPage, ordersList, webClient, authanJob.getName(), authanJob.getId());
 				}
-				printlnTable(queryResultPage);
 			}
 		}
-		
 
 		return ordersList;
 	}
 
-	private void printlnTable(HtmlPage queryResultPage) {
-		
-		HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(queryResultPage, "//*[@id=\"tablist\"]");
-		
-		List<HtmlTableRow> rows = dataTable.getRows();
-		for (HtmlTableRow htmlTableRow : rows) {
-			System.out.println(htmlTableRow.asText());
-		}
-	}
-	
-	private void mergeBarCodeAndProductName(Orders orders, List<String> columns) {
+	private void retrieveData(HtmlPage queryResultPage, List<Orders> ordersList, final WebClient webClient, String supplierNumber, Integer jobId) {
 
-		List<Map<String, String>> detailMapList = orders.getOrdersItemList();
-		for (Map<String, String> detailMap : detailMapList) {
-			String productNumber = detailMap.get("productNumber");
-			if (StringUtils.isNotBlank(productNumber)) {
-				for (int i = 0; i < columns.size(); i++) {
-					if (productNumber.equals(columns.get(i))) {
-						detailMap.put("barCode", columns.get(i - 1));
-						detailMap.put("description", columns.get(i + 1));
-					}
+		HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(queryResultPage, "//*[@id=\"tablist\"]");
+
+		List<HtmlTableRow> rows = dataTable.getRows();
+
+		for (int i = 1; i < rows.size(); i++) {
+			HtmlTableRow singleRow = rows.get(i);
+			Orders singleOrder = new Orders();
+			String uuid = UUID.randomUUID().toString();
+
+			singleOrder.getOrderTitleMap().put("uuid", uuid);
+			singleOrder.getOrderTitleMap().put("supplierNumber", supplierNumber);
+
+			List<HtmlTableCell> tds = singleRow.getCells();
+			String orderNumber = "";
+			String orderCreatorDeptNumber = "";
+			String address = "";
+			for (int j = 0; j < tds.size(); j++) {
+
+				HtmlTableCell singleCell = tds.get(j);
+				String content = StringUtils.trimToEmpty(singleCell.getTextContent());
+				switch (j) {
+				case 2:
+					orderNumber = content;
+					singleOrder.getOrderTitleMap().put("orderNumber", content);
+					break;
+
+				case 4:
+					orderCreatorDeptNumber = content;
+					break;
+				case 6:
+					singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
+					break;
+				case 8:
+					address = content;
+
+					singleOrder.getOrderTitleMap().put("address", content);
+					break;
+
+				case 10:
+					singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
+					break;
+				default:
+					break;
 				}
+			}
+
+			if (checkIfOrderNotGrabed(orderNumber, address, jobId)) {
+				ordersList.add(singleOrder);
+				retrieveDetail(singleOrder, orderNumber, orderCreatorDeptNumber, webClient, uuid);
 			}
 		}
 	}
 
-	private void extractProductNumberAndCount(HtmlTable singleTable, Orders orders) {
+	private String getLingGongDateString(String shortString) {
 
-		List<HtmlTableRow> rows = singleTable.getRows();
+		if (StringUtils.isNotBlank(shortString)) {
 
-		for (int i = 2; i < rows.size(); i++) {
+			String year = shortString.substring(0, 4);
+			String month = shortString.substring(4, 6);
+			String day = shortString.substring(6);
 
-			List<HtmlTableCell> cells = rows.get(i).getCells();
-			Map<String, String> singleMap = new HashMap<String, String>();
-			orders.getOrdersItemList().add(singleMap);
+			return year + "-" + month + "-" + day;
+		}
 
-			singleMap.put("uuid", orders.getOrderTitleMap().get("uuid"));
+		return "";
+	}
 
-			for (int j = 0; j < cells.size(); j++) {
+	private void retrieveDetail(Orders singleOrder, String orderNumber, String orderCreatorDeptNumber, final WebClient webClient, String uuid) {
 
-				HtmlTableCell currentCell = cells.get(j);
-				switch (j) {
-					case 1:
-						singleMap.put("productNumber", currentCell.asText());
+		String detailUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findGoodsInfo?id=" + orderNumber + "&deptid=" + orderCreatorDeptNumber;
+
+		try {
+
+			HtmlPage detailPage = webClient.getPage(detailUrl);
+
+			HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(detailPage, "//*[@id=\"tablist\"]");
+
+			List<HtmlTableRow> rows = dataTable.getRows();
+
+			for (int i = 1; i < rows.size(); i++) {
+
+				Map<String, String> singleDetail = new HashMap<String, String>();
+				singleOrder.getOrdersItemList().add(singleDetail);
+				singleDetail.put("uuid", uuid);
+
+				HtmlTableRow singleRow = rows.get(i);
+				List<HtmlTableCell> tds = singleRow.getCells();
+				for (int j = 0; j < tds.size(); j++) {
+
+					HtmlTableCell singleCell = tds.get(j);
+					String content = StringUtils.trimToEmpty(singleCell.getTextContent());
+					switch (j) {
+					case 2:
+						singleDetail.put("description", content);
 						break;
-					case 5:
+					case 3:
+						singleDetail.put("productNumber", content);
+						break;
+					case 4:
+						singleDetail.put("barCode", content);
+						break;
+					case 6:
 
-						String text = currentCell.asText();
-						if (text.contains(",")) {
-							text = text.replace(",", "");
+						if (StringUtils.isNotBlank(content)) {
+							singleDetail.put("taxRate", "0." + content.replace("%", ""));
+						} else {
+							singleDetail.put("taxRate", "");
 						}
-						singleMap.put("count", text);
+
+						break;
+					case 7:
+						singleDetail.put("count", content);
+						break;
+					case 8:
+						singleDetail.put("priceWithoutTax", content);
+						break;
+					case 9:
+						singleDetail.put("moneyAmountWithoutTax", content);
 
 						break;
 					default:
 						break;
+					}
 				}
 			}
+
+		} catch (FailingHttpStatusCodeException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	private String toEmpty(String input) {
@@ -232,7 +392,6 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		HtmlTextInput checkstrHtmlPasswordInput = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"random\"]");
 
 		HtmlImage validationCodeImage = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"codeId\"]");
-		;
 
 		String fileName = HanthinkProperties.getString("tessertOcrInstallPath") + System.currentTimeMillis() + ".jpg";
 		validationCodeImage.saveAs(new File(fileName));
@@ -258,10 +417,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			checkstrHtmlPasswordInput.setValueAttribute(code);
 
 			HtmlButtonInput loginButton = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"denglu\"]");
-			HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+			HtmlPage loginResultPage = (HtmlPage) loginButton.click();
 			JavaScriptJobManager javaScriptJobManager = loginResultPage.getEnclosingWindow().getJobManager();
 			while (javaScriptJobManager.getJobCount() > 0) {
-				System.out.println("Waiting to login");
 				Thread.sleep(1000);
 			}
 
@@ -285,7 +443,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	public String compositeOrderToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("rt-market-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("lg-request-soap.ftl");
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -434,24 +592,23 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 				String description = toEmpty(singleDetailMap.get("description"));
 				String count = toEmpty(singleDetailMap.get("count"));
-				// String moneyAmountWithoutTax =
-				// toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
+				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
-				// String priceWithoutTax =
-				// toEmpty(singleDetailMap.get("priceWithoutTax"));
-				String storeNumber = toEmpty(singleDetailMap.get("storeNumber"));
+				String priceWithoutTax = toEmpty(singleDetailMap.get("priceWithoutTax"));
 				String barCode = toEmpty(singleDetailMap.get("barCode"));
+				String taxRate = toEmpty(singleDetailMap.get("taxRate"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
 				productDetail.setOrderNumber(orderNumber);
 				productDetail.setDescription(description);
 				productDetail.setCount(count);
-				// productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
+				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
 				productDetail.setProductNumber(productNumber);
 				productDetail.setBarCode(barCode);
-				// productDetail.setPriceWithoutTax(priceWithoutTax);
-				productDetail.setStoreNumber(storeNumber);
+				productDetail.setPriceWithoutTax(priceWithoutTax);
+
+				productDetail.setTaxRate(taxRate);
 
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);

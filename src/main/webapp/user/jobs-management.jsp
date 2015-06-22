@@ -166,8 +166,18 @@
                        									    	value: storeId,
                        									    	optionsValue : 'id',
                        									    	selectedOption : storeId,
-                       									    	optionsCaption: '请选择卖场...'">
+                       									    	optionsCaption: '请选择数据源...'">
 									</select>
+									</div>
+									<div class="three columns">
+										<label>数据类型(默认订单)</label> 
+										<select data-bind="options: $root.allComponentTypes,
+                      											optionsText: 'description',
+                       									    	value: componentType,
+                       									    	optionsValue : 'name',
+                       									    	selectedOption : componentType,
+                       									    	optionsCaption: '请选择数据类型...'">
+                       					</select>
 									</div>
 								</div>
 								<div class="row">
@@ -275,8 +285,15 @@
 						self.ownerId = '';
 						self.storeId = '';
 						self.companyCode = '';
+						self.componentType = '';
 					};
 
+					var ComponentType = function() {
+						var self = this;
+						self.name = '';
+						self.description = '';	
+					};
+					
 					var ConfigurationModel = function() {
 
 						var self = this;
@@ -292,6 +309,7 @@
 						self.selectedStoreId = ko.observable('');
 						
 						self.selectedUserId = ko.observable('');
+						self.allComponentTypes = [{"name" : "order", "description": "订单"},{"name" : "storage", "description": "销存报表"}];
 						
 						self.selectedStoreId.subscribe(function(item) {
 							self.reloadJobList();
@@ -310,6 +328,15 @@
 									self.showOrHideDateInputs(false);
 								} else {
 									self.showOrHideDateInputs(true);
+								}
+								
+								if (item.componentType) {
+									
+									if (item.componentType == "storage") {
+										success("您选择了一个采集销存报表的任务");
+									} else if (item.componentType == "order") {
+										success("您选择了一个采集订单的任务");
+									}
 								}
 							}
 							

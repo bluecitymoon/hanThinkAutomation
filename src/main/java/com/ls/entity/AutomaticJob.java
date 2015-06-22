@@ -41,6 +41,7 @@ public class AutomaticJob implements Serializable {
 	protected Integer ownerId;
 	protected Integer storeId;
 	protected String companyCode;
+	protected String componentType;
 	
 	public String getCompanyCode() {
 	
@@ -268,6 +269,14 @@ public class AutomaticJob implements Serializable {
 
 	public void setDelayDays(Integer delayDays) {
 		this.delayDays = delayDays;
+	}
+	
+	public String getComponentType() {
+		return componentType;
+	}
+
+	public void setComponentType(String componentType) {
+		this.componentType = componentType;
 	}
 
 	@Override

@@ -29,4 +29,15 @@ public interface AuthanAutomationService {
 	void deleteJob(AutomaticJob automaticJob);
 
 	void saveOrUpdateJob(AutomaticJob automaticJob);
+	
+	/**
+	 * Grab database storage information
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @param automaticJob
+	 * 
+	 * @return
+	 */
+	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob);
 }

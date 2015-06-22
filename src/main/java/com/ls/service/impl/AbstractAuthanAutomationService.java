@@ -63,7 +63,11 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 		automaticJobRepository.saveAndFlush(automaticJob);
 
 	}
-
+	
+	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob){
+		return null;
+	}
+	
 	public String getRandomUUID() {
 
 		return UUID.randomUUID().toString();

@@ -54,6 +54,12 @@ public class StartupJobService implements InitializingBean {
 
 	@Resource(name = "suzhouUnivercityAutomationService")
 	private AuthanAutomationService suzhouUnivercityAutomationService;
+	
+	@Resource(name = "RTMarketAutomationService")
+	private AuthanAutomationService rtMarketAutomationService;
+	
+	@Resource(name = "LinggongAutomationService")
+	private AuthanAutomationService linggongAutomationService;
 
 	public void afterPropertiesSet() throws Exception {
 
@@ -81,7 +87,9 @@ public class StartupJobService implements InitializingBean {
 				jobDataMap.put("suzhouUnivercityAutomationService", suzhouUnivercityAutomationService);
 				jobDataMap.put("jobWillRun", automaticJob);
 				jobDataMap.put("storeDatasourceIdentity", storeDatasourceIdentity);
-
+				jobDataMap.put("rtMarketAutomationService", rtMarketAutomationService);
+				jobDataMap.put("linggongAutomationService", linggongAutomationService);
+				
 				try {
 
 					String startHourAndMin = automaticJob.getStart();
