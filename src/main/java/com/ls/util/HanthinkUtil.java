@@ -17,6 +17,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -31,8 +34,9 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
+import antlr.StringUtils;
+
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.ls.constants.HanthinkProperties;
@@ -42,7 +46,6 @@ import com.ls.vo.JobSchedule;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 import com.ls.vo.StorageDetail;
-import com.ls.vo.StorageGroup;
 
 public class HanthinkUtil {
 
@@ -248,8 +251,9 @@ public class HanthinkUtil {
 		}
 	}
 
-	public static void unzipLingduZipFile(String zipFileName) {
-
+	public static String unzipLingduZipFile(String zipFileName) {
+		
+		String extracedCsvFileName = null;
 		try {
 			ZipFile fileToUnzip = new ZipFile(zipFileName);
 
@@ -260,8 +264,10 @@ public class HanthinkUtil {
 				ZipEntry zipEntry = enumeration.nextElement();
 
 				InputStream bis = fileToUnzip.getInputStream(zipEntry);
-
-				FileOutputStream fos = new FileOutputStream(new File(HanthinkProperties.getString("dataFileBase") + zipEntry.getName()));
+				
+				extracedCsvFileName = HanthinkProperties.getString("dataFileBase") + zipEntry.getName();
+				
+				FileOutputStream fos = new FileOutputStream(new File(extracedCsvFileName));
 				OutputStream bos = new BufferedOutputStream(fos, 1024);
 
 				IOUtils.copy(bis, bos);
@@ -277,25 +283,31 @@ public class HanthinkUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		return extracedCsvFileName;
 	}
 
 	public static void postStorageInformation() {
 
-
-		File dataFile = new File("C:\\Downloads\\12673d23-baf9-485b-8698-5a326f5403de.csv");
+		
+		File dataFile = new File("/Users/jerryjiang/Documents/java-workplace/lingduDownloads/0949fc4e-a3c5-48a9-becd-c34c09b6d854.csv");
 
 		try {
 			List<String> lines = Files.readLines(dataFile, Charset.defaultCharset());
 
-			parseDataFromCsvFile(lines);
+			List<Orders> orders = parseDataFromCsvFile(lines, "20140033");
+			
+			System.out.println(orders.size());
 
 		} catch (IOException e) {
 		}
 
 	}
 
-	public static List<Orders> parseDataFromCsvFile(List<String> lines) {
-
+	public static List<Orders> parseDataFromCsvFile(List<String> lines, String orderDate) {
+		
+		String supplierNumber = "";
+	
 		Map<String, List<StorageDetail>> storeGroups = new HashMap<String, List<StorageDetail>>();
 		for (String singleLine : lines) {
 
@@ -312,6 +324,9 @@ public class HanthinkUtil {
 
 				String element = elements[i];
 				switch (i) {
+					case 0:
+						if (org.apache.commons.lang.StringUtils.isEmpty(supplierNumber)) supplierNumber = element;
+						break;
 					case 1:
 						storageDetail.setProductNumber(element);
 						break;
@@ -348,16 +363,47 @@ public class HanthinkUtil {
 			}
 		}
 
-		System.out.println(storeGroups);
-		System.out.println(storeGroups.size());
-
-		return null;
+		List<Orders> orders = new ArrayList<Orders>();
+		Set<Entry<String, List<StorageDetail>>> entryset = storeGroups.entrySet();
+		for (Entry<String, List<StorageDetail>> entry : entryset) {
+			Orders singleOrder = new Orders();
+			
+			Map<String, String> titleMap = new HashMap<String, String>();
+			String uuid = UUID.randomUUID().toString();
+			titleMap.put("uuid", uuid);
+			titleMap.put("storeNumber", entry.getKey());
+			titleMap.put("orderDate", orderDate);
+			titleMap.put("supplierNumber", supplierNumber);
+			
+			singleOrder.setOrderTitleMap(titleMap);
+			
+			List<Map<String, String>> detailList = new ArrayList<Map<String,String>>();
+			
+			List<StorageDetail> details = entry.getValue();
+			for (StorageDetail singleDetail : details) {
+				Map<String, String> singleDetaiMap = new HashMap<String, String>();
+				singleDetaiMap.put("productNumber", singleDetail.getProductNumber());
+				singleDetaiMap.put("description", singleDetail.getDescription());
+				singleDetaiMap.put("count", singleDetail.getCount());
+				singleDetaiMap.put("moneyAmountWithoutTax", singleDetail.getMoneyAmount());
+				singleDetaiMap.put("dayBalanceInDb", singleDetail.getDayBalanceInDb());
+				
+				detailList.add(singleDetaiMap);
+			}
+			
+			singleOrder.setOrdersItemList(detailList);
+			
+			orders.add(singleOrder);
+			
+		}
+	
+		return orders;
 	}
 
 	public static void main(String[] args) {
 
 		// getScheduleList(07, 20, 17, 19, 60);
-
+		//unzipLingduZipFile("/Users/jerryjiang/Documents/java-workplace/lingduDownloads/20150623162149.zip");
 		postStorageInformation();
 	}
 }

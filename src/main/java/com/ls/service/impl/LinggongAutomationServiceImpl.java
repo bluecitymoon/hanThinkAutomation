@@ -1,13 +1,9 @@
 package com.ls.service.impl;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,7 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -61,6 +59,7 @@ import com.ls.repository.ProductDetailRepository;
 import com.ls.util.HanthinkUtil;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
+import com.ls.vo.StorageDetail;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -170,7 +169,22 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 								e.printStackTrace();
 							}
 							
-							HanthinkUtil.unzipLingduZipFile(fileName + ".zip");	
+							String dataFile = HanthinkUtil.unzipLingduZipFile(fileName + ".zip");	
+							
+							try {
+								List<String> lines = Files.readLines(new File(dataFile), Charset.defaultCharset());
+
+								List<Orders> orders = parseDataFromCsvFile(lines, "20140033");
+								
+								String data = compositeStorageToXml(orders, automaticJob);
+								
+								return postData(orders, automaticJob, data);
+								
+							} catch (IOException e) {
+								e.printStackTrace();
+							} catch (TemplateException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
@@ -185,6 +199,141 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		}
 
 		return null;
+	}
+
+	private ResponseVo postData(List<Orders> orders, AutomaticJob job, String data) {
+		
+		ResponseVo responseVo = ResponseVo.newSuccessMessage("操作成功！");
+		
+		try {
+
+			String url = job.getClientIp() + job.getClientEnd();
+
+			// send ws
+			HttpResponse response = postWebService(url, data);
+
+			HttpEntity httpEntity = response.getEntity();
+			String responseText = null;
+			if (httpEntity != null) {
+				responseText = EntityUtils.toString(httpEntity);
+
+				responseVo = handleResponse(responseText);
+
+				if (responseVo.getType().equals("FAIL")) {
+
+					return responseVo;
+				}
+			}
+
+			System.out.println(responseText);
+
+			if (response.getStatusLine().getStatusCode() >= 200) {
+				saveOrders(orders, job);
+			} else {
+				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
+			}
+		}catch(Exception e) {
+			
+		}
+		
+		return responseVo;
+
+	}
+	
+	private List<Orders> parseDataFromCsvFile(List<String> lines, String orderDate) {
+		
+		String supplierNumber = "";
+	
+		Map<String, List<StorageDetail>> storeGroups = new HashMap<String, List<StorageDetail>>();
+		for (String singleLine : lines) {
+
+			StorageDetail storageDetail = new StorageDetail();
+
+			String deptNumber = "";
+			String[] elements = singleLine.split(",");
+			if (elements.length != 15) {
+				
+				System.out.println("bad data in the csv file");
+				continue;
+			}
+			for (int i = 0; i < elements.length; i++) {
+
+				String element = elements[i];
+				switch (i) {
+					case 0:
+						if (org.apache.commons.lang.StringUtils.isEmpty(supplierNumber)) supplierNumber = element;
+						break;
+					case 1:
+						storageDetail.setProductNumber(element);
+						break;
+					case 2:
+						storageDetail.setDescription(element);
+						break;
+					case 6:
+						deptNumber = element;
+						break;
+					case 13:
+						storageDetail.setDayBalanceInDb(element);
+						break;
+					case 10:
+						storageDetail.setCount(element);
+						break;
+					case 11:
+						storageDetail.setMoneyAmount(element);
+						break;
+
+					default:
+						break;
+				}
+			}
+
+			if (storeGroups.containsKey(deptNumber)) {
+				storeGroups.get(deptNumber).add(storageDetail);
+
+			} else {
+
+				List<StorageDetail> details = new ArrayList<StorageDetail>();
+				details.add(storageDetail);
+				storeGroups.put(deptNumber, details);
+
+			}
+		}
+
+		List<Orders> orders = new ArrayList<Orders>();
+		Set<Entry<String, List<StorageDetail>>> entryset = storeGroups.entrySet();
+		for (Entry<String, List<StorageDetail>> entry : entryset) {
+			Orders singleOrder = new Orders();
+			
+			Map<String, String> titleMap = new HashMap<String, String>();
+			String uuid = UUID.randomUUID().toString();
+			titleMap.put("uuid", uuid);
+			titleMap.put("storeNumber", entry.getKey());
+			titleMap.put("orderDate", orderDate);
+			titleMap.put("supplierNumber", supplierNumber);
+			
+			singleOrder.setOrderTitleMap(titleMap);
+			
+			List<Map<String, String>> detailList = new ArrayList<Map<String,String>>();
+			
+			List<StorageDetail> details = entry.getValue();
+			for (StorageDetail singleDetail : details) {
+				Map<String, String> singleDetaiMap = new HashMap<String, String>();
+				singleDetaiMap.put("productNumber", singleDetail.getProductNumber());
+				singleDetaiMap.put("description", singleDetail.getDescription());
+				singleDetaiMap.put("count", singleDetail.getCount());
+				singleDetaiMap.put("moneyAmountWithoutTax", singleDetail.getMoneyAmount());
+				singleDetaiMap.put("dayBalanceInDb", singleDetail.getDayBalanceInDb());
+				
+				detailList.add(singleDetaiMap);
+			}
+			
+			singleOrder.setOrdersItemList(detailList);
+			
+			orders.add(singleOrder);
+			
+		}
+	
+		return orders;
 	}
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
@@ -461,6 +610,21 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	}
 
+	public String compositeStorageToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
+
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("lg-storage-request-soap.ftl");
+
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		data.put("htUsername", automaticJob.getDbUsernname());
+		data.put("htPassword", automaticJob.getDbPassword());
+		data.put("htDbName", automaticJob.getDbName());
+		data.put("orders", orders);
+
+		return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
+
+	}
+	
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 
 		ResponseVo responseVo = ResponseVo.newResponse();
