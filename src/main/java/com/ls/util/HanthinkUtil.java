@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
@@ -34,6 +35,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.ls.constants.HanthinkProperties;
 import com.ls.entity.Role;
 import com.ls.entity.User;
 import com.ls.vo.JobSchedule;
@@ -54,7 +56,7 @@ public class HanthinkUtil {
 	public static <T> T getJavaObjectFromJsonString(String jsonString, Class<T> classType) {
 
 		@SuppressWarnings("unchecked")
-		T javaObject = (T) JSONObject.toBean(JSONObject.fromObject(jsonString), classType);
+		T javaObject = (T)JSONObject.toBean(JSONObject.fromObject(jsonString), classType);
 
 		return javaObject;
 	}
@@ -169,7 +171,7 @@ public class HanthinkUtil {
 			List<?> nodes = htmlPage.getByXPath(xPath);
 			if (null != nodes && !nodes.isEmpty()) {
 
-				return (T) nodes.get(0);
+				return (T)nodes.get(0);
 			}
 		} catch (Exception e) {
 
@@ -185,7 +187,7 @@ public class HanthinkUtil {
 			List<?> nodes = htmlPage.getByXPath(xPath);
 			if (null != nodes && !nodes.isEmpty()) {
 
-				return (T) nodes.get(index);
+				return (T)nodes.get(index);
 			}
 		} catch (Exception e) {
 
@@ -218,6 +220,7 @@ public class HanthinkUtil {
 	}
 
 	public static void changeImageToBlackAndWhite(String filePath) {
+
 		File file = new File(filePath);
 
 		try {
@@ -245,116 +248,116 @@ public class HanthinkUtil {
 		}
 	}
 
-	public static void unzipLingduZipFile(String zipFileName, String extractedFileName) {
-		
+	public static void unzipLingduZipFile(String zipFileName) {
+
 		try {
 			ZipFile fileToUnzip = new ZipFile(zipFileName);
-			
+
 			Enumeration<? extends ZipEntry> enumeration = fileToUnzip.entries();
-			
-			while(enumeration.hasMoreElements()) {
-				
+
+			while (enumeration.hasMoreElements()) {
+
 				ZipEntry zipEntry = enumeration.nextElement();
-				
+
 				InputStream bis = fileToUnzip.getInputStream(zipEntry);
-				
-				FileOutputStream fos = new FileOutputStream(new File(extractedFileName));
-				OutputStream bos = new BufferedOutputStream(fos, 4096);           
-                
-                int count;
-                byte data[] = new byte[4096];
-                while ((count = bis.read(data, 0, 4096)) != -1)
-                {
-                    bos.write(data, 0, count);
-                }
-                bos.flush();
-                bos.close();
-                bis.close();
-                
+
+				FileOutputStream fos = new FileOutputStream(new File(HanthinkProperties.getString("dataFileBase") + zipEntry.getName()));
+				OutputStream bos = new BufferedOutputStream(fos, 1024);
+
+				IOUtils.copy(bis, bos);
+
+				bos.close();
+				bis.close();
+
 			}
-			
+
 			fileToUnzip.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public static void postStorageInformation() {
-		
-		HanthinkUtil.unzipLingduZipFile("C:\\Users\\Administrator\\Downloads\\stream.zip", "C:\\Users\\Administrator\\Downloads\\stream.csv");
-		
-		File dataFile = new File("C:\\Users\\Administrator\\Downloads\\stream.csv");
-		
+
+
+		File dataFile = new File("C:\\Downloads\\12673d23-baf9-485b-8698-5a326f5403de.csv");
+
 		try {
 			List<String> lines = Files.readLines(dataFile, Charset.defaultCharset());
-			
+
 			parseDataFromCsvFile(lines);
-			
+
 		} catch (IOException e) {
 		}
-		
+
 	}
-	
+
 	public static List<Orders> parseDataFromCsvFile(List<String> lines) {
-		
-		Map<String, List<StorageDetail>> storeGroups = new HashMap<String,List<StorageDetail>>();
+
+		Map<String, List<StorageDetail>> storeGroups = new HashMap<String, List<StorageDetail>>();
 		for (String singleLine : lines) {
-			
+
 			StorageDetail storageDetail = new StorageDetail();
-			
+
 			String deptNumber = "";
 			String[] elements = singleLine.split(",");
-			for (int i = 0; i < elements.length; i++) {
+			if (elements.length != 15) {
 				
+				System.out.println("bad data in the csv file");
+				continue;
+			}
+			for (int i = 0; i < elements.length; i++) {
+
 				String element = elements[i];
 				switch (i) {
-				case 1:
-					storageDetail.setProductNumber(element);
-					break;
-				case 2:
-					storageDetail.setDescription(element);
-					break;
-				case 6:
-					deptNumber = element;
-					break;
-				case 13:
-					storageDetail.setDayBalanceInDb(element);
-					break;
-				case 10:
-					storageDetail.setCount(element);
-					break;
-				case 11:
-					storageDetail.setMoneyAmount(element);
-					break;
-					
-				default:
-					break;
+					case 1:
+						storageDetail.setProductNumber(element);
+						break;
+					case 2:
+						storageDetail.setDescription(element);
+						break;
+					case 6:
+						deptNumber = element;
+						break;
+					case 13:
+						storageDetail.setDayBalanceInDb(element);
+						break;
+					case 10:
+						storageDetail.setCount(element);
+						break;
+					case 11:
+						storageDetail.setMoneyAmount(element);
+						break;
+
+					default:
+						break;
 				}
 			}
-			
-			if(storeGroups.containsKey(deptNumber)) {
+
+			if (storeGroups.containsKey(deptNumber)) {
 				storeGroups.get(deptNumber).add(storageDetail);
-				
+
 			} else {
-				
+
 				List<StorageDetail> details = new ArrayList<StorageDetail>();
 				details.add(storageDetail);
 				storeGroups.put(deptNumber, details);
-				
+
 			}
 		}
-		
+
 		System.out.println(storeGroups);
 		System.out.println(storeGroups.size());
-		
+
 		return null;
 	}
-	
+
 	public static void main(String[] args) {
 
-		//getScheduleList(07, 20, 17, 19, 60);
-		
+		// getScheduleList(07, 20, 17, 19, 60);
+
 		postStorageInformation();
 	}
 }

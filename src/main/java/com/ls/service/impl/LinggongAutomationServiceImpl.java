@@ -118,15 +118,16 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		final List<Attachment> attachments = new ArrayList<Attachment>();
 		webClient.setAttachmentHandler(new CollectingAttachmentHandler(attachments));
-		String queryPageUrl = "http://scm.sgcs.com.cn/manager/sambillSelect/sambillSelect_findXcDayInfo.action?__multiselect_xcMonthBean.qryState=&xcMonthBean.qryBeginTime=20150619&xcMonthBean.qryEndTime=20150621&xcMonthBean.qryState=0009";
+		String queryPageUrl = "http://scm.sgcs.com.cn/manager/sambillSelect/sambillSelect_findXcDayInfo.action?__multiselect_xcMonthBean.qryState=&xcMonthBean.qryBeginTime=" + startDate.replace("-", "") + "&xcMonthBean.qryEndTime=" + endDate.replace("-", "") + "&xcMonthBean.qryState=0009";
+		
+		System.out.println(queryPageUrl);
+		
 		try {
 			HtmlPage listPage = webClient.getPage(queryPageUrl);
-			
-			List<HtmlAnchor> links = (List<HtmlAnchor>) listPage.getByXPath("//a");
+
+			List<HtmlAnchor> links = (List<HtmlAnchor>)listPage.getByXPath("//a");
 			for (HtmlAnchor htmlAnchor : links) {
 				if (htmlAnchor.getHrefAttribute().contains("downFile")) {
-					System.out.println(htmlAnchor.asText());
-
 					Page page = htmlAnchor.click();
 
 					JavaScriptJobManager javaScriptJobManager = listPage.getEnclosingWindow().getJobManager();
@@ -135,41 +136,43 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 						}
-
-						System.out.println("waiting in download....");
 					}
 
-					Attachment attachment = attachments.get(0);
-
-					if (attachment != null) {
-						Page conentPage = attachment.getPage();
-
-						try {
-							InputStream is = conentPage.getWebResponse().getContentAsStream();
-							
-							File file = new File( HanthinkProperties.getString("dataFileBase") + System.currentTimeMillis() + "-downloadData.csv");
-							if (!file.exists()) {
-								file.createNewFile();
-							}
-							FileOutputStream fileout = new FileOutputStream(file);
-
-							byte[] buffer = new byte[2048];
-							int ch = 0;
-							while ((ch = is.read(buffer)) != -1) {
-								fileout.write(buffer, 0, ch);
-							}
-							is.close();
-							fileout.flush();
-							fileout.close();
-
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
-					} else {
+					if (attachments.isEmpty()) {
 						System.out.println("No attachement found.");
-					}
+					} else {
 
+						for (Attachment attachment : attachments) {
+							System.err.println("Find Attachement " + attachment.getSuggestedFilename());
+							
+							Page conentPage = attachment.getPage();
+							String fileName = HanthinkProperties.getString("dataFileBase") + System.currentTimeMillis() + "-downloadData";
+							
+							try {
+								InputStream is = conentPage.getWebResponse().getContentAsStream();
+								
+								File file = new File(fileName + ".zip");
+								if (!file.exists()) {
+									file.createNewFile();
+								}
+								FileOutputStream fileout = new FileOutputStream(file);
+
+								byte[] buffer = new byte[2048];
+								int ch = 0;
+								while ((ch = is.read(buffer)) != -1) {
+									fileout.write(buffer, 0, ch);
+								}
+								is.close();
+								fileout.flush();
+								fileout.close();
+
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+							HanthinkUtil.unzipLingduZipFile(fileName + ".zip");	
+						}
+					}
 				}
 			}
 
@@ -203,8 +206,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		tryToLogin(webClient, authanJob);
 
-		String firstPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
-				+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=1&page.offset=10";
+		String firstPageUrl =
+			"http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "") + "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") +
+				"&page.currentIndex=1&page.offset=10";
 
 		HtmlPage firstHtmlPage = webClient.getPage(firstPageUrl);
 
@@ -217,8 +221,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			if (totalNumber > 1) {
 				for (int i = 2; i <= totalNumber; i++) {
-					String nextPage = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
-							+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=" + i + "&page.offset=10";
+					String nextPage =
+						"http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "") + "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") +
+							"&page.currentIndex=" + i + "&page.offset=10";
 					HtmlPage nextHtmlPage = webClient.getPage(nextPage);
 
 					retrieveData(nextHtmlPage, ordersList, webClient, authanJob.getName(), authanJob.getId());
@@ -252,28 +257,28 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				HtmlTableCell singleCell = tds.get(j);
 				String content = StringUtils.trimToEmpty(singleCell.getTextContent());
 				switch (j) {
-				case 2:
-					orderNumber = content;
-					singleOrder.getOrderTitleMap().put("orderNumber", content);
-					break;
+					case 2:
+						orderNumber = content;
+						singleOrder.getOrderTitleMap().put("orderNumber", content);
+						break;
 
-				case 4:
-					orderCreatorDeptNumber = content;
-					break;
-				case 6:
-					singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
-					break;
-				case 8:
-					address = content;
+					case 4:
+						orderCreatorDeptNumber = content;
+						break;
+					case 6:
+						singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
+						break;
+					case 8:
+						address = content;
 
-					singleOrder.getOrderTitleMap().put("address", content);
-					break;
+						singleOrder.getOrderTitleMap().put("address", content);
+						break;
 
-				case 10:
-					singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
-					break;
-				default:
-					break;
+					case 10:
+						singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -323,36 +328,36 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 					HtmlTableCell singleCell = tds.get(j);
 					String content = StringUtils.trimToEmpty(singleCell.getTextContent());
 					switch (j) {
-					case 2:
-						singleDetail.put("description", content);
-						break;
-					case 3:
-						singleDetail.put("productNumber", content);
-						break;
-					case 4:
-						singleDetail.put("barCode", content);
-						break;
-					case 6:
+						case 2:
+							singleDetail.put("description", content);
+							break;
+						case 3:
+							singleDetail.put("productNumber", content);
+							break;
+						case 4:
+							singleDetail.put("barCode", content);
+							break;
+						case 6:
 
-						if (StringUtils.isNotBlank(content)) {
-							singleDetail.put("taxRate", "0." + content.replace("%", ""));
-						} else {
-							singleDetail.put("taxRate", "");
-						}
+							if (StringUtils.isNotBlank(content)) {
+								singleDetail.put("taxRate", "0." + content.replace("%", ""));
+							} else {
+								singleDetail.put("taxRate", "");
+							}
 
-						break;
-					case 7:
-						singleDetail.put("count", content);
-						break;
-					case 8:
-						singleDetail.put("priceWithoutTax", content);
-						break;
-					case 9:
-						singleDetail.put("moneyAmountWithoutTax", content);
+							break;
+						case 7:
+							singleDetail.put("count", content);
+							break;
+						case 8:
+							singleDetail.put("priceWithoutTax", content);
+							break;
+						case 9:
+							singleDetail.put("moneyAmountWithoutTax", content);
 
-						break;
-					default:
-						break;
+							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -417,7 +422,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			checkstrHtmlPasswordInput.setValueAttribute(code);
 
 			HtmlButtonInput loginButton = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"denglu\"]");
-			HtmlPage loginResultPage = (HtmlPage) loginButton.click();
+			HtmlPage loginResultPage = (HtmlPage)loginButton.click();
 			JavaScriptJobManager javaScriptJobManager = loginResultPage.getEnclosingWindow().getJobManager();
 			while (javaScriptJobManager.getJobCount() > 0) {
 				Thread.sleep(1000);

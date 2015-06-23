@@ -35,8 +35,8 @@ public class TestLingGong {
 	@Test
 	public void testGrabStorageInformation() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(24);
-		rtmarketAutomationService.grabStorageInformation("2015-06-01", "2015-06-20", automaticJob);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(35);
+		rtmarketAutomationService.grabStorageInformation("2015-06-19", "2015-06-20", automaticJob);
 	}
 	
 	@Test

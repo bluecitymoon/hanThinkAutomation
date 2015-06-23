@@ -43,6 +43,11 @@ public class StorageDetail {
 	public void setDayBalanceInDb(String dayBalanceInDb) {
 		this.dayBalanceInDb = dayBalanceInDb;
 	}
+	@Override
+	public String toString() {
+
+		return "StorageDetail [storageGroupId=" + storageGroupId + ", productNumber=" + productNumber + ", description=" + description + ", count=" + count + ", moneyAmount=" + moneyAmount + ", dayBalanceInDb=" + dayBalanceInDb + "]";
+	}
 	
 	
 }
