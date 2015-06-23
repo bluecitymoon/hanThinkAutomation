@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
 import com.ls.constants.HanthinkProperties;
 import com.ls.entity.AutomaticJob;
 import com.ls.exception.ConfigurationException;
@@ -73,6 +75,17 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 		return UUID.randomUUID().toString();
 	}
 
+	public void waitBackgroundJavascript(Page page) {
+		
+		JavaScriptJobManager javaScriptJobManager = page.getEnclosingWindow().getJobManager();
+		while (javaScriptJobManager.getJobCount() > 0) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
 	public void fillUniqueIdentityForOrders(Orders orders) {
 
 		Map<String, String> titlesMap = orders.getOrderTitleMap();

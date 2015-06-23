@@ -1,9 +1,7 @@
 package com.ls.service.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -13,9 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -43,6 +41,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
@@ -87,6 +86,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return existedOrder == null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
 
@@ -116,76 +116,77 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		}
 
 		final List<Attachment> attachments = new ArrayList<Attachment>();
+		List<Orders> orders = new ArrayList<Orders>();
+		
 		webClient.setAttachmentHandler(new CollectingAttachmentHandler(attachments));
-		String queryPageUrl = "http://scm.sgcs.com.cn/manager/sambillSelect/sambillSelect_findXcDayInfo.action?__multiselect_xcMonthBean.qryState=&xcMonthBean.qryBeginTime=" + startDate.replace("-", "") + "&xcMonthBean.qryEndTime=" + endDate.replace("-", "") + "&xcMonthBean.qryState=0009";
-		
-		System.out.println(queryPageUrl);
-		
+		String queryPageUrl = "http://scm.sgcs.com.cn/manager/sambillSelect/sambillSelect_findXcDayInfo.action?__multiselect_xcMonthBean.qryState=&xcMonthBean.qryBeginTime=" + startDate.replace("-", "") + "&xcMonthBean.qryEndTime=" + endDate.replace("-", "")
+				+ "&xcMonthBean.qryState=0009";
 		try {
+			
 			HtmlPage listPage = webClient.getPage(queryPageUrl);
 
-			List<HtmlAnchor> links = (List<HtmlAnchor>)listPage.getByXPath("//a");
-			for (HtmlAnchor htmlAnchor : links) {
-				if (htmlAnchor.getHrefAttribute().contains("downFile")) {
-					Page page = htmlAnchor.click();
+			HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(listPage, "//*[@id=\"tablist\"]");
+			List<HtmlTableRow> rows = dataTable.getRows();
+			if (rows.size() < 2) {
+				return ResponseVo.newSuccessMessage("没有发现报告数据。");
+			}
+			
+			for (int i = 1; i < rows.size(); i++) {
+				
+				HtmlTableRow row = rows.get(i);
+				List<HtmlTableCell> cells = row.getCells();
+				
+				String orderDate = "";
+				for (int j = 0; j < cells.size(); j++) {
+					HtmlTableCell cell = cells.get(i);
+					switch (j) {
+					case 2:
+						orderDate = cell.asText().trim();
+						break;
 
-					JavaScriptJobManager javaScriptJobManager = listPage.getEnclosingWindow().getJobManager();
-					while (javaScriptJobManager.getJobCount() > 0) {
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-						}
-					}
+					case 5:
+						HtmlAnchor htmlAnchor = (HtmlAnchor) cell.getFirstChild();
 
-					if (attachments.isEmpty()) {
-						System.out.println("No attachement found.");
-					} else {
+						// click it!!
+						htmlAnchor.click();
 
-						for (Attachment attachment : attachments) {
-							System.err.println("Find Attachement " + attachment.getSuggestedFilename());
-							
+						waitBackgroundJavascript(listPage);
+
+						if (attachments.isEmpty()) {
+							System.out.println("No attachement found.");
+						} else {
+
+							Attachment attachment = attachments.get(0);
+
 							Page conentPage = attachment.getPage();
-							String fileName = HanthinkProperties.getString("dataFileBase") + System.currentTimeMillis() + "-downloadData";
-							
-							try {
-								InputStream is = conentPage.getWebResponse().getContentAsStream();
-								
-								File file = new File(fileName + ".zip");
-								if (!file.exists()) {
-									file.createNewFile();
-								}
-								FileOutputStream fileout = new FileOutputStream(file);
+							String fileName = HanthinkProperties.getString("dataFileBase") + attachment.getSuggestedFilename();
 
-								byte[] buffer = new byte[2048];
-								int ch = 0;
-								while ((ch = is.read(buffer)) != -1) {
-									fileout.write(buffer, 0, ch);
-								}
-								is.close();
-								fileout.flush();
-								fileout.close();
+							
+							HanthinkUtil.writeAttachementToFile(conentPage, fileName);
+							
+							String dataFile = HanthinkUtil.unzipLingduZipFile(fileName);
 
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							
-							String dataFile = HanthinkUtil.unzipLingduZipFile(fileName + ".zip");	
-							
 							try {
 								List<String> lines = Files.readLines(new File(dataFile), Charset.defaultCharset());
 
-								List<Orders> orders = parseDataFromCsvFile(lines, "20140033");
+								List<Orders> orderResult = parseDataFromCsvFile(lines, orderDate);
 								
-								String data = compositeStorageToXml(orders, automaticJob);
-								
-								return postData(orders, automaticJob, data);
-								
+								String data = compositeStorageToXml(orderResult, automaticJob);
+
+								ResponseVo responseVo = postData(orders, automaticJob, data);
+
 							} catch (IOException e) {
 								e.printStackTrace();
 							} catch (TemplateException e) {
 								e.printStackTrace();
 							}
+							
+							attachments.clear();
 						}
+					
+						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -198,13 +199,13 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			return ResponseVo.newFailMessage("获取销存页面失败，IOException : " + e.getMessage());
 		}
 
-		return null;
+		return ResponseVo.newFailMessage("操作失败");
 	}
 
 	private ResponseVo postData(List<Orders> orders, AutomaticJob job, String data) {
-		
+
 		ResponseVo responseVo = ResponseVo.newSuccessMessage("操作成功！");
-		
+
 		try {
 
 			String url = job.getClientIp() + job.getClientEnd();
@@ -232,18 +233,18 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			} else {
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}
-		}catch(Exception e) {
-			
+		} catch (Exception e) {
+
 		}
-		
+
 		return responseVo;
 
 	}
-	
+
 	private List<Orders> parseDataFromCsvFile(List<String> lines, String orderDate) {
-		
+
 		String supplierNumber = "";
-	
+
 		Map<String, List<StorageDetail>> storeGroups = new HashMap<String, List<StorageDetail>>();
 		for (String singleLine : lines) {
 
@@ -252,7 +253,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			String deptNumber = "";
 			String[] elements = singleLine.split(",");
 			if (elements.length != 15) {
-				
+
 				System.out.println("bad data in the csv file");
 				continue;
 			}
@@ -260,30 +261,31 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 				String element = elements[i];
 				switch (i) {
-					case 0:
-						if (org.apache.commons.lang.StringUtils.isEmpty(supplierNumber)) supplierNumber = element;
-						break;
-					case 1:
-						storageDetail.setProductNumber(element);
-						break;
-					case 2:
-						storageDetail.setDescription(element);
-						break;
-					case 6:
-						deptNumber = element;
-						break;
-					case 13:
-						storageDetail.setDayBalanceInDb(element);
-						break;
-					case 10:
-						storageDetail.setCount(element);
-						break;
-					case 11:
-						storageDetail.setMoneyAmount(element);
-						break;
+				case 0:
+					if (org.apache.commons.lang.StringUtils.isEmpty(supplierNumber))
+						supplierNumber = element;
+					break;
+				case 1:
+					storageDetail.setProductNumber(element);
+					break;
+				case 2:
+					storageDetail.setDescription(element);
+					break;
+				case 6:
+					deptNumber = element;
+					break;
+				case 13:
+					storageDetail.setDayBalanceInDb(element);
+					break;
+				case 10:
+					storageDetail.setCount(element);
+					break;
+				case 11:
+					storageDetail.setMoneyAmount(element);
+					break;
 
-					default:
-						break;
+				default:
+					break;
 				}
 			}
 
@@ -303,18 +305,18 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		Set<Entry<String, List<StorageDetail>>> entryset = storeGroups.entrySet();
 		for (Entry<String, List<StorageDetail>> entry : entryset) {
 			Orders singleOrder = new Orders();
-			
+
 			Map<String, String> titleMap = new HashMap<String, String>();
 			String uuid = UUID.randomUUID().toString();
 			titleMap.put("uuid", uuid);
 			titleMap.put("storeNumber", entry.getKey());
 			titleMap.put("orderDate", orderDate);
 			titleMap.put("supplierNumber", supplierNumber);
-			
+
 			singleOrder.setOrderTitleMap(titleMap);
-			
-			List<Map<String, String>> detailList = new ArrayList<Map<String,String>>();
-			
+
+			List<Map<String, String>> detailList = new ArrayList<Map<String, String>>();
+
 			List<StorageDetail> details = entry.getValue();
 			for (StorageDetail singleDetail : details) {
 				Map<String, String> singleDetaiMap = new HashMap<String, String>();
@@ -323,16 +325,16 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				singleDetaiMap.put("count", singleDetail.getCount());
 				singleDetaiMap.put("moneyAmountWithoutTax", singleDetail.getMoneyAmount());
 				singleDetaiMap.put("dayBalanceInDb", singleDetail.getDayBalanceInDb());
-				
+
 				detailList.add(singleDetaiMap);
 			}
-			
+
 			singleOrder.setOrdersItemList(detailList);
-			
+
 			orders.add(singleOrder);
-			
+
 		}
-	
+
 		return orders;
 	}
 
@@ -355,9 +357,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		tryToLogin(webClient, authanJob);
 
-		String firstPageUrl =
-			"http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "") + "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") +
-				"&page.currentIndex=1&page.offset=10";
+		String firstPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
+				+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=1&page.offset=10";
 
 		HtmlPage firstHtmlPage = webClient.getPage(firstPageUrl);
 
@@ -370,9 +371,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			if (totalNumber > 1) {
 				for (int i = 2; i <= totalNumber; i++) {
-					String nextPage =
-						"http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "") + "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") +
-							"&page.currentIndex=" + i + "&page.offset=10";
+					String nextPage = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
+							+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=" + i + "&page.offset=10";
 					HtmlPage nextHtmlPage = webClient.getPage(nextPage);
 
 					retrieveData(nextHtmlPage, ordersList, webClient, authanJob.getName(), authanJob.getId());
@@ -406,28 +406,28 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				HtmlTableCell singleCell = tds.get(j);
 				String content = StringUtils.trimToEmpty(singleCell.getTextContent());
 				switch (j) {
-					case 2:
-						orderNumber = content;
-						singleOrder.getOrderTitleMap().put("orderNumber", content);
-						break;
+				case 2:
+					orderNumber = content;
+					singleOrder.getOrderTitleMap().put("orderNumber", content);
+					break;
 
-					case 4:
-						orderCreatorDeptNumber = content;
-						break;
-					case 6:
-						singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
-						break;
-					case 8:
-						address = content;
+				case 4:
+					orderCreatorDeptNumber = content;
+					break;
+				case 6:
+					singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
+					break;
+				case 8:
+					address = content;
 
-						singleOrder.getOrderTitleMap().put("address", content);
-						break;
+					singleOrder.getOrderTitleMap().put("address", content);
+					break;
 
-					case 10:
-						singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
-						break;
-					default:
-						break;
+				case 10:
+					singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -477,36 +477,36 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 					HtmlTableCell singleCell = tds.get(j);
 					String content = StringUtils.trimToEmpty(singleCell.getTextContent());
 					switch (j) {
-						case 2:
-							singleDetail.put("description", content);
-							break;
-						case 3:
-							singleDetail.put("productNumber", content);
-							break;
-						case 4:
-							singleDetail.put("barCode", content);
-							break;
-						case 6:
+					case 2:
+						singleDetail.put("description", content);
+						break;
+					case 3:
+						singleDetail.put("productNumber", content);
+						break;
+					case 4:
+						singleDetail.put("barCode", content);
+						break;
+					case 6:
 
-							if (StringUtils.isNotBlank(content)) {
-								singleDetail.put("taxRate", "0." + content.replace("%", ""));
-							} else {
-								singleDetail.put("taxRate", "");
-							}
+						if (StringUtils.isNotBlank(content)) {
+							singleDetail.put("taxRate", "0." + content.replace("%", ""));
+						} else {
+							singleDetail.put("taxRate", "");
+						}
 
-							break;
-						case 7:
-							singleDetail.put("count", content);
-							break;
-						case 8:
-							singleDetail.put("priceWithoutTax", content);
-							break;
-						case 9:
-							singleDetail.put("moneyAmountWithoutTax", content);
+						break;
+					case 7:
+						singleDetail.put("count", content);
+						break;
+					case 8:
+						singleDetail.put("priceWithoutTax", content);
+						break;
+					case 9:
+						singleDetail.put("moneyAmountWithoutTax", content);
 
-							break;
-						default:
-							break;
+						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -571,7 +571,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			checkstrHtmlPasswordInput.setValueAttribute(code);
 
 			HtmlButtonInput loginButton = HanthinkUtil.getFirstElementByXPath(loginPage, "//*[@id=\"denglu\"]");
-			HtmlPage loginResultPage = (HtmlPage)loginButton.click();
+			HtmlPage loginResultPage = (HtmlPage) loginButton.click();
 			JavaScriptJobManager javaScriptJobManager = loginResultPage.getEnclosingWindow().getJobManager();
 			while (javaScriptJobManager.getJobCount() > 0) {
 				Thread.sleep(1000);
@@ -624,7 +624,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
 
 	}
-	
+
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 
 		ResponseVo responseVo = ResponseVo.newResponse();

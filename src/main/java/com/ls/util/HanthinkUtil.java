@@ -34,8 +34,7 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
-import antlr.StringUtils;
-
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -287,6 +286,31 @@ public class HanthinkUtil {
 		return extracedCsvFileName;
 	}
 
+	public static void writeAttachementToFile(Page conentPage, String fileName) {
+		
+		try {
+			InputStream is = conentPage.getWebResponse().getContentAsStream();
+
+			File file = new File(fileName);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileOutputStream fileout = new FileOutputStream(file);
+
+			byte[] buffer = new byte[2048];
+			int ch = 0;
+			while ((ch = is.read(buffer)) != -1) {
+				fileout.write(buffer, 0, ch);
+			}
+			is.close();
+			fileout.flush();
+			fileout.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void postStorageInformation() {
 
 		
