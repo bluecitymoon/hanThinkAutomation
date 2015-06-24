@@ -13,23 +13,14 @@
 	<#assign titleMap = order.orderTitleMap/>
 	<xsdingdanzhubiao>
 		<id>${titleMap['uuid']}</id>
-		<changbian>${titleMap['supplierNumber']}</changbian>
-		<#if titleMap['orderNumber']??>
-		<kehudanhao>${titleMap['orderNumber']}</kehudanhao>
-		<#else>
-		<kehudanhao></kehudanhao>
-		</#if>
 		<#if titleMap['orderDate']??>
 		<riqi>${titleMap['orderDate']}</riqi>
 		<#else>
 		<riqi></riqi>
 		</#if>
-		<#if titleMap['estimateTakeOverDate']??>
-		<daohuoriqi>${titleMap['estimateTakeOverDate']}</daohuoriqi>
-		<#else>
-		<daohuoriqi></daohuoriqi>
-		</#if>
-		<dizhi>${titleMap['address']}</dizhi>
+		<changbian>${titleMap['supplierNumber']}</changbian>
+		<mendian>${titleMap['storeNumber']}</mendian>
+		<bianhao></bianhao>
 	</xsdingdanzhubiao>
 	<#if order.ordersItemList??>
 	<#assign productList = order.ordersItemList/>
@@ -37,20 +28,11 @@
 	<xsdingdanzibiao>
 		<zhubiaoid>${product['uuid']}</zhubiaoid>
 		<huohao>${product['productNumber']}</huohao>
-		<tiaoxingma>${product['barCode']}</tiaoxingma>
+		<tiaoxingma></tiaoxingma>
 		<shangpinmiaoshu>${product['description']}</shangpinmiaoshu>
-		<shuliang>${product['count']}</shuliang>
-		<huansuanlv1></huansuanlv1>
-		<xiangshu></xiangshu>
-		<hanshuidanjia></hanshuidanjia>
-		<hanshuijine></hanshuijine>
-		<buhanshuijine>${product['moneyAmountWithoutTax']}</buhanshuijine>
-		<buhanshuidanjia>${product['priceWithoutTax']}</buhanshuidanjia>
-		<shuilv>${product['taxRate']}</shuilv>
-		<zengpinbianma></zengpinbianma>
-		<zengpinmiaoshu></zengpinmiaoshu>
-		<zengpinshuliang></zengpinshuliang>
-		<zibiaomendian></zibiaomendian>
+		<xiaoshoushuliang>${product['count']}</xiaoshoushuliang>
+		<xiaoshoujine>${product['moneyAmountWithoutTax']}</xiaoshoujine>
+		<dangrikucun>${product['dayBalanceInDb']}</dangrikucun>
 	</xsdingdanzibiao>
 	</#list>
 	</#if>

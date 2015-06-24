@@ -163,6 +163,27 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 
 	}
 
+	public ResponseVo handleStorageSoapResponse(String soapMessage) {
+
+		if (StringUtils.isEmpty(soapMessage) || !soapMessage.contains("zhongduanxiaoliangdaorudanjuResult")) {
+
+			return ResponseVo.newFailMessage("无法处理的SOAP返回消息 --> " + soapMessage);
+
+		}
+		String[] splitResult = soapMessage.split("zhongduanxiaoliangdaorudanjuResult");
+
+		if (splitResult.length == 2) {
+
+			return ResponseVo.newSuccessMessage("采集成功");
+		} else if (splitResult.length == 3) {
+			return ResponseVo.newFailMessage("SOAP处理失败，" + splitResult[1].replace("<", "").replace(">", ""));
+		} else {
+
+			return ResponseVo.newSuccessMessage(soapMessage);
+		}
+
+	}
+	
 	public void cleanUpValidationCodeFiles() {
 
 		try {

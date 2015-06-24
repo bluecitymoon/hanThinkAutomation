@@ -28,7 +28,7 @@ public class TestLingGong {
 
 		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
 		AutomaticJob automaticJob = automaticJobRepository.findOne(24);
-		rtmarketAutomationService.grabOrders("2015-06-18", "2015-06-20", automaticJob);
+		rtmarketAutomationService.grabOrders("2015-06-20", "2015-06-20", automaticJob);
 	}
 
 	
@@ -36,7 +36,7 @@ public class TestLingGong {
 	public void testGrabStorageInformation() throws Exception {
 
 		AutomaticJob automaticJob = automaticJobRepository.findOne(35);
-		rtmarketAutomationService.grabStorageInformation("2015-06-19", "2015-06-20", automaticJob);
+		rtmarketAutomationService.grabStorageInformation("2015-06-20", "2015-06-20", automaticJob);
 	}
 	
 	@Test

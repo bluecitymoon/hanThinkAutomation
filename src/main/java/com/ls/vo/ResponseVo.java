@@ -77,6 +77,11 @@ public class ResponseVo {
 		return vo;
 	}
 
+	public boolean success() {
+		
+		return (this.type == "SUCCESS");
+	}
+	
 	@Override
 	public String toString() {
 
