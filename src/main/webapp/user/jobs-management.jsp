@@ -170,7 +170,7 @@
 									</select>
 									</div>
 									<div class="three columns">
-										<label>数据类型(默认订单)</label> 
+										<label>数据源类型(默认订单)</label> 
 										<select data-bind="options: $root.allComponentTypes,
                       											optionsText: 'description',
                        									    	value: componentType,
