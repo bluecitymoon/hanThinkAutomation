@@ -44,6 +44,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.constants.HanthinkProperties;
@@ -139,7 +140,11 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 					HtmlTableCell cell = cells.get(j);
 					switch (j) {
 					case 2:
+						
 						orderDate = cell.asText().trim();
+						StringBuffer sb = new StringBuffer(orderDate);
+						orderDate = sb.insert(4, '-').insert(7, '-').toString();
+						
 						break;
 
 					case 5:
@@ -169,17 +174,23 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 								lines.remove(0);
 								
 								List<Orders> orderResult = parseDataFromCsvFile(lines, orderDate);
-								
-								String data = compositeStorageToXml(orderResult, automaticJob);
-								
-								Files.write(data.getBytes(), new File("C:\\Downloads\\"+ System.currentTimeMillis() + ".xml"));
-								
-								ResponseVo responseVo = postData(orders, automaticJob, data);
-								
-								if (responseVo.success()) {
-									successCount ++;
-								} else {
-									failCount ++;
+								for (int k = 0; k < orderResult.size(); k = k + 20) {
+									
+									int endIndex = k + 20 < orderResult.size()? k + 20: orderResult.size();
+									
+									List<Orders> subList = orderResult.subList(k, endIndex);
+									
+									String data = compositeStorageToXml(subList, automaticJob);
+									
+									Files.write(data.getBytes(), new File("C:\\Downloads\\"+ System.currentTimeMillis() + ".xml"));
+									
+									ResponseVo responseVo = postData(orders, automaticJob, data);
+									
+									if (responseVo.success()) {
+										successCount ++;
+									} else {
+										failCount ++;
+									}
 								}
 
 							} catch (IOException e) {
@@ -212,7 +223,6 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 	private ResponseVo postData(List<Orders> orders, AutomaticJob job, String data) {
 
 		ResponseVo responseVo = ResponseVo.newSuccessMessage("操作成功！");
-
 		try {
 
 			String url = job.getClientIp() + job.getClientEnd();
@@ -236,8 +246,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				}
 			}
 
-			if (response.getStatusLine().getStatusCode() >= 200) {
-				saveOrders(orders, job);
+			if (response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300) {
+				saveOrdersForStorage(orders, job);
 			} else {
 				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
 			}
@@ -676,7 +686,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 				System.out.println(responseText);
 
-				if (response.getStatusLine().getStatusCode() >= 200) {
+				if (response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300) {
 					saveOrders(orders, job);
 				} else {
 					return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
@@ -789,6 +799,75 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 				productDetail.setTaxRate(taxRate);
 
+				try {
+					productDetail = productDetailRepository.saveAndFlush(productDetail);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				if (null == productDetail) {
+					continue;
+				}
+			}
+
+			savedOrderList.add(savedOrder);
+
+		}
+		return savedOrderList;
+	}
+	
+	public List<Order> saveOrdersForStorage(List<Orders> orders, AutomaticJob job) {
+
+		if (null == orders || orders.size() == 0) {
+			return null;
+		}
+
+		List<Order> savedOrderList = new ArrayList<Order>();
+
+		for (Orders singleOrder : orders) {
+
+			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
+			String supplierNumber = titleMap.get("supplierNumber");
+
+			String storeNumber = titleMap.get("storeNumber");
+			String orderDate = titleMap.get("orderDate");
+
+			Order order = new Order();
+			order.setSupplierNumber(supplierNumber);
+			order.setOrderDate(orderDate);
+			order.setCreateDate(HanthinkUtil.getNow());
+			order.setJobId(job.getId());
+			order.setJobName(job.getName());
+			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
+			order.setStoreNumber(storeNumber);
+
+			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
+			Order savedOrder = null;
+			try {
+				savedOrder = orderRepository.saveAndFlush(order);
+			} catch (Exception e) {
+			}
+
+			if (null == savedOrder) {
+				continue;
+			}
+
+			for (Map<String, String> singleDetailMap : detailMap) {
+
+				String description = toEmpty(singleDetailMap.get("description"));
+				String count = toEmpty(singleDetailMap.get("count"));
+				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
+				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
+				String storageBalance = toEmpty(singleDetailMap.get("dayBalanceInDb"));
+
+				ProductDetail productDetail = new ProductDetail();
+				productDetail.setOrderId(savedOrder.getId());
+				productDetail.setDescription(description);
+				productDetail.setCount(count);
+				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
+				productDetail.setProductNumber(productNumber);
+				productDetail.setDayBalanceInDb(storageBalance);
+				
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);
 				} catch (Exception e) {

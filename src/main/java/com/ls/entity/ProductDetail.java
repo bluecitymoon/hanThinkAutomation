@@ -37,7 +37,16 @@ public class ProductDetail implements Serializable {
 	protected String giftCount;
 	protected String giftCode;
 	protected String storeNumber;
+	protected String dayBalanceInDb;
 	
+	public String getDayBalanceInDb() {
+		return dayBalanceInDb;
+	}
+
+	public void setDayBalanceInDb(String dayBalanceInDb) {
+		this.dayBalanceInDb = dayBalanceInDb;
+	}
+
 	public String getMoneyAmountWithTax() {
 	
 		return moneyAmountWithTax;

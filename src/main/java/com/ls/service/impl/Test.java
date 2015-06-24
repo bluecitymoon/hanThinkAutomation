@@ -26,34 +26,37 @@ public class Test {
 
 		//testGrabLianhuaDetail();
 		
-		String fileName = "D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\demo.txt";
+//		String fileName = "D:\\data\\Jerry\\hanThinkAutomation\\src\\main\\java\\com\\ls\\service\\impl\\demo.txt";
+//		
+//		List<String> lines = Files.readLines(new File(fileName), Charset.defaultCharset());
+//		
+//		List<List<String>> groupLines = new ArrayList<List<String>>();
+//		
+//		List<String> singleLines = new ArrayList<String>();
+//		int count = 0;
+//		for (String string : lines) {
+//			
+//			if (StringUtils.isNotBlank(string) && string.trim().equals("TESCO 乐  购  商  品  订  单")) {
+//				
+//				singleLines = new ArrayList<String>();
+//				groupLines.add(singleLines);
+//				count ++;
+//			}
+//			
+//			singleLines.add(string);
+//		}
+//		
+//		for (List<String> group : groupLines) {
+//			
+//			System.out.println("===============================================");
+//			for (String string : group) {
+//				
+//				System.out.println(string);
+//			}
+//		}
 		
-		List<String> lines = Files.readLines(new File(fileName), Charset.defaultCharset());
-		
-		List<List<String>> groupLines = new ArrayList<List<String>>();
-		
-		List<String> singleLines = new ArrayList<String>();
-		int count = 0;
-		for (String string : lines) {
-			
-			if (StringUtils.isNotBlank(string) && string.trim().equals("TESCO 乐  购  商  品  订  单")) {
-				
-				singleLines = new ArrayList<String>();
-				groupLines.add(singleLines);
-				count ++;
-			}
-			
-			singleLines.add(string);
-		}
-		
-		for (List<String> group : groupLines) {
-			
-			System.out.println("===============================================");
-			for (String string : group) {
-				
-				System.out.println(string);
-			}
-		}
+		StringBuffer test = new StringBuffer("20150204");
+		System.out.println(test.insert(4, '-').insert(7, '-'));
 	}
 
 	public static void testGrabLianhuaDetail() throws IOException, ParserException {
