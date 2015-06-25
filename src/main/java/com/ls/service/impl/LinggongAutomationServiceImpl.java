@@ -20,6 +20,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
+import org.apache.tools.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
 import com.ls.constants.HanthinkProperties;
@@ -56,6 +56,7 @@ import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
 import com.ls.util.HanthinkUtil;
+import com.ls.util.Zip;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 import com.ls.vo.StorageDetail;
@@ -86,12 +87,22 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return existedOrder == null;
 	}
 
+	private boolean checkIfStorageNotGrabed(String orderDate, String address, Integer jobId) {
+
+		Order existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
+
+		return existedOrder == null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
-
+		
 		if (null == automaticJob) return ResponseVo.newFailMessage("未知的任务配置.");
 
+		Date now = new Date();
+		automaticJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
+		
 		final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 		webClient.getOptions().setCssEnabled(false);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -113,7 +124,6 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		}
 
 		final List<Attachment> attachments = new ArrayList<Attachment>();
-		List<Orders> orders = new ArrayList<Orders>();
 		
 		webClient.setAttachmentHandler(new CollectingAttachmentHandler(attachments));
 		String queryPageUrl = "http://scm.sgcs.com.cn/manager/sambillSelect/sambillSelect_findXcDayInfo.action?__multiselect_xcMonthBean.qryState=&xcMonthBean.qryBeginTime=" + startDate.replace("-", "") + "&xcMonthBean.qryEndTime=" + endDate.replace("-", "")
@@ -166,30 +176,34 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 							
 							HanthinkUtil.writeAttachementToFile(conentPage, fileName);
 							
-							String dataFile = HanthinkUtil.unzipLingduZipFile(fileName);
-
+							List<String> unzipedFils = new Zip().unZip(fileName, HanthinkProperties.getString("dataFileBase"));
+							
+							if (unzipedFils.isEmpty()) {
+								break;
+							}
 							try {
-								List<String> lines = Files.readLines(new File(dataFile), Charset.forName("GBK"));
+								List<String> lines = Files.readLines(new File(unzipedFils.get(0)), Charset.forName("GBK"));
 								
 								lines.remove(0);
 								
-								List<Orders> orderResult = parseDataFromCsvFile(lines, orderDate);
-								for (int k = 0; k < orderResult.size(); k = k + 20) {
+								List<Orders> orderResult = parseDataFromCsvFile(lines, orderDate, automaticJob.getId(), automaticJob.getCompanyCode());
+								if (orderResult.isEmpty()) {
+									continue;
+								}
+								for (int k = 0; k < orderResult.size(); k = k + 100) {
 									
-									int endIndex = k + 20 < orderResult.size()? k + 20: orderResult.size();
+									int endIndex = k + 100 < orderResult.size()? k + 100: orderResult.size();
 									
 									List<Orders> subList = orderResult.subList(k, endIndex);
 									
 									String data = compositeStorageToXml(subList, automaticJob);
 									
-									Files.write(data.getBytes(), new File("C:\\Downloads\\"+ System.currentTimeMillis() + ".xml"));
-									
-									ResponseVo responseVo = postData(orders, automaticJob, data);
+									ResponseVo responseVo = postData(subList, automaticJob, data);
 									
 									if (responseVo.success()) {
-										successCount ++;
+										successCount += subList.size();
 									} else {
-										failCount ++;
+										failCount += subList.size();
 									}
 								}
 
@@ -216,8 +230,13 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		} catch (IOException e) {
 			return ResponseVo.newFailMessage("获取销存页面失败，IOException : " + e.getMessage());
 		}
+		
+		Date endTime = new Date();
+		automaticJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
-		return ResponseVo.newFailMessage("同步完成，成功"+ successCount + "个文件，失败" + failCount+ "个文件。");
+		automaticJobRepository.saveAndFlush(automaticJob);
+		//成功"+ successCount + "条门店销量纪录，失败" + failCount+ "条"
+		return ResponseVo.newSuccessMessage("同步完成!");
 	}
 
 	private ResponseVo postData(List<Orders> orders, AutomaticJob job, String data) {
@@ -238,7 +257,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				System.out.println(response.getStatusLine().getStatusCode());
 				System.out.println(responseText);
 				
-				responseVo = handleStorageSoapResponse(responseText);
+				responseVo = handleResponse(responseText);
 
 				if (responseVo.getType().equals("FAIL")) {
 
@@ -259,9 +278,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	}
 
-	private List<Orders> parseDataFromCsvFile(List<String> lines, String orderDate) {
-
-		String supplierNumber = "";
+	private List<Orders> parseDataFromCsvFile(List<String> lines, String orderDate, Integer jobId, String supplierNumber) {
 
 		Map<String, List<StorageDetail>> storeGroups = new HashMap<String, List<StorageDetail>>();
 		for (String singleLine : lines) {
@@ -280,11 +297,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				String element = StringUtils.trimToEmpty(elements[i]);
 				
 				switch (i) {
-				case 0:
-					if (StringUtils.isEmpty(supplierNumber)) {
-						supplierNumber = element;
-					}
-					break;
+				
 				case 1:
 					storageDetail.setProductNumber(element);
 					break;
@@ -323,12 +336,17 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		List<Orders> orders = new ArrayList<Orders>();
 		Set<Entry<String, List<StorageDetail>>> entryset = storeGroups.entrySet();
 		for (Entry<String, List<StorageDetail>> entry : entryset) {
+			String storeNumber = entry.getKey();
+			if (!checkIfStorageNotGrabed(orderDate, storeNumber, jobId)) {
+				System.out.println(orderDate + " : " + storeNumber + " is already grabed. skip..." );
+				continue;
+			}
 			Orders singleOrder = new Orders();
 
 			Map<String, String> titleMap = new HashMap<String, String>();
 			String uuid = UUID.randomUUID().toString();
 			titleMap.put("uuid", uuid);
-			titleMap.put("storeNumber", entry.getKey());
+			titleMap.put("storeNumber", storeNumber);
 			titleMap.put("orderDate", orderDate);
 			titleMap.put("supplierNumber", supplierNumber);
 
@@ -359,18 +377,16 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 	}
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
-
+		
 		List<Orders> ordersList = new ArrayList<Orders>();
 
 		if (null == authanJob) {
 			logger.error("configuration for job authan is not good.");
 			throw new ConfigurationException("未知的任务.");
 		}
-
-		Date now = new Date();
-
-		authanJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
-
+		
+		String supplierNumber = authanJob.getCompanyCode();
+		
 		final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 		webClient.getOptions().setCssEnabled(false);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -395,7 +411,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 							+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=" + i + "&page.offset=10";
 					HtmlPage nextHtmlPage = webClient.getPage(nextPage);
 
-					retrieveData(nextHtmlPage, ordersList, webClient, authanJob.getName(), authanJob.getId());
+					retrieveData(nextHtmlPage, ordersList, webClient, supplierNumber, authanJob.getId());
 				}
 			}
 		}
@@ -646,7 +662,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 	}
 
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
-
+		Date now = new Date();
+		job.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
+		
 		ResponseVo responseVo = ResponseVo.newResponse();
 
 		List<Orders> orders;
@@ -661,8 +679,6 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
-
-			System.out.println(data);
 
 			try {
 
@@ -732,7 +748,10 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			logger.error("postDataToWebService error" + responseVo.toString());
 		}
+		Date endTime = new Date();
+		job.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
+		automaticJobRepository.saveAndFlush(job);
 		return responseVo;
 	}
 

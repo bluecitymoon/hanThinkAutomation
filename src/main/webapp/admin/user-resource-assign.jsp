@@ -61,7 +61,7 @@
 													<td style="text-align: center" data-bind="text : name"></td>
 													<td style="text-align: center" data-bind="text : username"></td>
 													<td style="text-align: center">
-														<a title="分配资源" data-bind="click : $root.showOrderedResource" style="margin-left : 10px;" href="#"><i class="icon-user small icon-blue"></i></a>
+														<a title="分配资源" data-bind="click : $root.showOrderedResource" style="margin-left : 10px;" href="#"><i class="icon-info-sign small icon-blue"></i></a>
 													</td>
 												</tr>
 											</tbody>

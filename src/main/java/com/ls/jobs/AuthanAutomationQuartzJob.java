@@ -115,7 +115,13 @@ public class AuthanAutomationQuartzJob implements Job {
 				
 			} else if (storeDatasourceIdentity.equals("LG")){
 				
-				responseVo = linggongAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+				String componentType = authanJob.getComponentType();
+				
+				if (StringUtils.isNotBlank(componentType) && componentType.equals("storage")) {
+					responseVo = linggongAutomationService.grabStorageInformation(lastRunDate, now, authanJob);
+				} else {
+					responseVo = linggongAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+				}
 				
 			} else {
 

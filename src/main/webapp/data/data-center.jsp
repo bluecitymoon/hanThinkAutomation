@@ -29,11 +29,11 @@
                        									    value: $root.selectedTaskId,
                        									    optionsValue : 'id',
                        									    selectedOption : $root.selectedTaskId,
-                       									    optionsCaption: '请选择...'">
+                       									    optionsCaption: '请选择任务...'">
                        					</select>
 									</div>
 									<div class="four columns">
-										<button class="small nice blue button postfix" data-bind="click : loadOrderList">搜索</button>
+										<button class="small nice blue button postfix" data-bind="click : loadOrderList"><i class="icon-search large"></i></button>
 									</div>
 								</div>
 							</div>
@@ -56,9 +56,9 @@
 							<table class="infoTable">
 								<thead>
 									<tr>
-										<th style="text-align: center">数据编号</th>
-										<th>采集时间</th>
+										<!-- <th style="text-align: center">数据编号</th> -->
 										<th>任务名称</th>
+										<th>采集时间</th>
 										<th>订单编号</th>
 										<th>供应商</th>
 										<th>店号</th>
@@ -69,18 +69,18 @@
 								</thead>
 								<tbody data-bind="foreach : orderList">
 									<tr>
-										<td style="text-align: center" data-bind="text : uuid"></td>
-										<td style="text-align: center" data-bind="text : createDate"></td>
+										<!-- <td style="text-align: center" data-bind="text : uuid"></td>  -->
 										<td style="text-align: center" data-bind="text : jobName"></td>
+										<td style="text-align: center" data-bind="text : createDate"></td>
+										
 										<td style="text-align: center" data-bind="text : orderNumber"></td>
 										<td style="text-align: center" data-bind="text : supplierNumber"></td>
 										<td style="text-align: center" data-bind="text : storeNumber"></td>
 										<td style="text-align: center" data-bind="text : orderDate"></td>
 										<td style="text-align: center" data-bind="text : estimateTakeOverDate"></td>
-										
 										<td style="text-align: center">
 											<a data-bind="click : $root.removeSingleOrder" href="#" title="删除"><i class="icon-trash small icon-red"></i></a>
-											<a title="查看" data-bind="click : $root.showDetails" style="margin-left: 20px;" href="#"><i class="icon-user small icon-blue"></i></a></td>
+											<a title="查看" data-bind="click : $root.showDetails" style="margin-left: 20px;" href="#"><i class="icon-comments small icon-blue"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
@@ -106,6 +106,7 @@
 							<th>未税总价</th>
 							<th>含税单价</th>
 							<th>含税总价</th>
+							<th>当日库存</th>
 							<th>税率</th>
 							<th>赠品名称</th>
 							<th>赠品数量</th>
@@ -125,6 +126,7 @@
 							<td style="text-align: center" data-bind="text : moneyAmountWithoutTax"></td>
 							<td style="text-align: center" data-bind="text : priceWithTax"></td>
 							<td style="text-align: center" data-bind="text : moneyAmountWithTax"></td>
+							<td style="text-align: center" data-bind="text : dayBalanceInDb"></td>
 							<td style="text-align: center" data-bind="text : taxRate"></td>
 							<td style="text-align: center" data-bind="text : giftName"></td>
 							<td style="text-align: center" data-bind="text : giftCount"></td>
@@ -178,6 +180,7 @@
 				self.taxRate = '';
 				self.moneyAmountWithTax = '';
 				self.storeNumber = '';
+				self.dayBalanceInDb = '';
 			};
 
 			var DataCenterModel = function() {

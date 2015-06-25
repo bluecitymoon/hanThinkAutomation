@@ -200,8 +200,11 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 			}
 		}
 
-		System.out.println(ordersList);
+		Date endTime = new Date();
+		authanJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
+		automaticJobRepository.saveAndFlush(authanJob);
+		
 		return ordersList;
 	}
 

@@ -3,11 +3,15 @@ package com.ls.util;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,6 +40,7 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.ls.constants.HanthinkProperties;
@@ -261,18 +266,32 @@ public class HanthinkUtil {
 			while (enumeration.hasMoreElements()) {
 
 				ZipEntry zipEntry = enumeration.nextElement();
-
-				InputStream bis = fileToUnzip.getInputStream(zipEntry);
-				
 				extracedCsvFileName = HanthinkProperties.getString("dataFileBase") + zipEntry.getName();
 				
-				FileOutputStream fos = new FileOutputStream(new File(extracedCsvFileName));
-				OutputStream bos = new BufferedOutputStream(fos, 1024);
-
-				IOUtils.copy(bis, bos);
-
-				bos.close();
-				bis.close();
+				File outputFile = new File(extracedCsvFileName);
+				InputStream inputStream = fileToUnzip.getInputStream(zipEntry);
+				FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+				
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));  
+				String line= null;
+				StringBuilder bigStringBuilder = new StringBuilder();
+				while((line = reader.readLine()) != null) {
+					bigStringBuilder.append(line + "\n");
+					//writer.write(line+"\n");
+				}
+				
+				Files.write(bigStringBuilder.toString().getBytes(), outputFile);
+////				
+////				
+////				FileOutputStream fos = new FileOutputStream(new File(extracedCsvFileName));
+////				OutputStream bos = new BufferedOutputStream(fos);
+//
+//				IOUtils.copy(bis, bos);
+//
+//				bos.close();
+				inputStream.close();
+				fileOutputStream.close();
 
 			}
 
@@ -427,7 +446,7 @@ public class HanthinkUtil {
 	public static void main(String[] args) {
 
 		// getScheduleList(07, 20, 17, 19, 60);
-		//unzipLingduZipFile("/Users/jerryjiang/Documents/java-workplace/lingduDownloads/20150623162149.zip");
-		postStorageInformation();
+		unzipLingduZipFile("C:\\Downloads\\20150625100534.zip");
+		//postStorageInformation();
 	}
 }
