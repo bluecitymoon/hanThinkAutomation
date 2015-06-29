@@ -302,13 +302,6 @@ public class AuthanAutomationForOrderingSystemServiceImpl extends AbstractAuthan
 
 	}
 
-	@Secured({"ROLE_ADMIN"})
-	public void saveOrUpdateJob(AutomaticJob automaticJob) {
-
-		automaticJobRepository.saveAndFlush(automaticJob);
-
-	}
-
 	private boolean checkIfOrderNotGrabed(Orders order, Integer jobId) {
 
 		Map<String, String> titleMap = order.getOrderTitleMap();

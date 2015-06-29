@@ -98,7 +98,7 @@ public class DataManagementServiceImpl implements DataManagementService {
 
 	}
 
-	@Secured({"ROLE_ADMIN"})
+	@Secured({"ROLE_ADMIN", "ROLE_CUSTOMER"})
 	public void removeOrders(Collection<Integer> orders) {
 		
 		List<Integer> orderList = new ArrayList(orders);

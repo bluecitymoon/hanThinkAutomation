@@ -42,7 +42,16 @@ public class AutomaticJob implements Serializable {
 	protected Integer storeId;
 	protected String companyCode;
 	protected String componentType;
+	protected String zone;
 	
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
 	public String getCompanyCode() {
 	
 		return companyCode;

@@ -348,13 +348,6 @@ public class TescoAutomationServiceImpl extends AbstractAuthanAutomationService 
 
 	}
 
-	@Secured({"ROLE_ADMIN"})
-	public void saveOrUpdateJob(AutomaticJob automaticJob) {
-
-		automaticJobRepository.saveAndFlush(automaticJob);
-
-	}
-
 	private boolean notExistedOrder(Order order, Integer jobId) {
 
 		String orderNumber = order.getOrderNumber();

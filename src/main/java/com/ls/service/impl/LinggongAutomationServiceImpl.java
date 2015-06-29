@@ -190,9 +190,11 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 								if (orderResult.isEmpty()) {
 									continue;
 								}
-								for (int k = 0; k < orderResult.size(); k = k + 100) {
+								
+								int groupCount = 200;
+								for (int k = 0; k < orderResult.size(); k = k + groupCount) {
 									
-									int endIndex = k + 100 < orderResult.size()? k + 100: orderResult.size();
+									int endIndex = k + groupCount < orderResult.size()? k + groupCount: orderResult.size();
 									
 									List<Orders> subList = orderResult.subList(k, endIndex);
 									

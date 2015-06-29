@@ -59,7 +59,7 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 
 	}
 
-	@Secured({"ROLE_ADMIN"})
+	@Secured({"ROLE_ADMIN", "ROLE_CUSTOMER"})
 	public void saveOrUpdateJob(AutomaticJob automaticJob) {
 
 		automaticJobRepository.saveAndFlush(automaticJob);

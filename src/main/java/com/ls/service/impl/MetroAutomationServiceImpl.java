@@ -392,13 +392,6 @@ public class MetroAutomationServiceImpl extends AbstractAuthanAutomationService 
 
 	}
 
-	@Secured({ "ROLE_ADMIN" })
-	public void saveOrUpdateJob(AutomaticJob automaticJob) {
-
-		automaticJobRepository.saveAndFlush(automaticJob);
-
-	}
-
 	private boolean checkIfOrderNotGrabed(Orders order) {
 
 		Map<String, String> titleMap = order.getOrderTitleMap();
