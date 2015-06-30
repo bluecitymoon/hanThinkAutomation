@@ -34,8 +34,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlBold;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
@@ -283,7 +285,15 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		HtmlTextInput usernameHtmlTextInput = loginPage.getElementByName("userid");
 		HtmlPasswordInput passwordHtmlTextInput = loginPage.getElementByName("passwd");
 		HtmlPasswordInput checkstrHtmlPasswordInput = loginPage.getElementByName("checkstr");
+		HtmlSelect zoneHtmlSelect = loginPage.getElementByName("area");
 
+		if (StringUtils.isEmpty(automaticJob.getZone())) {
+			automaticJob.setZone("1");
+		}
+		
+		HtmlOption selectedOption = zoneHtmlSelect.getOptionByValue(automaticJob.getZone());
+		zoneHtmlSelect.setSelectedAttribute(selectedOption, true);
+		
 		HtmlImage validationCodeImage = null;
 
 		@SuppressWarnings("unchecked")

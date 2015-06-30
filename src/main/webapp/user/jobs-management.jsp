@@ -194,7 +194,20 @@
 
 								</div>
 								<div class="row">
-									<label class="required">存储数据客户端IP</label> <input type="text" class="addon-postfix  required" data-bind="value : clientIp" />
+									<div class="ten columns">
+										<label class="required">存储数据客户端IP</label> 
+										<input type="text" class="addon-postfix  required" data-bind="value : clientIp" />
+									</div>
+									<div class="two columns" data-bind="visible : $root.showZone ">
+										<label>区域</label> 
+										<select data-bind="options: $root.allZones,
+                      											optionsText: 'description',
+                       									    	value: zone,
+                       									    	optionsValue : 'id',
+                       									    	selectedOption : zone,
+                       									    	optionsCaption: '请选择区域'">
+                       					</select>
+									</div>
 								</div>
 								<div class="row">
 									<div class="four columns">
@@ -286,6 +299,7 @@
 						self.storeId = '';
 						self.companyCode = '';
 						self.componentType = '';
+						self.zone = '1';
 					};
 
 					var ComponentType = function() {
@@ -310,7 +324,7 @@
 						
 						self.selectedUserId = ko.observable('');
 						self.allComponentTypes = [{"name" : "order", "description": "订单"},{"name" : "storage", "description": "销存报表"}];
-						
+						self.allZones = [{"id" : "1", "description" : "华东"},{"id" : "2", "description" : "华北"},{"id" : "3", "description" : "东北"},{"id" : "4", "description" : "华中"},{"id" : "5", "description" : "华南"}];
 						self.selectedStoreId.subscribe(function(item) {
 							self.reloadJobList();
 						});
@@ -319,6 +333,7 @@
 						});
 						
 						self.showOrHideDateInputs = ko.observable(true);
+						self.showZone = ko.observable(false);
 						
 						self.selectedTaskId.subscribe(function(item) {
 							
@@ -377,6 +392,12 @@
 						
 						self.editJob = function(item, event) {
 							self.job(item);
+							
+							if (item.type == 'RTMARKET') {
+								self.showZone(true);
+							} else {
+								self.showZone(false);
+							}
 							
 							self.openEditJobDialog();
 						};
