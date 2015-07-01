@@ -30,6 +30,15 @@ public class TestRTMarket {
 		AutomaticJob automaticJob = automaticJobRepository.findOne(23);
 		rtmarketAutomationService.grabOrders("2015-01-01", "2015-01-13", automaticJob);
 	}
+	
+	@Test
+	public void testGrabStorage() throws Exception {
+
+		AutomaticJob automaticJob = automaticJobRepository.findOne(34);
+		//AutomaticJob automaticJob = automaticJobRepository.findOne(23);
+		rtmarketAutomationService.grabStorageInformation("2015-01-01", "2015-01-13", automaticJob);
+	}
+
 
 	@Test
 	public void testWholeProcess() throws Exception {

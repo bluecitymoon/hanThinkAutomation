@@ -18,6 +18,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
+import org.apache.poi.hssf.util.HSSFColor.TURQUOISE;
 import org.htmlparser.Parser;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlBold;
@@ -82,6 +84,141 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		return existedOrder == null || existedOrder.isEmpty();
 	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
+		
+		if (null == automaticJob) return ResponseVo.newFailMessage("未知的任务配置.");
+
+		Date now = new Date();
+		automaticJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
+		
+		final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+		webClient.getOptions().setCssEnabled(false);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+		try {
+
+			tryToLogin(webClient, automaticJob);
+
+		} catch (FailingHttpStatusCodeException e) {
+			return ResponseVo.newFailMessage("登陆大润发失败，错误的http code FailingHttpStatusCodeException : " + e.getMessage());
+		} catch (MalformedURLException e) {
+			return ResponseVo.newFailMessage("登陆大润发失败，MalformedURLException " + e.getMessage());
+		} catch (IOException e) {
+			return ResponseVo.newFailMessage("登陆大润发失败，IOException " + e.getMessage());
+		} catch (URISyntaxException e) {
+			return ResponseVo.newFailMessage("登陆大润发失败，URISyntaxException " + e.getMessage());
+		} catch (InterruptedException e) {
+			return ResponseVo.newFailMessage("登陆大润发失败，InterruptedException " + e.getMessage());
+		}
+		
+		List<Orders> storageOrders = new ArrayList<Orders>();
+		String storagePageURL = "https://supplier.rt-mart.com.cn/php/scm_items_stat_list_a.php?code=all&pcode=";
+		try {
+			HtmlPage storageHtmlPage = webClient.getPage(storagePageURL);
+			ScriptResult scriptResult = storageHtmlPage.executeJavaScript("printall()");
+			HtmlPage wholeListPage = (HtmlPage) scriptResult.getNewPage();
+			
+			HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(wholeListPage, "/html/body/form/table");
+			
+			parseStorage(storageOrders, dataTable, automaticJob);
+			
+		} catch (FailingHttpStatusCodeException e) {
+			return ResponseVo.newFailMessage("大润发终端销量页面加载失败. 错误的http code FailingHttpStatusCodeException : " + e.getMessage());
+		} catch (MalformedURLException e) {
+			return ResponseVo.newFailMessage("大润发终端销量页面加载失败， MalformedURLException " + e.getMessage());
+		} catch (IOException e) {
+			return ResponseVo.newFailMessage("大润发终端销量页面加载失败，IOException " + e.getMessage());
+		}
+		
+		Date endTime = new Date();
+		automaticJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
+
+		automaticJobRepository.saveAndFlush(automaticJob);
+		return ResponseVo.newSuccessMessage("同步完成!");
+	}
+	
+	private void parseStorage(List<Orders> storageOrders, HtmlTable dataTable, AutomaticJob automaticJob) {
+		
+		if (dataTable == null) return;
+		
+		List<HtmlTableRow> rows = dataTable.getRows();
+		if (rows == null || rows.isEmpty()) return;
+		
+		String lastProductNumber = "";
+		String lastDescription = "";
+		for (int i = 2; i < rows.size(); i++) {
+			
+			HtmlTableRow singleRow = rows.get(i);
+			List<HtmlTableCell> cells = singleRow.getCells();
+			
+			String currentProductNumber = "";
+			String currentDescription = "";
+			for (int j = 0; j < cells.size(); j++) {
+				
+				String cellContent = StringUtils.trimToEmpty(cells.get(j).asText());
+				
+				boolean useDefaultProductNumber = false;
+				boolean useDefaultDescription = false;
+				switch (j) {
+				case 0:
+					
+					if (StringUtils.isEmpty(cellContent)) {
+						useDefaultProductNumber = true;
+						currentProductNumber = lastProductNumber;
+					} else {
+						useDefaultProductNumber = false;
+						lastProductNumber = cellContent;
+						currentProductNumber = cellContent;
+					}
+					
+					break;
+				case 1:
+					
+					if (StringUtils.isEmpty(cellContent)) {
+						useDefaultDescription = true;
+					} else {
+						useDefaultDescription = false;
+						lastDescription = cellContent;
+					}
+					
+					break;
+				case 2:
+					
+					Orders singleOrder = getSingleOrderByProductNumber(storageOrders, cellContent);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * 
+	 * @param storageOrders
+	 * @param cellContent
+	 * @return
+	 */
+	private Orders getSingleOrderByProductNumber(List<Orders> storageOrders, String cellContent) {
+		
+		for (Orders orders : storageOrders) {
+			
+			Map<String, String> titleMap = orders.getOrderTitleMap();
+			String storeNumber = titleMap.get("storeNumber");
+			
+			if (StringUtils.isNotBlank(storeNumber) && storeNumber.equals(cellContent)) {
+				return orders;
+			}
+		}
+		
+		return null;
+	}
+
 
 	public List<Orders> grabOrders(String start, String end, AutomaticJob authanJob) throws ConfigurationException, FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
