@@ -346,7 +346,7 @@
 										angle: 85,
 										distance: 80,
 										showAfter: 100,
-										hideAfter: 2000,
+										hideAfter: 5000,
 									});
 						};
 						
