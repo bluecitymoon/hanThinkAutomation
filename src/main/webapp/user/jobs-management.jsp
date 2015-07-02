@@ -337,7 +337,7 @@
 						self.showOrHideDateInputs = ko.observable(true);
 						self.showZone = ko.observable(false);
 						
-						self.consoleMessage = ko.observable('');
+						self.consoleMessage = ko.observable('没有消息');
 						
 						self.checkResultMessage = function() {
 							$('#checkResultMessage').grumble(
@@ -649,7 +649,7 @@
 
 						self.startManually = function() {
 							
-							self.consoleMessage('');
+							self.consoleMessage('没有消息');
 							
 							if (self.selectedTaskId().type == 'RTMARKET' || $('#grabForm').valid()) {
 								$.ajax({
