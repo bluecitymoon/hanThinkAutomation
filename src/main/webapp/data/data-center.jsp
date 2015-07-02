@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=utf8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>	<html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
@@ -48,7 +49,10 @@
 					<div class="blue module ui-corner-top clearfix">
 						<h2>数据列表</h2>
 						<h2 class="right">
-							<a title="删除所有" class="white small button" data-bind="click : $root.removeAll"  href="#">删除所有</a>
+							<sec:authorize ifAllGranted="ROLE_ADMIN">
+								<a title="清空所有" class="red small button" data-bind="click : $root.cleanUpDataCenter"  href="#">清空所有</a>
+							</sec:authorize>
+							<a title="删除本页" class="white small button" data-bind="click : $root.removeAll"  href="#">删除本页</a>
 						</h2>
 					</div>
 					<div class="content">
@@ -230,6 +234,24 @@
 						});
 					}
 				};
+				
+				self.cleanUpDataCenter = function() {
+					
+					if(window.confirm("这个操作会清空所有的数据，包括其他任务。确定删除？")) {
+						
+						
+						$.ajax({
+							url : 'cleanUpDataCenter.action',
+							success : function(data) {
+								
+								if(isOK (data)) {
+									self.loadOrderList();
+								}
+							}
+						});
+					}
+				};
+				
 				self.removeSingleOrder = function(item, event) {
 						var orderIdList = new Array();
 						orderIdList.push(item.id);

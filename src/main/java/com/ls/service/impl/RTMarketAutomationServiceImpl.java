@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
-import org.apache.poi.hssf.util.HSSFColor.TURQUOISE;
 import org.htmlparser.Parser;
 import org.htmlparser.util.ParserException;
 import org.slf4j.Logger;
@@ -56,6 +56,7 @@ import com.ls.repository.OrderRepository;
 import com.ls.repository.ProductDetailRepository;
 import com.ls.service.impl.vistor.RTMarketDetailParser;
 import com.ls.util.HanthinkUtil;
+import com.ls.util.XinXinConstants;
 import com.ls.vo.Orders;
 import com.ls.vo.ResponseVo;
 
@@ -85,10 +86,24 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return existedOrder == null || existedOrder.isEmpty();
 	}
 
+	private boolean checkIfStorageNotGrabed(String orderDate, String storeNumber, Integer jobId) {
+
+		Order existedOrder = null;
+		try {
+			existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(storeNumber, jobId, orderDate);
+		} catch (Exception e) {
+			
+			System.out.println(e.getMessage());
+			return false;
+		}
+
+		return existedOrder == null;
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
+		ResponseVo responseVo = null;
 		
 		if (null == automaticJob) return ResponseVo.newFailMessage("未知的任务配置.");
 
@@ -126,6 +141,19 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 			
 			parseStorage(storageOrders, dataTable, automaticJob);
 			
+			if (storageOrders.isEmpty()) {
+				return ResponseVo.newSuccessMessage("没有需要抓取的数据！");
+			}
+			String xml = "";
+			try {
+				xml = compositeStorageToXml(storageOrders, automaticJob);
+
+			} catch (TemplateException e) {
+				return ResponseVo.newFailMessage("遇到错误：请联系小江。" + e.getMessage());
+			}
+			
+			responseVo = postStorageDataToWebService(storageOrders, automaticJob, xml);
+			
 		} catch (FailingHttpStatusCodeException e) {
 			return ResponseVo.newFailMessage("大润发终端销量页面加载失败. 错误的http code FailingHttpStatusCodeException : " + e.getMessage());
 		} catch (MalformedURLException e) {
@@ -138,7 +166,7 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		automaticJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
 
 		automaticJobRepository.saveAndFlush(automaticJob);
-		return ResponseVo.newSuccessMessage("同步完成!");
+		return responseVo;
 	}
 	
 	private void parseStorage(List<Orders> storageOrders, HtmlTable dataTable, AutomaticJob automaticJob) {
@@ -155,45 +183,68 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 			HtmlTableRow singleRow = rows.get(i);
 			List<HtmlTableCell> cells = singleRow.getCells();
 			
-			String currentProductNumber = "";
-			String currentDescription = "";
+			Map<String, String> singleOrderDetailMap = new HashMap<String, String>();
+			Orders singleOrder = null;
 			for (int j = 0; j < cells.size(); j++) {
 				
 				String cellContent = StringUtils.trimToEmpty(cells.get(j).asText());
 				
-				boolean useDefaultProductNumber = false;
-				boolean useDefaultDescription = false;
 				switch (j) {
 				case 0:
 					
-					if (StringUtils.isEmpty(cellContent)) {
-						useDefaultProductNumber = true;
-						currentProductNumber = lastProductNumber;
-					} else {
-						useDefaultProductNumber = false;
+					if (StringUtils.isNotEmpty(cellContent)) {
 						lastProductNumber = cellContent;
-						currentProductNumber = cellContent;
 					}
-					
+					singleOrderDetailMap.put("productNumber", lastProductNumber);
 					break;
 				case 1:
 					
-					if (StringUtils.isEmpty(cellContent)) {
-						useDefaultDescription = true;
-					} else {
-						useDefaultDescription = false;
+					if (StringUtils.isNotEmpty(cellContent)) {
 						lastDescription = cellContent;
 					}
 					
+					singleOrderDetailMap.put("description", lastDescription);
 					break;
 				case 2:
 					
-					Orders singleOrder = getSingleOrderByProductNumber(storageOrders, cellContent);
+					singleOrder = getSingleOrderByProductNumber(storageOrders, cellContent);
+					if (singleOrder == null) {
+						singleOrder = new Orders();
+						
+						String supplierNumber = StringUtils.trimToEmpty(automaticJob.getCompanyCode());
+						String todayString = new SimpleDateFormat(XinXinConstants.SIMPLE_DATE_FORMAT_STRING).format(new Date());
+						singleOrder.getOrderTitleMap().put("supplierNumber", supplierNumber);
+						singleOrder.getOrderTitleMap().put("orderDate", todayString);
+						singleOrder.getOrderTitleMap().put("uuid", getRandomUUID());
+					}
+					singleOrder.getOrderTitleMap().put("storeNumber", cellContent);
+					
+					break;
+				case 4:
+					singleOrderDetailMap.put("dayBalanceInDb", cellContent);
+					break;
+					
+				case 9:
+					
+					singleOrderDetailMap.put("count", cellContent);
+					
 					break;
 				default:
 					break;
 				}
 			}
+			
+			String uuid = singleOrder.getOrderTitleMap().get("uuid");
+			singleOrderDetailMap.put("uuid", uuid);
+			
+			Integer jobId = automaticJob.getId();
+			String storeNumber = singleOrderDetailMap.get("storeNumber");
+			String orderDate = singleOrderDetailMap.get("orderDate");
+			
+			if (checkIfStorageNotGrabed(orderDate, storeNumber, jobId)) {
+				storageOrders.add(singleOrder);
+			}
+			
 		}
 	}
 
@@ -460,9 +511,22 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		Process process = Runtime.getRuntime().exec(command);
 		process.waitFor();
 
-		String code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
-
-		System.out.println(code);
+		String code = "";
+		try {
+			code = Files.readFirstLine(new File(fileName + ".txt"), Charset.defaultCharset());
+			
+			if (StringUtils.isBlank(code)) {
+				tryToLogin(webClient, automaticJob);
+				return;
+			}
+			
+			code = code.replaceAll("[^a-zA-Z0-9]", "");
+			
+			System.out.println(code);
+		} catch (IOException e) {
+			tryToLogin(webClient, automaticJob);
+			return;
+		}
 
 		Thread.sleep(1000);
 
@@ -498,6 +562,21 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	}
 
+	public String compositeStorageToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
+
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("rt-market-storage-request-soap.ftl");
+
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		data.put("htUsername", automaticJob.getDbUsernname());
+		data.put("htPassword", automaticJob.getDbPassword());
+		data.put("htDbName", automaticJob.getDbName());
+		data.put("orders", orders);
+
+		return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
+
+	}
+	
 	public ResponseVo postDataToWebService(String start, String end, AutomaticJob job) {
 
 		ResponseVo responseVo = ResponseVo.newResponse();
@@ -514,8 +593,6 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			// composite data
 			String data = compositeOrderToXml(orders, job);
-
-			System.out.println(data);
 
 			try {
 				
@@ -536,8 +613,6 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 						return responseVo;
 					}
 				}
-
-				System.out.println(responseText);
 
 				if (response.getStatusLine().getStatusCode() >= 200) {
 					saveOrders(orders, job);
@@ -671,4 +746,73 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return savedOrderList;
 	}
 
+	
+	@Override
+	public void saveOrdersForStorage(List<Orders> orders, AutomaticJob job) {
+
+		if (null == orders || orders.size() == 0) {
+			return;
+		}
+
+		List<Order> savedOrderList = new ArrayList<Order>();
+
+		for (Orders singleOrder : orders) {
+
+			Map<String, String> titleMap = singleOrder.getOrderTitleMap();
+			String supplierNumber = titleMap.get("supplierNumber");
+
+			String storeNumber = titleMap.get("storeNumber");
+			String orderDate = titleMap.get("orderDate");
+
+			Order order = new Order();
+			order.setSupplierNumber(supplierNumber);
+			order.setOrderDate(orderDate);
+			order.setCreateDate(HanthinkUtil.getNow());
+			order.setJobId(job.getId());
+			order.setJobName(job.getName());
+			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
+			order.setStoreNumber(storeNumber);
+
+			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
+			Order savedOrder = null;
+			try {
+				savedOrder = orderRepository.saveAndFlush(order);
+			} catch (Exception e) {
+			}
+
+			if (null == savedOrder) {
+				continue;
+			}
+
+			for (Map<String, String> singleDetailMap : detailMap) {
+
+				String description = toEmpty(singleDetailMap.get("description"));
+				String count = toEmpty(singleDetailMap.get("count"));
+				//String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
+				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
+				String storageBalance = toEmpty(singleDetailMap.get("dayBalanceInDb"));
+
+				ProductDetail productDetail = new ProductDetail();
+				productDetail.setOrderId(savedOrder.getId());
+				productDetail.setDescription(description);
+				productDetail.setCount(count);
+				//productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
+				productDetail.setProductNumber(productNumber);
+				productDetail.setDayBalanceInDb(storageBalance);
+				
+				try {
+					productDetail = productDetailRepository.saveAndFlush(productDetail);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				if (null == productDetail) {
+					continue;
+				}
+			}
+
+			savedOrderList.add(savedOrder);
+
+		}
+	}
 }

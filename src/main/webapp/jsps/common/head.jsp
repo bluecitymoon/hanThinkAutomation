@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="/ls/css/messenger.css">
 <link rel="stylesheet" href="/ls/css/messenger-theme-future.css">
 <link rel="stylesheet" href="/ls/css/jquery.dataTables.css">
+<link rel="stylesheet" href="/ls/css/grumble.css">
 <script src="/ls/js/jquery-1.10.2.js"></script>
 <script src="/ls/js/jquery-ui-1.10.4.custom.js"></script>
 <script src="/ls/js/knockout-3.1.0.js"></script>
@@ -23,4 +24,7 @@
 <script src="/ls/js/messenger.min.js"></script>
 <script src="/ls/js/messenger-theme-future.js"></script>
 <script src="/ls/js/User.js"></script>
+<script src="/ls/js/Bubble.js"></script>
+<script src="/ls/js/jquery.grumble.js"></script>
+
 </head>

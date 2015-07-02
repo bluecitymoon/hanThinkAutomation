@@ -162,18 +162,10 @@ public class AuchanAutomationAction extends BaseAction {
 
 			} else if (storeDatasourceIdentity.equals("RTMARKET")) {
 
-				response = rtMarketAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
-
+				executeCorrespondingService(rtMarketAutomationService, automaticJob, manuallyStart, manuallyStop);
 			} else if (storeDatasourceIdentity.equals("LG")) {
 
-				String componentType = automaticJob.getComponentType();
-				
-				if (StringUtils.isNotBlank(componentType) && componentType.equals("storage")) {
-					response = linggongAutomationService.grabStorageInformation(manuallyStart, manuallyStop, automaticJob);
-				} else {
-					response = linggongAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
-				}
-
+				executeCorrespondingService(linggongAutomationService, automaticJob, manuallyStart, manuallyStop);
 			} else {
 
 				response = ResponseVo.newFailMessage("尚未开发的功能。");
@@ -192,6 +184,17 @@ public class AuchanAutomationAction extends BaseAction {
 		}
 
 		return SUCCESS;
+	}
+	
+	public void executeCorrespondingService(AuthanAutomationService authanAutomationService, AutomaticJob automaticJob, String manuallyStart, String manuallyStop) {
+		
+		String componentType = automaticJob.getComponentType();
+		
+		if (StringUtils.isNotBlank(componentType) && componentType.equals("storage")) {
+			response = authanAutomationService.grabStorageInformation(manuallyStart, manuallyStop, automaticJob);
+		} else {
+			response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
+		}
 	}
 	
 	public String loadJobNames() {

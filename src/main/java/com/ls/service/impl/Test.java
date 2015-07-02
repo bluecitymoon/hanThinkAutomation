@@ -55,8 +55,13 @@ public class Test {
 //			}
 //		}
 		
-		StringBuffer test = new StringBuffer("20150204");
-		System.out.println(test.insert(4, '-').insert(7, '-'));
+//		StringBuffer test = new StringBuffer("20150204");
+//		System.out.println(test.insert(4, '-').insert(7, '-'));
+		
+		
+		String regex = "[^a-zA-Z0-9]";
+		
+		System.out.println("%^%&%$_)<><,/,/234444 <><,//,.()()()()2342 assfsdf    s123".replaceAll(regex, ""));
 	}
 
 	public static void testGrabLianhuaDetail() throws IOException, ParserException {

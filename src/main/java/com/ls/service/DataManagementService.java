@@ -12,4 +12,6 @@ public interface DataManagementService {
 	Page<Order> loadOrderInPage(Integer jobId, Pageable pageable);
 	
 	void removeOrders(Collection<Integer> orders);
+	
+	void cleanUpDataCenter();
 }

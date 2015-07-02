@@ -100,6 +100,20 @@ public class DataConsoleAction extends BaseAction {
 		
 		return SUCCESS;
 	}
+	
+	public String cleanUpDataCenter() {
+		
+		try {
+			dataManagementService.cleanUpDataCenter();
+			
+			setResponse(ResponseVo.newSuccessMessage("删除成功。"));
+			
+		} catch (Exception e) {
+			setResponse(ResponseVo.newFailMessage("删除过程中出现了问题，重试或者联系技术人员。 " + e.getMessage()));
+		}
+		
+		return SUCCESS;
+	}
 
 	public PagedElement<Order> getOrders() {
 		return orders;

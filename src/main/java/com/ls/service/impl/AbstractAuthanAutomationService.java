@@ -12,12 +12,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
@@ -67,7 +69,7 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 	}
 	
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob){
-		return null;
+		return ResponseVo.newFailMessage("这个功能并没有开发。");
 	}
 	
 	public String getRandomUUID() {
@@ -140,6 +142,50 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 		response = httpClient.execute(request);
 
 		return response;
+	}
+
+	public ResponseVo postStorageDataToWebService(List<Orders> orders, AutomaticJob job, String data) {
+
+		ResponseVo responseVo = ResponseVo.newSuccessMessage("操作成功！");
+		try {
+
+			String url = job.getClientIp() + job.getClientEnd();
+
+			// send ws
+			HttpResponse response = postWebService(url, data);
+
+			HttpEntity httpEntity = response.getEntity();
+			String responseText = null;
+			if (httpEntity != null) {
+				responseText = EntityUtils.toString(httpEntity);
+				
+				System.out.println(response.getStatusLine().getStatusCode());
+				System.out.println(responseText);
+				
+				responseVo = handleResponse(responseText);
+
+				if (responseVo.getType().equals("FAIL")) {
+
+					return responseVo;
+				}
+			}
+
+			if (response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300) {
+				saveOrdersForStorage(orders, job);
+			} else {
+				return ResponseVo.newFailMessage("发送web service失败。 response code :" + response.getStatusLine().getStatusCode() + " Response Text : " + responseText);
+			}
+		} catch (Exception e) {
+
+		}
+
+		return responseVo;
+
+	}
+	
+	
+	public void saveOrdersForStorage(List<Orders> orders, AutomaticJob job) {
+		//do nothing in basic class
 	}
 
 	public ResponseVo handleResponse(String soapMessage) {

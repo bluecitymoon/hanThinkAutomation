@@ -112,4 +112,10 @@ public class DataManagementServiceImpl implements DataManagementService {
 		}
 		
 	}
+	
+	@Secured({"ROLE_ADMIN"})
+	public void cleanUpDataCenter() {
+		productDetailRepository.deleteAll();
+		orderRepository.deleteAll();
+	}
 }

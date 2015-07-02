@@ -34,6 +34,10 @@
 				<param name="root">response</param>
 			</result>
 		</action>
-		
+		<action name="cleanUpDataCenter" class="consoleAction" method="cleanUpDataCenter">
+			<result name="success" type="json">
+				<param name="root">response</param>
+			</result>
+		</action>
 	</package>	
 </struts>

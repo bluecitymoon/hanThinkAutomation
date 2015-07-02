@@ -111,7 +111,13 @@ public class AuthanAutomationQuartzJob implements Job {
 				
 			} else if (storeDatasourceIdentity.equals("RTMARKET")){
 				
-				responseVo = rtMarketAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+				String componentType = authanJob.getComponentType();
+				
+				if (StringUtils.isNotBlank(componentType) && componentType.equals("storage")) {
+					responseVo = rtMarketAutomationService.grabStorageInformation(lastRunDate, now, authanJob);
+				} else {
+					responseVo = rtMarketAutomationService.postDataToWebService(lastRunDate, now, authanJob);
+				}
 				
 			} else if (storeDatasourceIdentity.equals("LG")){
 				

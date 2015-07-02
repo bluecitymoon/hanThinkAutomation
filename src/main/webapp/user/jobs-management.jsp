@@ -89,6 +89,7 @@
 											<td class="text-center">
 												<a  href="#" data-bind="click : $root.startJob" title="启动"><i class="icon-play-sign small icon-blue"></i></a> 
 												<a  href="#" style="margin-left : 15px;" data-bind="click : $root.stopJob" title="停止"><i class="icon-stop small icon-red"></i></a>
+												<a  href="#" style="margin-left : 15px;" data-bind="click : $root.restartJob" title="重启任务"><i class="icon-refresh small icon-green"></i></a>
 											</td>
 											</sec:authorize>
 										</tr>
@@ -141,6 +142,7 @@
 								<div class="row">
 									<div class="six columns">
 										<a class=" blue button" href="#" data-bind="click : startManually">开始抓取</a>
+										<a id="checkResultMessage" class=" green button" href="#" data-bind="click : checkResultMessage" style="margin-left: 10px">查看结果</a>
 									</div>
 								</div>
 								<div class="row" id="console">
@@ -335,6 +337,19 @@
 						self.showOrHideDateInputs = ko.observable(true);
 						self.showZone = ko.observable(false);
 						
+						self.consoleMessage = ko.observable('');
+						
+						self.checkResultMessage = function() {
+							$('#checkResultMessage').grumble(
+									{
+										text: self.consoleMessage(),
+										angle: 85,
+										distance: 80,
+										showAfter: 100,
+										hideAfter: 2000,
+									});
+						};
+						
 						self.selectedTaskId.subscribe(function(item) {
 							
 							if(item) {
@@ -476,6 +491,64 @@
 							});
 							
 						};
+						
+						self.restartJob = function(item, event) {
+							
+							$.ajax({
+								method : 'post',
+								data : {
+									job : JSON.stringify(item)
+								},
+								url : 'shutDownJob.action',
+								success : function(data) {
+									if (data && data.type== 'fail') {
+										Messenger().post({
+											message : data.response.message,
+											type : 'error',
+											showCloseButton : true
+										});
+									} else {
+										
+										$.ajax({
+											method : 'post',
+											data : {
+												job : JSON.stringify(item)
+											},
+											url : 'startupJob.action',
+											success : function(data) {
+												
+												handleResponse(data);
+												
+												self.reloadJobList();
+												
+											},
+											error : function(XMLHttpRequest,
+													textStatus, errorThrown) {
+												Messenger().post({
+													message : '启动任务失败,' + errorThrown,
+													type : 'error',
+													showCloseButton : true
+												});
+											}
+										});
+										
+										Messenger().post({
+											message : '任务<b class="label green">'+ item.dbName +'</b>已重启！',
+											showCloseButton : true
+										});
+									}
+								},
+								error : function(XMLHttpRequest,
+										textStatus, errorThrown) {
+									Messenger().post({
+										message : '错误：	' + errorThrown,
+										type : 'error',
+										showCloseButton : true
+									});
+								}
+							});
+						};
+						
 						self.stopJob = function(item, event) {
 							
 							$.ajax({
@@ -575,6 +648,9 @@
 						};
 
 						self.startManually = function() {
+							
+							self.consoleMessage('');
+							
 							if (self.selectedTaskId().type == 'RTMARKET' || $('#grabForm').valid()) {
 								$.ajax({
 									data : {
@@ -585,12 +661,14 @@
 									url : 'startManually.action',
 									success : function(data) {
 										
-											handleResponse(data);
+											handleResponse(data, 'YES');
 										
 									},
 									error : function(XMLHttpRequest,
 											textStatus, errorThrown) {
 										Messenger().post("抓取失败！");
+										
+										self.consoleMessage("抓取失败！");
 									}
 								});
 							}
@@ -652,10 +730,7 @@
 				//			model.manuallyDbName(ui.item.id);	
 				//		}
 				//	});
-					
-				});
-		
-		function handleResponse(response) {
+		function handleResponse(response, needToSave) {
 			
 			if (response) {
 				
@@ -671,8 +746,15 @@
 						type : 'error'
 					});
 				}
+				
+				if (needToSave) {
+					model.consoleMessage(response.message);
+				}
 			}
 		}
+				});
+		
+		
 	</script>
 </body>
 </html>

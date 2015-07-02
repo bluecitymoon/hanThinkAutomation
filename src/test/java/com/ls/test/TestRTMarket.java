@@ -1,5 +1,8 @@
 package com.ls.test;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.junit.Test;
@@ -11,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ls.entity.AutomaticJob;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.service.AuthanAutomationService;
+import com.ls.util.XinXinConstants;
 import com.ls.vo.ResponseVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -37,6 +41,7 @@ public class TestRTMarket {
 		AutomaticJob automaticJob = automaticJobRepository.findOne(34);
 		//AutomaticJob automaticJob = automaticJobRepository.findOne(23);
 		rtmarketAutomationService.grabStorageInformation("2015-01-01", "2015-01-13", automaticJob);
+		
 	}
 
 

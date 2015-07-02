@@ -14,7 +14,7 @@
 	<xsdingdanzhubiao>
 		<danjuleixing>终端销量</danjuleixing>
 		<id>${titleMap['uuid']}</id>
-		<riqi></riqi>
+		<riqi>${titleMap['orderDate']}</riqi>
 		<changbian>${titleMap['supplierNumber']}</changbian>
 		<dizhi>${titleMap['storeNumber']}</dizhi>
 		<bianhao></bianhao>
@@ -28,7 +28,7 @@
 		<tiaoxingma></tiaoxingma>
 		<shangpinmiaoshu>${product['description']}</shangpinmiaoshu>
 		<shuliang>${product['count']}</shuliang>
-		<buhanshuijine>${product['moneyAmountWithoutTax']}</buhanshuijine>
+		<buhanshuijine></buhanshuijine>
 		<dangrikucun>${product['dayBalanceInDb']}</dangrikucun>
 	</xsdingdanzibiao>
 	</#list>

@@ -837,10 +837,11 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return savedOrderList;
 	}
 	
-	public List<Order> saveOrdersForStorage(List<Orders> orders, AutomaticJob job) {
+	@Override
+	public void saveOrdersForStorage(List<Orders> orders, AutomaticJob job) {
 
 		if (null == orders || orders.size() == 0) {
-			return null;
+			return;
 		}
 
 		List<Order> savedOrderList = new ArrayList<Order>();
@@ -903,7 +904,6 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			savedOrderList.add(savedOrder);
 
 		}
-		return savedOrderList;
 	}
 
 }
