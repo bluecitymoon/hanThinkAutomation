@@ -29,6 +29,8 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
@@ -36,6 +38,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.ls.constants.AuthanConstants;
@@ -99,10 +102,37 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		webClient.getOptions().setCssEnabled(false);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 
-		tryToLogin(webClient, authanJob);
+		HtmlPage resultPage = tryToLogin(webClient, authanJob);
+		
+		ScriptResult scriptResult = resultPage.executeJavaScript("goMenu('javascript:to_e2e();','16','电子订单')");
+		
+		Page newPage = scriptResult.getNewPage();
+		
+		System.out.println(newPage.getUrl().toString());
+		
+		Page reloginPage = webClient.getPage(newPage.getUrl().toString());
+		waitBackgroundJavascript(reloginPage);
+		
+		HtmlPage inboxPage = webClient.getPage("https://platform.powere2e.com/platform/mailbox/openInbox.htm?showAll");
+		HtmlTextInput receivedDateFrom = inboxPage.getElementByName("receivedDateFrom");
+		HtmlTextInput receivedDateTo = inboxPage.getElementByName("receivedDateTo");
+		
+		String carrefourStart = "";
+		try {
+			carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		String carrefourEnd = "";
+		try {
+			carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(end);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		receivedDateFrom.setValueAttribute(carrefourStart);
+		receivedDateTo.setValueAttribute(carrefourEnd);
 
-		webClient.getPage("https://supplierweb.carrefour.com/callSSO.jsp");
-
+		ScriptResult queryResult = inboxPage.executeJavaScript("openInbox('/platform', false)");
 		List<String> orderIds = getAllOrderFileIds(webClient, start, end);
 
 		print(orderIds);
@@ -112,6 +142,17 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		fillUniqueIdentityForOrdersList(ordersList);
 		
 		return ordersList;
+	}
+
+	public void waitBackgroundJavascript(Page page) {
+		
+		JavaScriptJobManager javaScriptJobManager = page.getEnclosingWindow().getJobManager();
+		while (javaScriptJobManager.getJobCount() > 0) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	private List<Orders> parseDetails(List<String> orderIds, WebClient webClient, Integer jobId) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
@@ -157,8 +198,6 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		try {
 			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
 			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(end);
-			
-			webClient.getPage("https://platform.powere2e.com/platform/mailbox/openInbox.htm?showAll");
 			
 			int page = 1;
 
@@ -221,7 +260,7 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		return baseUrl;
 	}
 
-	public String tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
+	public HtmlPage tryToLogin(WebClient webClient, AutomaticJob automaticJob) throws FailingHttpStatusCodeException, MalformedURLException, IOException, URISyntaxException, InterruptedException {
 
 		System.out.println("Trying to login......");
 
@@ -277,12 +316,11 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 			cleanUpValidationCodeFiles();
 			System.out.println("Log in successfully.");
 
-			return null;
+			return loginResultPage;
 		}
 
-		tryToLogin(webClient, automaticJob);
+		return tryToLogin(webClient, automaticJob);
 
-		return null;
 	}
 
 	public String generateNewValidationCode(String cookies, WebClient webClient) throws FailingHttpStatusCodeException, IOException, InterruptedException {
