@@ -133,13 +133,32 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		receivedDateTo.setValueAttribute(carrefourEnd);
 
 		ScriptResult queryResult = inboxPage.executeJavaScript("openInbox('/platform', false)");
-		List<String> orderIds = getAllOrderFileIds(webClient, start, end);
-
-		print(orderIds);
-
-		ordersList = parseDetails(orderIds, webClient, authanJob.getId());
+		HtmlPage archivePage = (HtmlPage) queryResult.getNewPage();
 		
-		fillUniqueIdentityForOrdersList(ordersList);
+		try {
+			CarrefourDetailLinkingFinder carrefourDetailLinkingFinder = allGuidInSinglePage(archivePage);
+			
+			List<String> orderIds = new ArrayList<String>();
+			
+			if (carrefourDetailLinkingFinder.getGuidList() == null || carrefourDetailLinkingFinder.getGuidList().isEmpty()) {
+				return null;
+			}
+			
+			orderIds.addAll(carrefourDetailLinkingFinder.getGuidList());
+			
+			if (carrefourDetailLinkingFinder.hasNextPage()) {
+				orderIds.addAll(getAllOrderFileIds(webClient, carrefourStart, carrefourEnd));
+			}
+			
+			System.out.println(orderIds.size());
+			
+			ordersList = parseDetails(orderIds, webClient, authanJob.getId());
+			
+			fillUniqueIdentityForOrdersList(ordersList);
+		} catch (ParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return ordersList;
 	}
@@ -192,14 +211,12 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		return ordersList;
 	}
 
-	private List<String> getAllOrderFileIds(WebClient webClient, String start, String end) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	private List<String> getAllOrderFileIds(WebClient webClient, String carrefourStart, String carrefourEnd) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 
 		List<String> allGuidList = new ArrayList<String>();
 		try {
-			String carrefourStart = HanthinkUtil.getCarrefourDateQueryString(start);
-			String carrefourEnd = HanthinkUtil.getCarrefourDateQueryString(end);
 			
-			int page = 1;
+			int page = 2;
 
 			boolean hasNextPage = true;
 			while (hasNextPage) {
@@ -233,8 +250,6 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 				}
 			}
 
-		} catch (ParseException e) {
-			throw new RuntimeException("非标准的日期格式");
 		} catch (ParserException e) {
 
 		}
@@ -242,6 +257,19 @@ public class CarrefourAutomationServiceImpl extends AbstractAuthanAutomationServ
 		return allGuidList;
 	}
 
+	private CarrefourDetailLinkingFinder allGuidInSinglePage(HtmlPage archivePage) throws ParserException {
+		
+		String archivePageContent = archivePage.getWebResponse().getContentAsString();
+
+		Parser htmlParser = new Parser();
+		htmlParser.setInputHTML(archivePageContent);
+
+		CarrefourDetailLinkingFinder carrefourDetailLinkingFinder = new CarrefourDetailLinkingFinder();
+		htmlParser.visitAllNodesWith(carrefourDetailLinkingFinder);
+
+		return carrefourDetailLinkingFinder;
+	}
+	
 	private String toEmpty(String input) {
 
 		String inputString = StringUtils.trimToEmpty(input);

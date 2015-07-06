@@ -536,14 +536,17 @@ public class RTMarketAutomationServiceImpl extends AbstractAuthanAutomationServi
 		HtmlPage loginResultPage = (HtmlPage) loginButton.click();
 
 		String callbackUrl = loginResultPage.getUrl().toString();
-
-		if (callbackUrl.equals("https://supplier.rt-mart.com.cn/php/scm_main.php")) {
+		
+		System.out.println(callbackUrl);
+		
+		if (callbackUrl.equals("https://supplier.rt-mart.com.cn/php/r_index.php?err=2")) {
 			
+			tryToLogin(webClient, automaticJob);
+		} else {
 			System.out.println("RT-Market login successfully!");
 			cleanUpValidationCodeFiles();
 			return;
-		} else {
-			tryToLogin(webClient, automaticJob);
+			
 		}
 	}
 
