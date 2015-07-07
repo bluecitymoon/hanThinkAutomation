@@ -28,8 +28,8 @@ public class TestCarrerfour {
 	@Test
 	public void testGrabOrders() throws Exception {
 
-		AutomaticJob automaticJob = automaticJobRepository.findOne(5);
-		List<Orders> orders = carrefourAutomationService.grabOrders("2015-01-23", "2015-01-23", automaticJob);
+		AutomaticJob automaticJob = automaticJobRepository.findOne(39);
+		List<Orders> orders = carrefourAutomationService.grabOrders("2015-07-02", "2015-07-05", automaticJob);
 
 	}
 

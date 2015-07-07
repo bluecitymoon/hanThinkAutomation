@@ -40,4 +40,22 @@ public interface AuthanAutomationService {
 	 * @return
 	 */
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob);
+	
+	/**
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @param automaticJob
+	 * @return
+	 */
+	public ResponseVo grabReceivingReport(String startDate, String endDate, AutomaticJob automaticJob);
+	
+	/**
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @param automaticJob
+	 * @return
+	 */
+	public ResponseVo grabReturnedOrder(String startDate, String endDate, AutomaticJob automaticJob);
 }

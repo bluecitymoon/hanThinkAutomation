@@ -20,7 +20,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
-import org.apache.tools.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +91,198 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		Order existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
 
 		return existedOrder == null;
+	}
+	
+	@Override
+	public ResponseVo grabReceivingReport(String startDate, String endDate, AutomaticJob automaticJob) {
+		
+		if (null == automaticJob) return ResponseVo.newFailMessage("未知的任务配置.");
+
+		Date now = new Date();
+		automaticJob.setLastGrabStart(AuthanConstants.HANTHINK_TIME_FORMATTER.format(now));
+		
+		final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+		webClient.getOptions().setCssEnabled(false);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+		try {
+
+			tryToLogin(webClient, automaticJob);
+
+		} catch (FailingHttpStatusCodeException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，错误的http code FailingHttpStatusCodeException : " + e.getMessage());
+		} catch (MalformedURLException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，MalformedURLException " + e.getMessage());
+		} catch (IOException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，IOException " + e.getMessage());
+		} catch (URISyntaxException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，URISyntaxException " + e.getMessage());
+		} catch (InterruptedException e) {
+			return ResponseVo.newFailMessage("登陆零供b2b失败，InterruptedException " + e.getMessage());
+		}
+		
+		List<Orders> orders = new ArrayList<Orders>();
+		
+		String receivingReportUrl = "http://scm.sgcs.com.cn/manager/acceptBill/acceptBill_findAcceptBillSummarizingList.action?" + 
+				"acceptBill.endDate=" + endDate.replace("-", "") + "&acceptBill.qryBillNumber=&acceptBill.qryDelyBillNo=&acceptBill.qryDeptCode=&acceptBill.qryGoodsCode="+ 
+				"&acceptBill.qryOrderBillNumber=&acceptBill.qryOrganizationId=&acceptBill.startDate=" + startDate.replace("-", "") + "&chooseTabId=2&page.currentIndex=1&page.offset=10"; 
+		
+		try {
+			HtmlPage singleListPage = webClient.getPage(receivingReportUrl);
+	
+			HtmlTable dataTable = HanthinkUtil.getFirstElementByXPath(singleListPage, "//*[@id=\"tablist\"]");
+			parseOrderListTable(orders, dataTable, automaticJob);
+			
+			HtmlLabel totalPageCountLabel = HanthinkUtil.getFirstElementByXPath(singleListPage, "//*[@id=\"pagetotalpage\"]");
+			
+			String countString = HanthinkUtil.getNumbersInString(totalPageCountLabel.asText());
+			Integer count = Integer.valueOf(countString);
+			
+			System.out.println(count);
+			
+			for (int i = 2; i <= count; i++) {
+				
+				String singPageUrl = "http://scm.sgcs.com.cn/manager/acceptBill/acceptBill_findAcceptBillSummarizingList.action?" + 
+						"acceptBill.endDate=" + endDate.replace("-", "") + "&acceptBill.qryBillNumber=&acceptBill.qryDelyBillNo=&acceptBill.qryDeptCode=&acceptBill.qryGoodsCode="+ 
+						"&acceptBill.qryOrderBillNumber=&acceptBill.qryOrganizationId=&acceptBill.startDate=" + startDate.replace("-", "") + "&chooseTabId=2&page.currentIndex=" + i + "&page.offset=10"; 
+				HtmlPage singlePage = webClient.getPage(singPageUrl);
+				
+				HtmlTable table = HanthinkUtil.getFirstElementByXPath(singlePage, "//*[@id=\"tablist\"]");
+				parseOrderListTable(orders, table, automaticJob);
+			}
+			
+		} catch (FailingHttpStatusCodeException e) {
+			return ResponseVo.newFailMessage("获取数据失败， URL是 " + receivingReportUrl+ "   " + e.getMessage());
+		} catch (MalformedURLException e) {
+			return ResponseVo.newFailMessage("获取数据失败， URL是 " + receivingReportUrl+ "   " + e.getMessage());
+		} catch (IOException e) {
+			return ResponseVo.newFailMessage("获取数据失败， URL是 " + receivingReportUrl+ "   " + e.getMessage());
+		}
+
+		if (orders.isEmpty()) {
+			return ResponseVo.newSuccessMessage("没有发现需要采集的数据！");
+		}
+		
+		String xml = "";
+		try {
+			
+			xml = compositeStorageToXml(orders, automaticJob, "lg-receiving-report-request-soap.ftl");
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseVo.newFailMessage("模板封装失败，请联系技术人员。" + e.getMessage());
+		} catch (TemplateException e) {
+			e.printStackTrace();
+			return ResponseVo.newFailMessage("模板封装失败，请联系技术人员。" + e.getMessage());
+		}
+		
+		System.out.println(xml);
+		
+		if(StringUtils.isNotBlank(xml)) {
+			ResponseVo responseVo = postData(orders, automaticJob, xml);
+			
+			if (!responseVo.success()) {
+				return responseVo;
+			}
+		}
+		
+		Date endTime = new Date();
+		automaticJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
+
+		automaticJobRepository.saveAndFlush(automaticJob);
+		
+		return ResponseVo.newSuccessMessage("同步完成!");
+	}
+	
+	private void parseOrderListTable(List<Orders> orders, HtmlTable dataTable, AutomaticJob automaticJob) {
+		
+		List<HtmlTableRow> rows = dataTable.getRows();
+		for (int i = 1; i < rows.size() - 1; i++) {
+			
+			HtmlTableRow singleRow = rows.get(i);
+			List<HtmlTableCell> cells = singleRow.getCells();
+			
+			StorageDetail storageDetail = new StorageDetail();
+			for (int j = 0; j < cells.size(); j++) {
+				
+				String cellContent = StringUtils.trimToEmpty(cells.get(j).asText());
+				switch (j) {
+				case 1:
+					storageDetail.setStoreNumber(cellContent);
+					break;
+				case 7:
+					storageDetail.setOrderDate(getLingGongDateString(cellContent));
+					break;
+				case 8:
+					storageDetail.setProductNumber(cellContent);
+					break;
+				case 9:
+					storageDetail.setDescription(cellContent);
+					break;
+				case 14:
+					storageDetail.setCount(cellContent);
+					break;
+				case 15:
+					storageDetail.setTaxRate("0."+ cellContent);
+					break;
+				case 16:
+					storageDetail.setMoneyAmountWithoutTax(cellContent);
+					break;
+				case 17:
+					storageDetail.setMoneyAmount(cellContent);
+					break;
+				default:
+					break;
+				}
+			}
+			
+			String orderDate = storageDetail.getOrderDate();
+			String storeNumber = storageDetail.getStoreNumber();
+			if (!checkIfStorageNotGrabed(orderDate, storeNumber, automaticJob.getId())) {
+				continue;
+			}
+			
+			Orders singleOrder = getOrderByStoreNumberAndOrderDate(orders, storeNumber, orderDate);
+			
+			if (singleOrder == null) {
+				singleOrder = new Orders();
+				
+				singleOrder.getOrderTitleMap().put("uuid", getRandomUUID());
+				singleOrder.getOrderTitleMap().put("orderDate", orderDate);
+				singleOrder.getOrderTitleMap().put("storeNumber", storeNumber);
+				singleOrder.getOrderTitleMap().put("supplierNumber", automaticJob.getCompanyCode());
+				
+				orders.add(singleOrder);
+			}
+			
+			Map<String, String> detailMap = new HashMap<String, String>();
+			
+			detailMap.put("uuid", singleOrder.getOrderTitleMap().get("uuid"));
+			detailMap.put("productNumber", storageDetail.getProductNumber());
+			detailMap.put("description", storageDetail.getDescription());
+			detailMap.put("taxRate", storageDetail.getTaxRate());
+			detailMap.put("count", storageDetail.getCount());
+			detailMap.put("moneyAmountWithoutTax", storageDetail.getMoneyAmountWithoutTax());
+			detailMap.put("moneyAmount", storageDetail.getMoneyAmount());
+			
+			singleOrder.getOrdersItemList().add(detailMap);
+			
+		}
+	}
+	
+	private Orders getOrderByStoreNumberAndOrderDate(List<Orders> orders, String storeNumber, String orderDate) {
+		
+		for (Orders order : orders) {
+			
+			String storeNumberInMap = order.getOrderTitleMap().get("storeNumber");
+			String orderDateInMap = order.getOrderTitleMap().get("orderDate");
+			
+			if (storeNumberInMap != null && storeNumberInMap.equals(storeNumber) && orderDateInMap != null && orderDateInMap.equals(orderDateInMap)) {
+				return order;
+			}
+		}
+		
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -198,7 +389,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 									
 									List<Orders> subList = orderResult.subList(k, endIndex);
 									
-									String data = compositeStorageToXml(subList, automaticJob);
+									String data = compositeStorageToXml(subList, automaticJob, "lg-storage-request-soap.ftl");
 									
 									ResponseVo responseVo = postData(subList, automaticJob, data);
 									
@@ -648,9 +839,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	}
 
-	public String compositeStorageToXml(List<Orders> orders, AutomaticJob automaticJob) throws IOException, TemplateException {
+	public String compositeStorageToXml(List<Orders> orders, AutomaticJob automaticJob, String fileName) throws IOException, TemplateException {
 
-		Template template = AuthanConstants.getAnchanConfiguration().getTemplate("lg-storage-request-soap.ftl");
+		Template template = AuthanConstants.getAnchanConfiguration().getTemplate(fileName);
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -881,6 +1072,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				String moneyAmountWithoutTax = toEmpty(singleDetailMap.get("moneyAmountWithoutTax"));
 				String productNumber = toEmpty(singleDetailMap.get("productNumber"));
 				String storageBalance = toEmpty(singleDetailMap.get("dayBalanceInDb"));
+				String taxRate = toEmpty(singleDetailMap.get("taxRate"));
+				String moneyAmount = toEmpty(singleDetailMap.get("moneyAmount"));
 
 				ProductDetail productDetail = new ProductDetail();
 				productDetail.setOrderId(savedOrder.getId());
@@ -889,6 +1082,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				productDetail.setMoneyAmountWithoutTax(moneyAmountWithoutTax);
 				productDetail.setProductNumber(productNumber);
 				productDetail.setDayBalanceInDb(storageBalance);
+				productDetail.setMoneyAmountWithTax(moneyAmount);
+				productDetail.setTaxRate(taxRate);
 				
 				try {
 					productDetail = productDetailRepository.saveAndFlush(productDetail);

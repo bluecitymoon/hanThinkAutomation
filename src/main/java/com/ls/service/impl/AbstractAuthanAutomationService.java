@@ -72,6 +72,14 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 		return ResponseVo.newFailMessage("这个功能并没有开发。");
 	}
 	
+	public ResponseVo grabReceivingReport(String startDate, String endDate, AutomaticJob automaticJob) {
+		return ResponseVo.newFailMessage("这个功能并没有开发。");
+	}
+	
+	public ResponseVo grabReturnedOrder(String startDate, String endDate, AutomaticJob automaticJob) {
+		return ResponseVo.newFailMessage("这个功能并没有开发。");
+	}
+	
 	public String getRandomUUID() {
 
 		return UUID.randomUUID().toString();

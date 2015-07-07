@@ -192,6 +192,8 @@ public class AuchanAutomationAction extends BaseAction {
 		
 		if (StringUtils.isNotBlank(componentType) && componentType.equals("storage")) {
 			response = authanAutomationService.grabStorageInformation(manuallyStart, manuallyStop, automaticJob);
+		} else if (StringUtils.isNotBlank(componentType) && componentType.equals("receivingReport")) {
+			response = authanAutomationService.grabReceivingReport(manuallyStart, manuallyStop, automaticJob);
 		} else {
 			response = authanAutomationService.postDataToWebService(manuallyStart, manuallyStop, automaticJob);
 		}

@@ -7,6 +7,36 @@ public class StorageDetail {
 	private String count;
 	private String moneyAmount;
 	private String dayBalanceInDb;
+	
+	private String storeNumber;
+	private String orderDate;
+	private String taxRate;
+	private String moneyAmountWithoutTax;
+	
+	public String getTaxRate() {
+		return taxRate;
+	}
+	public void setTaxRate(String taxRate) {
+		this.taxRate = taxRate;
+	}
+	public String getMoneyAmountWithoutTax() {
+		return moneyAmountWithoutTax;
+	}
+	public void setMoneyAmountWithoutTax(String moneyAmountWithoutTax) {
+		this.moneyAmountWithoutTax = moneyAmountWithoutTax;
+	}
+	public String getStoreNumber() {
+		return storeNumber;
+	}
+	public void setStoreNumber(String storeNumber) {
+		this.storeNumber = storeNumber;
+	}
+	public String getOrderDate() {
+		return orderDate;
+	}
+	public void setOrderDate(String orderDate) {
+		this.orderDate = orderDate;
+	}
 	public String getStorageGroupId() {
 		return storageGroupId;
 	}
@@ -45,9 +75,13 @@ public class StorageDetail {
 	}
 	@Override
 	public String toString() {
-
-		return "StorageDetail [storageGroupId=" + storageGroupId + ", productNumber=" + productNumber + ", description=" + description + ", count=" + count + ", moneyAmount=" + moneyAmount + ", dayBalanceInDb=" + dayBalanceInDb + "]";
+		return "StorageDetail [storageGroupId=" + storageGroupId
+				+ ", productNumber=" + productNumber + ", description="
+				+ description + ", count=" + count + ", moneyAmount="
+				+ moneyAmount + ", dayBalanceInDb=" + dayBalanceInDb
+				+ ", storeNumber=" + storeNumber + ", orderDate=" + orderDate
+				+ ", taxRate=" + taxRate + ", moneyAmountWithoutTax="
+				+ moneyAmountWithoutTax + "]";
 	}
-	
 	
 }
