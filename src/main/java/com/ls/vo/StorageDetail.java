@@ -12,7 +12,14 @@ public class StorageDetail {
 	private String orderDate;
 	private String taxRate;
 	private String moneyAmountWithoutTax;
+	private String barCode;
 	
+	public String getBarCode() {
+		return barCode;
+	}
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
+	}
 	public String getTaxRate() {
 		return taxRate;
 	}
@@ -75,13 +82,7 @@ public class StorageDetail {
 	}
 	@Override
 	public String toString() {
-		return "StorageDetail [storageGroupId=" + storageGroupId
-				+ ", productNumber=" + productNumber + ", description="
-				+ description + ", count=" + count + ", moneyAmount="
-				+ moneyAmount + ", dayBalanceInDb=" + dayBalanceInDb
-				+ ", storeNumber=" + storeNumber + ", orderDate=" + orderDate
-				+ ", taxRate=" + taxRate + ", moneyAmountWithoutTax="
-				+ moneyAmountWithoutTax + "]";
+		return "StorageDetail [storageGroupId=" + storageGroupId + ", productNumber=" + productNumber + ", description=" + description + ", count=" + count + ", moneyAmount=" + moneyAmount + ", dayBalanceInDb=" + dayBalanceInDb + ", storeNumber=" + storeNumber + ", orderDate="
+				+ orderDate + ", taxRate=" + taxRate + ", moneyAmountWithoutTax=" + moneyAmountWithoutTax + ", barCode=" + barCode + "]";
 	}
-	
 }

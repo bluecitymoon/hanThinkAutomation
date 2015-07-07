@@ -47,6 +47,13 @@ public class TestLingGong {
 	}
 	
 	@Test
+	public void testGrabReturnedOrder() throws Exception {
+
+		AutomaticJob automaticJob = automaticJobRepository.findOne(25);
+		rtmarketAutomationService.grabReturnedOrder("2015-07-06", "2015-07-07", automaticJob);
+	}
+	
+	@Test
 	public void testWholeProcess() throws Exception {
 
 		//AutomaticJob automaticJob = automaticJobRepository.findOne(34);
