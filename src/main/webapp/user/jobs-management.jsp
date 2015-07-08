@@ -325,7 +325,7 @@
 						self.selectedStoreId = ko.observable('');
 						
 						self.selectedUserId = ko.observable('');
-						self.allComponentTypes = [{"name" : "order", "description": "订单"},{"name" : "storage", "description": "销存报表"}, {"name" : "receivingReport", "description": "验收单"}];
+						self.allComponentTypes = [{"name" : "order", "description": "订单"},{"name" : "storage", "description": "销存报表"}, {"name" : "receivingReport", "description": "验收单"}, {"name" : "returnedOrder", "description": "退补单"}];
 						self.allZones = [{"id" : "1", "description" : "华东"},{"id" : "2", "description" : "华北"},{"id" : "3", "description" : "东北"},{"id" : "4", "description" : "华中"},{"id" : "5", "description" : "华南"}];
 						self.selectedStoreId.subscribe(function(item) {
 							self.reloadJobList();

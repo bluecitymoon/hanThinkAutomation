@@ -14,6 +14,51 @@ public class StorageDetail {
 	private String moneyAmountWithoutTax;
 	private String barCode;
 	
+	private String beforePrice;
+	private String beforeMonyAmountWithTax;
+	private String beforeTax;
+	
+	private String afterPrice;
+	private String afterMonyAmountWithTax;
+	private String afterTax;
+	
+	
+	public String getBeforePrice() {
+		return beforePrice;
+	}
+	public void setBeforePrice(String beforePrice) {
+		this.beforePrice = beforePrice;
+	}
+	public String getBeforeMonyAmountWithTax() {
+		return beforeMonyAmountWithTax;
+	}
+	public void setBeforeMonyAmountWithTax(String beforeMonyAmountWithTax) {
+		this.beforeMonyAmountWithTax = beforeMonyAmountWithTax;
+	}
+	public String getBeforeTax() {
+		return beforeTax;
+	}
+	public void setBeforeTax(String beforeTax) {
+		this.beforeTax = beforeTax;
+	}
+	public String getAfterPrice() {
+		return afterPrice;
+	}
+	public void setAfterPrice(String afterPrice) {
+		this.afterPrice = afterPrice;
+	}
+	public String getAfterMonyAmountWithTax() {
+		return afterMonyAmountWithTax;
+	}
+	public void setAfterMonyAmountWithTax(String afterMonyAmountWithTax) {
+		this.afterMonyAmountWithTax = afterMonyAmountWithTax;
+	}
+	public String getAfterTax() {
+		return afterTax;
+	}
+	public void setAfterTax(String afterTax) {
+		this.afterTax = afterTax;
+	}
 	public String getBarCode() {
 		return barCode;
 	}
@@ -80,6 +125,7 @@ public class StorageDetail {
 	public void setDayBalanceInDb(String dayBalanceInDb) {
 		this.dayBalanceInDb = dayBalanceInDb;
 	}
+	
 	@Override
 	public String toString() {
 		return "StorageDetail [storageGroupId=" + storageGroupId + ", productNumber=" + productNumber + ", description=" + description + ", count=" + count + ", moneyAmount=" + moneyAmount + ", dayBalanceInDb=" + dayBalanceInDb + ", storeNumber=" + storeNumber + ", orderDate="

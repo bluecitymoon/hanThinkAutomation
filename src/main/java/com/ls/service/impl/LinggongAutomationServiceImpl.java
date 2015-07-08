@@ -318,11 +318,35 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 9:
 					storageDetail.setTaxRate("0."+ cellContent);
 					break;
+				case 10:
+					storageDetail.setBeforePrice(cellContent);
+					break;
+				case 11:
+					storageDetail.setBeforeMonyAmountWithTax(cellContent);
+					break;
+				case 12:
+					storageDetail.setBeforeTax(cellContent);
+					break;
+				case 13:
+					storageDetail.setAfterPrice(cellContent);
+					break;
+				case 14:
+					storageDetail.setAfterMonyAmountWithTax(cellContent);
+					break;
+				case 15:
+					storageDetail.setAfterTax(cellContent);
+					break;
 				case 18:
 					storageDetail.setOrderDate(getLingGongDateString(cellContent));
 					break;
 				case 19:
 					storageDetail.setCount(cellContent);
+					break;
+				case 23:
+					storageDetail.setMoneyAmountWithoutTax(cellContent);
+					break;
+				case 24:
+					storageDetail.setMoneyAmount(cellContent);
 					break;
 				default:
 					break;
@@ -356,6 +380,18 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			detailMap.put("taxRate", storageDetail.getTaxRate());
 			detailMap.put("count", storageDetail.getCount());
 			detailMap.put("barCode", storageDetail.getBarCode());
+			
+			detailMap.put("moneyAmountWithoutTax", storageDetail.getMoneyAmountWithoutTax());
+			detailMap.put("moneyAmount", storageDetail.getMoneyAmount());
+			
+			detailMap.put("beforePrice", storageDetail.getBeforePrice());
+			detailMap.put("beforeMonyAmountWithTax", storageDetail.getBeforeMonyAmountWithTax());
+			detailMap.put("beforeTax", storageDetail.getBeforeTax());
+			
+			detailMap.put("afterPrice", storageDetail.getAfterPrice());
+			detailMap.put("afterMonyAmountWithTax", storageDetail.getAfterMonyAmountWithTax());
+			detailMap.put("afterTax", storageDetail.getAfterTax());
+			
 			
 			singleOrder.getOrdersItemList().add(detailMap);
 			

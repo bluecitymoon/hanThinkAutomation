@@ -32,6 +32,12 @@
 		<tiaoxingma>${product['barCode']}</tiaoxingma>
 		<shangpinmiaoshu>${product['description']}</shangpinmiaoshu>
 		<shuliang>${product['count']}</shuliang>
+		<tiaoqianjinjia>${product['beforePrice']}</<tiaoqianjinjia>
+		<tiaoqianjine>${product['beforeMonyAmountWithTax']}</<tiaoqianjine>
+		<tiaoqianshuijin>${product['beforeTax']}</tiaoqianshuijin>
+		<tiaohoujinjia>${product['afterPrice']}</<tiaohoujinjia>
+		<tiaohoujine>${product['afterMonyAmountWithTax']}</tiaohoujine>
+		<tiaohoushuijin>${product['afterTax']}</tiaohoushuijin>
 		<buhanshuijine>${product['moneyAmountWithoutTax']}</buhanshuijine>
 		<hanshuijine>${product['moneyAmount']}</hanshuijine>
 		<shuilv>${product['taxRate']}</shuilv>
