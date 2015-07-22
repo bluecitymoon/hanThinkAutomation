@@ -423,6 +423,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 9:
 					storageDetail.setDescription(cellContent);
 					break;
+				case 13:
+					storageDetail.setPaperType(cellContent);
+					break;
 				case 14:
 					storageDetail.setCount(cellContent);
 					break;
@@ -456,6 +459,19 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				singleOrder.getOrderTitleMap().put("storeNumber", storeNumber);
 				singleOrder.getOrderTitleMap().put("supplierNumber", automaticJob.getCompanyCode());
 				
+				String paperType = storageDetail.getPaperType();
+				if (StringUtils.isNotBlank(paperType)) {
+					
+					if (paperType.equals("正向")) {
+						paperType = "验收单";
+					} else if (paperType.equals("反向")) {
+						paperType = "退货单";
+					} else {
+						paperType = "";
+					}
+					
+				} 
+				singleOrder.getOrderTitleMap().put("paperType", paperType);
 				orders.add(singleOrder);
 			}
 			

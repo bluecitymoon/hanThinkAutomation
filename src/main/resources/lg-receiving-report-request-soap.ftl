@@ -12,7 +12,7 @@
 	<#list orders as order>
 	<#assign titleMap = order.orderTitleMap/>
 	<xsdingdanzhubiao>
-		<danjuleixing>验收单</danjuleixing>
+		<danjuleixing>${titleMap['paperType']}</danjuleixing>
 		<id>${titleMap['uuid']}</id>
 		<#if titleMap['orderDate']??>
 		<riqi>${titleMap['orderDate']}</riqi>

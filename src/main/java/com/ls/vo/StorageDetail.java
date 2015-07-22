@@ -22,7 +22,15 @@ public class StorageDetail {
 	private String afterMonyAmountWithTax;
 	private String afterTax;
 	
+	private String paperType;
 	
+	
+	public String getPaperType() {
+		return paperType;
+	}
+	public void setPaperType(String paperType) {
+		this.paperType = paperType;
+	}
 	public String getBeforePrice() {
 		return beforePrice;
 	}
