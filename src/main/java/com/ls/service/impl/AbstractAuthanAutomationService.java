@@ -200,7 +200,7 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 
 		if (StringUtils.isEmpty(soapMessage) || !soapMessage.contains("daorudanjuResult")) {
 
-			return ResponseVo.newFailMessage("无法处理的SOAP返回消息 --> " + soapMessage);
+			return ResponseVo.newFailMessage("无法处理的ERP返回消息 --> " + soapMessage);
 
 		}
 		String[] splitResult = soapMessage.split("daorudanjuResult");
@@ -209,7 +209,7 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 
 			return ResponseVo.newSuccessMessage("采集成功");
 		} else if (splitResult.length == 3) {
-			return ResponseVo.newFailMessage("SOAP处理失败，" + splitResult[1].replace("<", "").replace(">", ""));
+			return ResponseVo.newFailMessage("存储已采集的数据到ERP失败，ERP端返回的消息是 " + splitResult[1].replace("<", "").replace(">", ""));
 		} else {
 
 			return ResponseVo.newSuccessMessage(soapMessage);
