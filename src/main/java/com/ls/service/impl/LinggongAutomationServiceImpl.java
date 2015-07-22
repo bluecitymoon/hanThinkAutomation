@@ -164,7 +164,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		String xml = "";
 		try {
 			
-			xml = compositeStorageToXml(orders, automaticJob, "lg-receiving-report-request-soap.ftl");
+			xml = compositeStorageToXml(orders, automaticJob, "lg-returned-order-request-soap.ftl");
 			
 		} catch (IOException e) {
 			e.printStackTrace();
