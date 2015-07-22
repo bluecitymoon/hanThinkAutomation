@@ -35,7 +35,7 @@
 		<tiaoqianjinjia>${product['beforePrice']}</<tiaoqianjinjia>
 		<tiaoqianjine>${product['beforeMonyAmountWithTax']}</<tiaoqianjine>
 		<tiaoqianshuijin>${product['beforeTax']}</tiaoqianshuijin>
-		<tiaohoujinjia>${product['afterPrice']}</<tiaohoujinjia>
+		<tiaohoujinjia>${product['afterPrice']}</tiaohoujinjia>
 		<tiaohoujine>${product['afterMonyAmountWithTax']}</tiaohoujine>
 		<tiaohoushuijin>${product['afterTax']}</tiaohoushuijin>
 		<buhanshuijine>${product['moneyAmountWithoutTax']}</buhanshuijine>
