@@ -795,7 +795,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		HtmlPage firstHtmlPage = webClient.getPage(firstPageUrl);
 
-		retrieveData(firstHtmlPage, ordersList, webClient, authanJob.getName(), authanJob.getId());
+		retrieveData(firstHtmlPage, ordersList, webClient, supplierNumber, authanJob.getId());
 
 		HtmlLabel totalPageLabel = HanthinkUtil.getFirstElementByXPath(firstHtmlPage, "//*[@id=\"pagetotalpage\"]");
 		String totalNumberString = HanthinkUtil.getNumbersInString(totalPageLabel.asText());
