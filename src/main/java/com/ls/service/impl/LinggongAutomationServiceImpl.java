@@ -93,6 +93,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return existedOrder == null;
 	}
 	
+	/**
+	 * 退补单
+	 */
 	public ResponseVo grabReturnedOrder(String startDate, String endDate, AutomaticJob automaticJob) {
 		
 		if (null == automaticJob) return ResponseVo.newFailMessage("未知的任务配置.");
@@ -166,6 +169,12 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			
 			xml = compositeStorageToXml(orders, automaticJob, "lg-returned-order-request-soap.ftl");
 			
+			if (StringUtils.isNotBlank(automaticJob.getMode()) && automaticJob.getMode().equals("DEBUG")) {
+				
+				String gbkString = new String(xml.getBytes(), Charset.forName("GBK"));
+				
+				Files.write(gbkString.getBytes(), new File(HanthinkProperties.getString("dataFileBase") + "ReturnedOrder" + System.currentTimeMillis() + ".txt"));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseVo.newFailMessage("模板封装失败，请联系技术人员。" + e.getMessage());
@@ -191,6 +200,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		
 	}
 	
+	/**
+	 * 验收单
+	 */
 	@Override
 	public ResponseVo grabReceivingReport(String startDate, String endDate, AutomaticJob automaticJob) {
 		
@@ -306,6 +318,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 1:
 					storageDetail.setStoreNumber(cellContent);
 					break;
+				case 4:
+					storageDetail.setPaperNumber(cellContent);
+					break;
 				case 5:
 					storageDetail.setProductNumber(cellContent);
 					break;
@@ -355,11 +370,12 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			
 			String orderDate = storageDetail.getOrderDate();
 			String storeNumber = storageDetail.getStoreNumber();
+			String paperNumber = storageDetail.getPaperNumber();
 			if (!checkIfStorageNotGrabed(orderDate, storeNumber, automaticJob.getId())) {
 				continue;
 			}
 			
-			Orders singleOrder = getOrderByStoreNumberAndOrderDate(orders, storeNumber, orderDate);
+			Orders singleOrder = getOrderByStoreNumberAndOrderDateAndPaperNumber(orders, storeNumber, orderDate, paperNumber);
 			
 			if (singleOrder == null) {
 				singleOrder = new Orders();
@@ -368,6 +384,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				singleOrder.getOrderTitleMap().put("orderDate", orderDate);
 				singleOrder.getOrderTitleMap().put("storeNumber", storeNumber);
 				singleOrder.getOrderTitleMap().put("supplierNumber", automaticJob.getCompanyCode());
+				singleOrder.getOrderTitleMap().put("paperNumber", paperNumber);
 				
 				orders.add(singleOrder);
 			}
@@ -505,6 +522,23 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return null;
 	}
 	
+	private Orders getOrderByStoreNumberAndOrderDateAndPaperNumber(List<Orders> orders, String storeNumber, String orderDate, String paperNumber) {
+		
+		for (Orders order : orders) {
+			
+			String storeNumberInMap = order.getOrderTitleMap().get("storeNumber");
+			String orderDateInMap = order.getOrderTitleMap().get("orderDate");
+			String paperNumberInMap = order.getOrderTitleMap().get("paperNumber");
+			if (storeNumberInMap != null && storeNumberInMap.equals(storeNumber) && orderDateInMap != null && orderDateInMap.equals(orderDateInMap)
+				&& paperNumberInMap != null && paperNumberInMap.equals(paperNumber)	
+					) {
+				return order;
+			}
+		}
+		
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
@@ -1263,6 +1297,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			String storeNumber = titleMap.get("storeNumber");
 			String orderDate = titleMap.get("orderDate");
 
+			String orderNumber = titleMap.get("paperNumber");
 			Order order = new Order();
 			order.setSupplierNumber(supplierNumber);
 			order.setOrderDate(orderDate);
@@ -1271,6 +1306,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			order.setJobName(job.getName());
 			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			order.setStoreNumber(storeNumber);
+			order.setOrderNumber(orderNumber);
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;

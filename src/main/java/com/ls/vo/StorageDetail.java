@@ -24,7 +24,15 @@ public class StorageDetail {
 	
 	private String paperType;
 	
+	//单号
+	private String paperNumber;
 	
+	public String getPaperNumber() {
+		return paperNumber;
+	}
+	public void setPaperNumber(String paperNumber) {
+		this.paperNumber = paperNumber;
+	}
 	public String getPaperType() {
 		return paperType;
 	}

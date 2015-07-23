@@ -42,10 +42,10 @@
 		<shuliang>${product['count']}</shuliang>
 		<huansuanlv1></huansuanlv1>
 		<xiangshu></xiangshu>
-		<hanshuidanjia></hanshuidanjia>
-		<hanshuijine></hanshuijine>
-		<buhanshuijine>${product['moneyAmountWithoutTax']}</buhanshuijine>
-		<buhanshuidanjia>${product['priceWithoutTax']}</buhanshuidanjia>
+		<hanshuidanjia>${product['priceWithoutTax']}</hanshuidanjia>
+		<hanshuijine>${product['moneyAmountWithoutTax']}</hanshuijine>
+		<buhanshuijine></buhanshuijine>
+		<buhanshuidanjia></buhanshuidanjia>
 		<shuilv>${product['taxRate']}</shuilv>
 		<zengpinbianma></zengpinbianma>
 		<zengpinmiaoshu></zengpinmiaoshu>

@@ -14,6 +14,7 @@
 	<xsdingdanzhubiao>
 		<danjuleixing>退补单</danjuleixing>
 		<id>${titleMap['uuid']}</id>
+		<kehudanhao>${titleMap['paperNumber']}</kehudanhao>
 		<#if titleMap['orderDate']??>
 		<riqi>${titleMap['orderDate']}</riqi>
 		<#else>
@@ -32,8 +33,8 @@
 		<tiaoxingma>${product['barCode']}</tiaoxingma>
 		<shangpinmiaoshu>${product['description']}</shangpinmiaoshu>
 		<shuliang>${product['count']}</shuliang>
-		<tiaoqianjinjia>${product['beforePrice']}</<tiaoqianjinjia>
-		<tiaoqianjine>${product['beforeMonyAmountWithTax']}</<tiaoqianjine>
+		<tiaoqianjinjia>${product['beforePrice']}</tiaoqianjinjia>
+		<tiaoqianjine>${product['beforeMonyAmountWithTax']}</tiaoqianjine>
 		<tiaoqianshuijin>${product['beforeTax']}</tiaoqianshuijin>
 		<tiaohoujinjia>${product['afterPrice']}</tiaohoujinjia>
 		<tiaohoujine>${product['afterMonyAmountWithTax']}</tiaohoujine>
