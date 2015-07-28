@@ -14,6 +14,8 @@
 	<xsdingdanzhubiao>
 		<danjuleixing>${titleMap['paperType']}</danjuleixing>
 		<id>${titleMap['uuid']}</id>
+		<kehudanhao>${titleMap['paperNumber']}</kehudanhao>
+		<bianhao>${titleMap['danjuhao']}</bianhao>
 		<#if titleMap['orderDate']??>
 		<riqi>${titleMap['orderDate']}</riqi>
 		<#else>
@@ -21,7 +23,6 @@
 		</#if>
 		<changbian>${titleMap['supplierNumber']}</changbian>
 		<dizhi>${titleMap['storeNumber']}</dizhi>
-		<bianhao></bianhao>
 	</xsdingdanzhubiao>
 	<#if order.ordersItemList??>
 	<#assign productList = order.ordersItemList/>

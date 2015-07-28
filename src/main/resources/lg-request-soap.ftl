@@ -30,6 +30,7 @@
 		<daohuoriqi></daohuoriqi>
 		</#if>
 		<dizhi>${titleMap['address']}</dizhi>
+		<fuzhu>${titleMap['comments']}</fuzhu>
 	</xsdingdanzhubiao>
 	<#if order.ordersItemList??>
 	<#assign productList = order.ordersItemList/>

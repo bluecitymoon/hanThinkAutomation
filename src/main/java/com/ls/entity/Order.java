@@ -32,7 +32,17 @@ public class Order implements Serializable {
 	protected Date createDate;
 	protected String grabTips;
 	protected String address;
+	protected String paperNumber;
 	
+	
+	public String getPaperNumber() {
+		return paperNumber;
+	}
+
+	public void setPaperNumber(String paperNumber) {
+		this.paperNumber = paperNumber;
+	}
+
 	@Transient
 	List<ProductDetail> productDetails;
 	

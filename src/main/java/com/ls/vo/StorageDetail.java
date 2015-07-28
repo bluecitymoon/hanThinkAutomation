@@ -24,8 +24,17 @@ public class StorageDetail {
 	
 	private String paperType;
 	
+	private String danjuhao; //fk
+
 	//单号
 	private String paperNumber;
+	
+	public String getDanjuhao() {
+		return danjuhao;
+	}
+	public void setDanjuhao(String danjuhao) {
+		this.danjuhao = danjuhao;
+	}
 	
 	public String getPaperNumber() {
 		return paperNumber;

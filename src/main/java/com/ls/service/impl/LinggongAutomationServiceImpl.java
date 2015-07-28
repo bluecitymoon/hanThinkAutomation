@@ -93,6 +93,13 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return existedOrder == null;
 	}
 	
+	private boolean checkIfReturnedOrderNotGrabed(String orderDate, String address, Integer jobId, String orderNumber) {
+
+		Order existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
+
+		return existedOrder == null;
+	}
+	
 	/**
 	 * 退补单
 	 */
@@ -431,6 +438,12 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 1:
 					storageDetail.setStoreNumber(cellContent);
 					break;
+				case 4:
+					storageDetail.setDanjuhao(cellContent);
+					break;
+				case 6:
+					storageDetail.setPaperNumber(cellContent);
+					break;
 				case 7:
 					storageDetail.setOrderDate(getLingGongDateString(cellContent));
 					break;
@@ -462,11 +475,20 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			
 			String orderDate = storageDetail.getOrderDate();
 			String storeNumber = storageDetail.getStoreNumber();
-			if (!checkIfStorageNotGrabed(orderDate, storeNumber, automaticJob.getId())) {
+			String paperNumber = storageDetail.getPaperNumber();
+			String danjuhao = storageDetail.getDanjuhao();
+			String paperType = storageDetail.getPaperType();
+			
+			//fk bug
+			if (StringUtils.isEmpty(paperNumber) && StringUtils.isNotBlank(paperType) && paperType.equals("正向") ) {
 				continue;
 			}
 			
-			Orders singleOrder = getOrderByStoreNumberAndOrderDate(orders, storeNumber, orderDate);
+			if (!checkIfReturnedOrderNotGrabed(orderDate, storeNumber, automaticJob.getId(), paperNumber)) {
+				continue;
+			}
+			
+			Orders singleOrder = getOrderByStoreNumberAndOrderDateAndPaperNumberAndDanJuHao(orders, storeNumber, orderDate, paperNumber, danjuhao);
 			
 			if (singleOrder == null) {
 				singleOrder = new Orders();
@@ -475,8 +497,9 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				singleOrder.getOrderTitleMap().put("orderDate", orderDate);
 				singleOrder.getOrderTitleMap().put("storeNumber", storeNumber);
 				singleOrder.getOrderTitleMap().put("supplierNumber", automaticJob.getCompanyCode());
+				singleOrder.getOrderTitleMap().put("paperNumber", paperNumber);
+				singleOrder.getOrderTitleMap().put("danjuhao", danjuhao);
 				
-				String paperType = storageDetail.getPaperType();
 				if (StringUtils.isNotBlank(paperType)) {
 					
 					if (paperType.equals("正向")) {
@@ -539,6 +562,23 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return null;
 	}
 
+	private Orders getOrderByStoreNumberAndOrderDateAndPaperNumberAndDanJuHao(List<Orders> orders, String storeNumber, String orderDate, String paperNumber, String danjuhao) {
+		
+		for (Orders order : orders) {
+			
+			String storeNumberInMap = order.getOrderTitleMap().get("storeNumber");
+			String orderDateInMap = order.getOrderTitleMap().get("orderDate");
+			String paperNumberInMap = order.getOrderTitleMap().get("paperNumber");
+			String danjuhaoInMap = order.getOrderTitleMap().get("danjuhao");
+			if (storeNumberInMap != null && storeNumberInMap.equals(storeNumber) && orderDateInMap != null && orderDateInMap.equals(orderDateInMap)
+				&& paperNumberInMap != null && paperNumberInMap.equals(paperNumber)	&& danjuhaoInMap != null && danjuhaoInMap.equals(danjuhao)
+					) {
+				return order;
+			}
+		}
+		
+		return null;
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
@@ -909,6 +949,10 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 10:
 					singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
 					break;
+				case 13:
+					singleOrder.getOrderTitleMap().put("comments", content);
+					break;
+					
 				default:
 					break;
 				}
@@ -1219,6 +1263,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			String estimateTakeOverDate = titleMap.get("estimateTakeOverDate");
 			String orderDate = titleMap.get("orderDate");
 			String address = titleMap.get("address");
+			
+			String grabTips = titleMap.get("comments");
 
 			Order order = new Order();
 			order.setOrderNumber(orderNumber);
@@ -1231,6 +1277,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			order.setAddress(address);
 			order.setStoreNumber(address);
+			order.setGrabTips(grabTips);
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
@@ -1298,6 +1345,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			String orderDate = titleMap.get("orderDate");
 
 			String orderNumber = titleMap.get("paperNumber");
+			String paperNumber = titleMap.get("danjuhao");
+			
 			Order order = new Order();
 			order.setSupplierNumber(supplierNumber);
 			order.setOrderDate(orderDate);
@@ -1307,6 +1356,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			order.setUuid(singleOrder.getOrderTitleMap().get("uuid"));
 			order.setStoreNumber(storeNumber);
 			order.setOrderNumber(orderNumber);
+			order.setPaperNumber(paperNumber);
 
 			List<Map<String, String>> detailMap = singleOrder.getOrdersItemList();
 			Order savedOrder = null;
