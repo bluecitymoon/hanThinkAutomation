@@ -52,6 +52,7 @@
 		<zengpinmiaoshu></zengpinmiaoshu>
 		<zengpinshuliang></zengpinshuliang>
 		<zibiaomendian></zibiaomendian>
+		<fuzhu>${product['comments']}</fuzhu>
 	</xsdingdanzibiao>
 	</#list>
 	</#if>

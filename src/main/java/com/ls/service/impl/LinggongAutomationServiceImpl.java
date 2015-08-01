@@ -176,12 +176,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			
 			xml = compositeStorageToXml(orders, automaticJob, "lg-returned-order-request-soap.ftl");
 			
-			if (StringUtils.isNotBlank(automaticJob.getMode()) && automaticJob.getMode().equals("DEBUG")) {
-				
-				String gbkString = new String(xml.getBytes(), Charset.forName("GBK"));
-				
-				Files.write(gbkString.getBytes(), new File(HanthinkProperties.getString("dataFileBase") + "ReturnedOrder" + System.currentTimeMillis() + ".txt"));
-			}
+			saveSoapDataToFileInDebugMode(xml, automaticJob, "ReturnedOrder");
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseVo.newFailMessage("模板封装失败，请联系技术人员。" + e.getMessage());
@@ -284,6 +280,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		try {
 			
 			xml = compositeStorageToXml(orders, automaticJob, "lg-receiving-report-request-soap.ftl");
+			
+			saveSoapDataToFileInDebugMode(xml, automaticJob, "ReceivingReport");
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -880,7 +878,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 		tryToLogin(webClient, authanJob);
 
-		String firstPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
+		String firstPageUrl = "http://scm.sgcs.com.cn/manager/orderform/orderform_findSupplierList?orderFormBean.billCate=1&orderFormBean.billNumber=&orderFormBean.billState=1&orderFormBean.endTime=" + end.replace("-", "")
 				+ "&orderFormBean.inDeptCode=&orderFormBean.readState=&orderFormBean.startTime=" + start.replace("-", "") + "&page.currentIndex=1&page.offset=10";
 
 		HtmlPage firstHtmlPage = webClient.getPage(firstPageUrl);
@@ -1032,6 +1030,10 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 						singleDetail.put("moneyAmountWithoutTax", content);
 
 						break;
+					case 12:
+						
+						singleDetail.put("comments", content);
+						break;
 					default:
 						break;
 					}
@@ -1171,6 +1173,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			// composite data
 			String data = compositeOrderToXml(orders, job);
 
+			saveSoapDataToFileInDebugMode(data, job, "Order");
+			
 			try {
 
 				String url = job.getClientIp() + job.getClientEnd();

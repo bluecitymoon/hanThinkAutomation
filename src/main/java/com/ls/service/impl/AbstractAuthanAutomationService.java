@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +27,7 @@ import org.springframework.security.access.annotation.Secured;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptJobManager;
+import com.google.common.io.Files;
 import com.ls.constants.HanthinkProperties;
 import com.ls.entity.AutomaticJob;
 import com.ls.exception.ConfigurationException;
@@ -68,6 +70,20 @@ public abstract class AbstractAuthanAutomationService implements AuthanAutomatio
 
 	}
 	
+	public void saveSoapDataToFileInDebugMode(String xml, AutomaticJob automaticJob, String type) {
+		
+		if (StringUtils.isNotBlank(automaticJob.getMode()) && automaticJob.getMode().equals("DEBUG")) {
+			
+			String gbkString = new String(xml.getBytes(), Charset.forName("GBK"));
+			
+			try {
+				Files.write(gbkString.getBytes(), new File(HanthinkProperties.getString("dataFileBase") + type + System.currentTimeMillis() + ".txt"));
+			} catch (IOException e) {
+				System.out.println("not a big deal, save debug file fails.");
+			}
+		}
+		
+	}
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob){
 		return ResponseVo.newFailMessage("这个功能并没有开发。");
 	}
