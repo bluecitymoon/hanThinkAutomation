@@ -486,7 +486,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				continue;
 			}
 			
-			Orders singleOrder = getOrderByStoreNumberAndOrderDateAndPaperNumberAndDanJuHao(orders, storeNumber, orderDate, paperNumber, danjuhao);
+			Orders singleOrder = getOrderByStoreNumberAndDanJuHao(orders, storeNumber, danjuhao);
 			
 			if (singleOrder == null) {
 				singleOrder = new Orders();
@@ -560,16 +560,18 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return null;
 	}
 
-	private Orders getOrderByStoreNumberAndOrderDateAndPaperNumberAndDanJuHao(List<Orders> orders, String storeNumber, String orderDate, String paperNumber, String danjuhao) {
+	private Orders getOrderByStoreNumberAndDanJuHao(List<Orders> orders, String storeNumber, String danjuhao) {
 		
 		for (Orders order : orders) {
 			
 			String storeNumberInMap = order.getOrderTitleMap().get("storeNumber");
-			String orderDateInMap = order.getOrderTitleMap().get("orderDate");
-			String paperNumberInMap = order.getOrderTitleMap().get("paperNumber");
+			//String orderDateInMap = order.getOrderTitleMap().get("orderDate");
+			//String paperNumberInMap = order.getOrderTitleMap().get("paperNumber");
 			String danjuhaoInMap = order.getOrderTitleMap().get("danjuhao");
-			if (storeNumberInMap != null && storeNumberInMap.equals(storeNumber) && orderDateInMap != null && orderDateInMap.equals(orderDateInMap)
-				&& paperNumberInMap != null && paperNumberInMap.equals(paperNumber)	&& danjuhaoInMap != null && danjuhaoInMap.equals(danjuhao)
+			if (storeNumberInMap != null && storeNumberInMap.equals(storeNumber)
+					//&& orderDateInMap != null && orderDateInMap.equals(orderDateInMap)
+				//&& paperNumberInMap != null && paperNumberInMap.equals(paperNumber)	
+					&& danjuhaoInMap != null && danjuhaoInMap.equals(danjuhao)
 					) {
 				return order;
 			}
@@ -1002,12 +1004,15 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 					HtmlTableCell singleCell = tds.get(j);
 					String content = StringUtils.trimToEmpty(singleCell.getTextContent());
 					switch (j) {
+					
+					case 1:
+						singleDetail.put("productNumber", content);
+						break;
+						
 					case 2:
 						singleDetail.put("description", content);
 						break;
-					case 3:
-						singleDetail.put("productNumber", content);
-						break;
+					
 					case 4:
 						singleDetail.put("barCode", content);
 						break;
