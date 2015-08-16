@@ -486,7 +486,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				continue;
 			}
 			
-			Orders singleOrder = getOrderByStoreNumberAndDanJuHao(orders, storeNumber, danjuhao);
+			Orders singleOrder = getOrderByStoreNumberAndDanJuHaoAndOrderNumber(orders, storeNumber, danjuhao, paperNumber);
 			
 			if (singleOrder == null) {
 				singleOrder = new Orders();
@@ -560,17 +560,17 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		return null;
 	}
 
-	private Orders getOrderByStoreNumberAndDanJuHao(List<Orders> orders, String storeNumber, String danjuhao) {
+	private Orders getOrderByStoreNumberAndDanJuHaoAndOrderNumber(List<Orders> orders, String storeNumber, String danjuhao, String orderNumber) {
 		
 		for (Orders order : orders) {
 			
 			String storeNumberInMap = order.getOrderTitleMap().get("storeNumber");
 			//String orderDateInMap = order.getOrderTitleMap().get("orderDate");
-			//String paperNumberInMap = order.getOrderTitleMap().get("paperNumber");
+			String paperNumberInMap = order.getOrderTitleMap().get("paperNumber");
 			String danjuhaoInMap = order.getOrderTitleMap().get("danjuhao");
 			if (storeNumberInMap != null && storeNumberInMap.equals(storeNumber)
 					//&& orderDateInMap != null && orderDateInMap.equals(orderDateInMap)
-				//&& paperNumberInMap != null && paperNumberInMap.equals(paperNumber)	
+				&& paperNumberInMap != null && paperNumberInMap.equals(orderNumber)	
 					&& danjuhaoInMap != null && danjuhaoInMap.equals(danjuhao)
 					) {
 				return order;
@@ -579,6 +579,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 		
 		return null;
 	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResponseVo grabStorageInformation(String startDate, String endDate, AutomaticJob automaticJob) {
@@ -774,7 +775,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 			String deptNumber = "";
 			String[] elements = singleLine.split(",");
-			if (elements.length != 15) {
+			if (elements.length != 14) {
 
 				System.out.println("bad data in the csv file");
 				continue;
@@ -791,16 +792,16 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 2:
 					storageDetail.setDescription(element);
 					break;
-				case 6:
+				case 5:
 					deptNumber = element;
 					break;
-				case 13:
+				case 12:
 					storageDetail.setDayBalanceInDb(element);
 					break;
-				case 10:
+				case 9:
 					storageDetail.setCount(element);
 					break;
-				case 11:
+				case 10:
 					storageDetail.setMoneyAmount(element);
 					break;
 
