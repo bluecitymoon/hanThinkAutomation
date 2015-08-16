@@ -686,6 +686,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 									
 									String data = compositeStorageToXml(subList, automaticJob, "lg-storage-request-soap.ftl");
 									
+									saveSoapDataToFileInDebugMode(data, automaticJob, "Storage");
+									
 									ResponseVo responseVo = postData(subList, automaticJob, data);
 									
 									if (responseVo.success()) {
