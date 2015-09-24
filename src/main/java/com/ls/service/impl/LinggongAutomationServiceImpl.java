@@ -81,21 +81,35 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 
 	private boolean checkIfOrderNotGrabed(String orderNumber, String address, Integer jobId) {
 
-		Order existedOrder = orderRepository.findByOrderNumberAndStoreNumberAndJobId(orderNumber, address, jobId);
+		Order existedOrder = null;
+		try {
+			existedOrder = orderRepository.findByOrderNumberAndStoreNumberAndJobId(orderNumber, address, jobId);
+		} catch (Exception e) {
+			return false;
+		}
 
 		return existedOrder == null;
 	}
 
 	private boolean checkIfStorageNotGrabed(String orderDate, String address, Integer jobId) {
 
-		Order existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
-
+		Order existedOrder = null;
+		try {
+			existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
+		} catch (Exception e) {
+			return false;
+		}
 		return existedOrder == null;
 	}
-	
+
 	private boolean checkIfReturnedOrderNotGrabed(String orderDate, String address, Integer jobId, String orderNumber) {
 
-		Order existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
+		Order existedOrder = null;
+		try {
+			existedOrder = orderRepository.findByStoreNumberAndJobIdAndOrderDate(address, jobId, orderDate);
+		} catch (Exception e) {
+			return false;
+		}
 
 		return existedOrder == null;
 	}
@@ -136,6 +150,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				"chooseTabId=2&compensatesBillBean.qryAccUnitCode=&compensatesBillBean.qryBillNumber=&compensatesBillBean.qryContNumber=" +
 				"&compensatesBillBean.qryEndAccDate=" + endDate.replace("-", "") + "&compensatesBillBean.qryStartAccDate=" 
 				+ startDate.replace("-", "") + "&page.currentIndex=1&page.offset=10";
+		System.out.println(receivingReportUrl);
 		try {
 			HtmlPage singleListPage = webClient.getPage(receivingReportUrl);
 	
@@ -157,6 +172,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				
 				HtmlTable table = HanthinkUtil.getFirstElementByXPath(singlePage, "//*[@id=\"tablist\"]");
 				parseReturnedList(orders, table, automaticJob);
+				
+				System.out.println(singPageUrl);
 			}
 			
 		} catch (FailingHttpStatusCodeException e) {
@@ -186,6 +203,8 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			return ResponseVo.newFailMessage("模板封装失败，请联系技术人员。" + e.getMessage());
 		}
 		
+		long start = System.currentTimeMillis();
+		System.out.println("start to send data to ERP side.");
 		if(StringUtils.isNotBlank(xml)) {
 			ResponseVo responseVo = postData(orders, automaticJob, xml);
 			
@@ -193,6 +212,10 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				return responseVo;
 			}
 		}
+		
+		long end = System.currentTimeMillis();
+		
+		System.out.println("sending to SOAP costed " + (end - start)/1000 + "s.");
 		
 		Date endTime = new Date();
 		automaticJob.setLastGrabEnd(AuthanConstants.HANTHINK_TIME_FORMATTER.format(endTime));
@@ -414,7 +437,23 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 			detailMap.put("afterMonyAmountWithTax", storageDetail.getAfterMonyAmountWithTax());
 			detailMap.put("afterTax", storageDetail.getAfterTax());
 			
-			
+			if (StringUtils.isNotEmpty(automaticJob.getMode()) && automaticJob.getMode().equals("DEBUG")) {
+				File file = new File("c:\\LingGong-Returned-Orders.csv");
+				if (!file.exists()) {
+					try {
+						file.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				try {
+					Files.append(storageDetail.toString(), file, Charset.defaultCharset());
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			singleOrder.getOrdersItemList().add(detailMap);
 			
 		}
