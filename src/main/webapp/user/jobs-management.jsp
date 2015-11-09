@@ -239,7 +239,7 @@
 										<label class="required">登陆用户名</label> <input type="text" class="required" data-bind="value : username" />
 									</div>
 									<div class="four columns">
-										<label class="required">登陆密码</label> <input type="password" class="required" data-bind="value : password" />
+										<label class="required">登陆密码</label> <input type="text" class="required" data-bind="value : password" />
 									</div>
 									<div class="four columns">
 										<label>企业代码</label> <input type="text" class="required" data-bind="value : companyCode" />
