@@ -10,6 +10,7 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import com.ls.entity.AutomaticJob;
 import com.ls.entity.Store;
 import com.ls.jobs.AuthanAutomationQuartzJob;
 import com.ls.jobs.AutomaticJobManager;
+import com.ls.jobs.CleanUpImagesJob;
 import com.ls.repository.AutomaticJobRepository;
 import com.ls.repository.StoreRepository;
 import com.ls.service.AuthanAutomationService;
@@ -152,6 +154,24 @@ public class StartupJobService implements InitializingBean {
 
 				}
 			}
+		}
+		
+		startUpCleanUpJob();
+	}
+
+	private void startUpCleanUpJob() {
+
+		JobDetail jobDetail = JobBuilder.newJob(CleanUpImagesJob.class).withIdentity("CleanUpImagesJob", "OTHERS_GROUP").build();
+		
+		CronTriggerImpl singleTrigger = (CronTriggerImpl) CronScheduleBuilder.dailyAtHourAndMinute(1, 28).build();
+		
+		singleTrigger.setName("Every_Night_Clean_Up_Validation_Code_Images");
+		singleTrigger.setGroup("OTHERS_GROUP");
+		Scheduler scheduler = AutomaticJobManager.getScheduler();
+		try {
+			scheduler.scheduleJob(jobDetail, singleTrigger);
+		} catch (SchedulerException e) {
+			
 		}
 	}
 

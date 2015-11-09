@@ -980,6 +980,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 					orderCreatorDeptNumber = content;
 					break;
 				case 6:
+					//14 有效日期 TODO
 					singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
 					break;
 				case 8:
