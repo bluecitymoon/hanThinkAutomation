@@ -979,7 +979,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 				case 4:
 					orderCreatorDeptNumber = content;
 					break;
-				case 14:
+				case 6:
 					//14 有效日期 TODO
 					singleOrder.getOrderTitleMap().put("orderDate", getLingGongDateString(content));
 					break;
@@ -989,7 +989,7 @@ public class LinggongAutomationServiceImpl extends AbstractAuthanAutomationServi
 					singleOrder.getOrderTitleMap().put("address", content);
 					break;
 
-				case 10:
+				case 14:
 					singleOrder.getOrderTitleMap().put("estimateTakeOverDate", getLingGongDateString(content));
 					break;
 				case 13:
